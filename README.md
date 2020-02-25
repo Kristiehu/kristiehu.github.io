@@ -1,2 +1,5 @@
-# kristiehu.github.io
-TEST 12345667
+# Simcoe County Beta What's new
+
+Right Click for more options (e.g. Switch To Basic)
+
+![](right-click.gif)
