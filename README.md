@@ -1,5 +1,9 @@
 # Simcoe County Beta What's new
 
+<!--   Introductions   -->
+We have made some new updates to our OpenGIS site. This latest version includes some new useful features and enhancements. Please check below to see additional details in the new udpates.
+
+<!--   Main Content   -->
 ## Search Bar
 ### Search By Pages
 
