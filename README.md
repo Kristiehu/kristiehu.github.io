@@ -8,7 +8,7 @@
 * [Navigation Panel](#navigation)
 * [Other Enhancements](#other)
 
-![](demo.gif)
+![Demo](demo.gif "Demo")
 
 <!--   Main Content   --> 
 <a name="search"></a><br/>
@@ -19,7 +19,7 @@ Searching could be easier with the assit of "Search by Types" and the "Show More
 * Search by Types
 * Show More Button
 
-![search panel](search.gif)
+![search panel](search.gif "Search Bar")
 
 
 <a name="imagery"></a>
@@ -29,7 +29,7 @@ DIfferent imageries and topological basemaps can be switched in the drop-down me
 
 * Switch Basemaps
 
-![imagery panel](imagery.gif)
+![imagery panel](imagery.gif "Imagery/ Topo Basemap")
 
 
 <a name="navigation"></a>
@@ -43,12 +43,12 @@ Some more features have been added to Navigation panel on the left.
 * Context menu
 * Additional tools
 <!--   layers panel gif   -->
-![layers panel](layers.gif)
+![layers panel](layers.gif "Layers")
 
 ### _My Maps_
 * Improved Sharing: Import & Save
 <!--   maps panel gif   -->
-![maps panel](maps.gif)
+![maps panel](maps.gif "My Maps")
 
 <a name="other"></a>
 
