@@ -25,6 +25,77 @@
 	--shadow-md: 0 16px 40px rgba(0, 0, 0, 0.18);
 	--accent-soft: rgba(130, 14, 14, 0.12);
 }
+
+:root {
+  --container: 980px;
+  --pad-x: clamp(1rem, 4vw, 2rem);
+  --pad-y: clamp(1rem, 3vw, 2.5rem);
+}
+
+main {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: var(--pad-y) var(--pad-x);
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body { overflow-x: hidden; }
+p { line-height: 1.7; }
+
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+h1, h2, h3, p, a {
+  overflow-wrap: anywhere;
+}
+
+
+.menu-btn { display: none; }
+
+@media (max-width: 720px) {
+  .menu-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.75rem;
+    border: 1px solid rgba(0,0,0,0.12);
+    border-radius: 10px;
+    background: #fff;
+    font-size: 0.9rem;
+  }
+
+  .nav { position: relative; }
+
+  .internal-links {
+    display: none;
+    position: absolute;
+    right: 12px;
+    top: 54px;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 180px;
+    padding: 0.5rem;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+  }
+
+  .internal-links a {
+    padding: 0.6rem 0.75rem;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+}
+
+
+
+
+
+
 @font-face {
 	font-family: "Atkinson";
 	src: url("/fonts/atkinson-regular.woff") format("woff");
