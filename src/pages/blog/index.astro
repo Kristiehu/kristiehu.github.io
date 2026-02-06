@@ -83,13 +83,54 @@ const posts = (await getCollection('blog')).sort(
 				ul li:first-child .title {
 					font-size: 1.563em;
 				}
+
+			p {
+				margin-bottom: 1.25rem;
+			}
+
+			a {
+				color: inherit;
+				text-decoration: none;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+				transition: border-color 0.2s ease, opacity 0.2s ease;
+			}
+
+			a:hover {
+				border-bottom-color: rgba(255, 0, 0, 0.6);
+				opacity: 1;
+			}
+
+			sup {
+				font-size: 0.7em;
+				vertical-align: super;
+				line-height: 0;
+			}
+
+			sup a {
+				opacity: 0.65;
+			}
+
+			sup a:hover {
+				opacity: 1;
+			}
+
+			@media (max-width: 640px) {
+				.section.prose {
+				font-size: 1rem;
+				line-height: 1.7;
+				}
+			}
+			
+
+
+
 			}
 		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<section>
+			<section class='prose'>
 				<ul>
 					{
 						posts.map((post) => (

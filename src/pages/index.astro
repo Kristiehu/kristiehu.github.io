@@ -1,49 +1,174 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import ComplexType from "../components/ComplexType.astro";
+import { Image } from "astro:assets";
+import portrait from "../assets/me_0.png";
+
+const NAME = "Hi, I'm Kristie Hu 静祎";
+const PRONOUNCE = "/jing-yee hoo/";
+
+const LINKS = [
+  { label: "GitHub", href: "https://github.com/KristieHu" },
+  { label: "LinkedIn", href: "https://www.kristiehu.com/" },
+  { label: "Resume", href: "/resume.pdf" },
+  { label: "Email", href: "mailto:kristieyet@gmail.com" },
+];
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  </head>
+
+  <body>
+    <Header />
+
+    <main class="wrap">
+      <!-- HERO (same as About) -->
+      <section class="hero">
+        <Image
+          src={portrait}
+          alt="Kristie Hu portrait"
+          width={200}
+          height={200}
+          sizes="200px"
+          widths={[200, 400]}
+          quality={95}
+          class="portrait"
+        />
+
+        <div class="heroText">
+          <h1 class="name">
+            {NAME}
+            <span class="pronounce">{PRONOUNCE}</span>
+          </h1>
+
+          <div class="type">
+            <ComplexType />
+          </div>
+
+          <nav class="links" aria-label="Primary">
+            {LINKS.map((l) => (
+              <a class="chip" href={l.href} target={l.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer">
+                {l.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </section>
+
+			<!-- FOOTER NOTE -->
+      <section class="section tiny">
+        <p class="muted">
+          I’m driven by location intelligence — turning spatial complexity into clarity people can act on.
+        </p>
+      </section>
+    </main>
+
+    <Footer />
+
+    <style>
+      :global(html) { scroll-behavior: smooth; }
+      :global(body) {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI;
+        font-weight: 500;
+        line-height: 1.6;
+      }
+
+      .wrap { max-width: 860px; margin: 0 auto; padding: 3.5rem 1.25rem; }
+
+	  .tiny { margin-top: 2.1rem; }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 1.5rem;
+        align-items: center;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+      }
+
+      @media (max-width: 760px) {
+        .hero { grid-template-columns: 1fr; text-align: center; }
+      }
+	  .quote {
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: #888;
+		letter-spacing: 0.2px;
+		}
+
+		.quote span {
+		color: #111;
+		font-weight: 500;
+		}
+
+      .portrait{
+        border-radius: 999px;
+        display: block;
+        /* border: 1px solid rgba(127,127,127,0.25);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12); */
+      } /* ✅ IMPORTANT: close this */
+
+      .name {
+        margin: 0;
+        font-size: clamp(2rem, 2vw, 2rem);
+        font-weight: 700;
+        letter-spacing: -0.015em;
+      }
+
+      .pronounce {
+        margin-left: 0.5rem;
+        font-size: 0.45em;
+        font-weight: 400;
+        opacity: 0.55;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+      }
+
+      .type { 
+		margin-top: 0.5rem;
+		color:#3A5F8F;
+	 }
+
+      .links { margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+	  .chip {
+		position: relative;
+		padding: 0.4rem 0.85rem;
+		border-radius: 999px;
+		font-size: 0.92rem;
+		font-weight: 500;
+		text-decoration: none;
+		color: var(--black, #111);
+		border: 1px solid rgba(0,0,0,0.25);
+		background: transparent;
+		transition:
+			background-color 160ms ease,
+			color 160ms ease,
+			border-color 160ms ease,
+			transform 120ms ease;
+	  }
+
+	.chip:hover {
+	background: rgba(255, 0, 0, 0.06);
+	border-color: rgba(0,0,0,0.35);
+	transform: translateY(-5px);
+	}
+
+	.chip:active {
+	transform: translateY(0);
+	}
+
+
+
+
+      .section { margin-top: 2.4rem; }
+      .prose { max-width: 100ch; }
+      .muted { opacity: 0.65; font-style: italic; text-align: center;}
+    </style>
+  </body>
 </html>

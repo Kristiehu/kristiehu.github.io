@@ -1,63 +1,322 @@
 ---
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import ComplexType from "../components/ComplexType.astro";
+import { Image } from "astro:assets";
+import portrait from "../assets/me_0.png";
+
+const NAME = "Kristie Hu 静祎";
+const PRONOUNCE = "/jing-yee hoo/";
+
+const LINKS = [
+  { label: "GitHub", href: "https://github.com/KristieHu" },
+  { label: "LinkedIn", href: "https://www.kristiehu.com/" },
+  { label: "Resume", href: "/resume.pdf" },
+  { label: "Email", href: "mailto:kristieyet@gmail.com" },
+];
 ---
 
-<Layout
-	title="About Me"
-	description="Lorem ipsum dolor sit amet"
-	pubDate={new Date('August 08 2021')}
-	heroImage={AboutHeroImage}
->
-	<p>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-		labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo
-		viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam
-		adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus
-		et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus
-		vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque
-		sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
-	</p>
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  </head>
 
-	<p>
-		Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non
-		tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non
-		blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna
-		porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis
-		massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc.
-		Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis
-		bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra
-		massa massa ultricies mi.
-	</p>
+  <body>
+    <Header />
 
-	<p>
-		Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl
-		suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet
-		nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae
-		turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem
-		dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat
-		semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus
-		vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum
-		facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam
-		vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla
-		urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
-	</p>
+    <main class="wrap">
+      <!-- HERO -->
+      <section class="hero">
+        <Image
+			src={portrait}
+			alt="Kristie Hu portrait"
+			width={200}
+			height={200}
+			sizes="200px"
+			widths={[200, 400]}
+			quality={95}
+			class="portrait"
+			/>
 
-	<p>
-		Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper
-		viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc
-		scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur
-		gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus
-		pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim
-		blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id
-		cursus metus aliquam eleifend mi.
-	</p>
+        <div class="heroText">
+          <h1 class="name">
+            About Me
+          </h1>
 
-	<p>
-		Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta
-		nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam
-		tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci
-		ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar
-		proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
-	</p>
-</Layout>
+          <div class="type">
+            <ComplexType />
+          </div>
+
+          <nav class="links" aria-label="Primary">
+            {LINKS.map((l) => (
+              <a class="chip" href={l.href} target={l.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer">
+                {l.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </section>
+
+      <!-- BIO -->
+      <section class="section prose">
+        <p>
+          I’m a <strong>GIS Application Analyst </strong>& <strong> System Design Engineer</strong> with a research-first foundation in LiDAR, hyperspectral remote sensing, 
+		  and applied machine learning, and a practical bias toward systems that scale, ship, and stay useful.
+        </p>
+
+        <p>
+          I hold a BES and an MSc in Honours Geomatics from <a href="https://uwaterloo.ca">University of Waterloo</a>. My master's thesis, 
+		  <a href = "https://uwspace.uwaterloo.ca/items/dcb172d9-cec1-487b-8b18-1226c0156061">Semantic Modelling of an Indoor 
+		  Parking Garage Using Hand-held GeoSLAM LiDAR Point Clouds</a>, focused on building high-definition indoor digital twins in GNSS-denied 
+		  environments. The work combined LiDAR-based SLAM, 
+		  semantic segmentation, line-feature extraction, and surface reconstruction to generate accurate 3D indoor models for navigation, 
+		  emergency response, and autonomous parking use cases. Using deep-learning segmentation (DCTNet), the methodology achieved 90.74% mean 
+		  IoU and 98.65% mean F1, validating both geometric accuracy and semantic reliability <sup id="fnref-1"><a href="#fn-1" aria-describedby="footnote-label">[1]</a></sup>.
+        </p>
+
+        <p>
+		  Following graduation, I joined the <a href="https://vip.uwaterloo.ca/">Vision and Image Processing Lab (VIP Lab)</a> as a full-time Research Associate, where I worked on 
+		  hyperspectral remote sensing and applied machine learning. My research included vegetation and crop mapping using PRISMA data 
+		   and deep-learning–based object detection for Arctic imagery <sup id="fnref-1"><a href="#fn-2" aria-describedby="footnote-label">[2]</a></sup>, bridging spectral modeling, spatial analysis, and real-world data constraints. 
+        </p>
+		<p>
+			In industry, I own the design and delivery of automated geospatial ETL pipelines for fiber systems. I’ve developed Bash- and Python-based 
+			frameworks that transformed ad hoc reporting into reliable, repeatable pipelines, reducing turnaround time by ~75%. My work covers full 
+			lifecycle ETL, internal network-analysis tooling, and system design including PostGIS data modeling, lightweight API prototypes, planning dashboards, 
+			and production documentation designed to scale beyond a single contributor.
+		</p>
+		<p>
+			Across research and production environments, my interests converge on hyperspectral imaging, LiDAR and point-cloud processing, digital 
+			twins, and pragmatic ML deployed in real-world geospatial systems where robustness matters more than novelty.
+		</p>
+        <p>
+          Outside of work, I enjoy photography, handcrafting, doodling, and cooking—anything iterative and hands-on. I’m an
+          <strong>INTJ</strong> with a fire sun and earth rising, which likely explains the quiet focus and work-driven tendencies.
+        </p>
+      </section>
+
+	  <!-- FOOTER NOTE -->
+	  <!-- <sup id="fnref-1"><a href="#fn-2" aria-describedby="footnote-label">[3]</a></sup> -->
+	  <section class="footnotes">
+    <h2 id="footnote-label" class="sr-only">Footnotes</h2>
+    <ol>		
+		<li id="fn-1">
+			University of Waterloo, Geomatics - 
+			<a href="https://uwaterloo.ca/geospatial-intelligence/" target="_blank" rel="noopener noreferrer">Geospatial Intelligence & Mapping Lab</a>
+            <a href="#fnref-2" class="footnote-back">↩</a>
+		</li>
+		<li id="fn-2">
+			University of Waterloo, System Design Engineering - 
+			<a href="https://vip.uwaterloo.ca/" target="_blank" rel="noopener noreferrer">Vision & Image Processing Lab</a>
+            <a href="#fnref-2" class="footnote-back">↩</a>
+		</li>
+		<li id="fn-3">
+			Liberty Village, Telecom, Utilities & Infrustructure  - 
+			<a href="https://www.beanfield.com/en/tor/about-us" target="_blank" rel="noopener noreferrer">Beanfield Metroconnect</a>
+            <a href="#fnref-2" class="footnote-back">↩</a>
+		</li>
+		
+		
+    </ol>
+	</section>
+    </main>
+    <Footer />
+
+	<style>
+		.type { 
+		margin-top: 0.5rem;
+		color:#3A5F8F;
+	 }
+	  .quote {
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: #888;
+		letter-spacing: 0.2px;
+		}
+
+		.quote span {
+		color: #111;
+		font-weight: 500;
+		}
+
+	  :global(html) { scroll-behavior: smooth; }
+	  :global(body) {
+		margin: 0;
+
+		font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI;
+		font-weight: 500;
+		line-height: 1.6;
+	  }
+
+	  .wrap { max-width: 860px; margin: 0 auto; padding: 3.5rem 1.25rem; }
+
+	  .hero h1 { margin: 0; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.02em; }
+	  .hero {padding-bottom: 1.5rem;}
+	  .hero .name {margin-bottom: 0.6rem;}
+	  .hero h2 {margin-top: 0.4rem;}
+
+	  .name { font-size: clamp(2rem, 2vw, 2rem);
+		font-weight: 700;		
+		letter-spacing: -0.015em;
+		font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI;
+	  }
+	  .pronounce {
+		margin-left: 0.5rem;
+		font-size: 0.45em;
+		font-weight: 400;
+		opacity: 0.55;
+		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+	  }
+
+	  .muted { 
+		opacity: 0.65; 
+		font-weight: 500; 
+		font-style: italic; 
+		font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI;
+	}
+	  .tagline { margin: 0.75rem 0 0; font-weight: 600; }
+	  .lead { margin: 0.6rem 0 0; opacity: 0.9; max-width: 70ch; }
+
+	  .links { margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+	  .chip {
+		position: relative;
+		padding: 0.4rem 0.85rem;
+		border-radius: 999px;
+		font-size: 0.92rem;
+		font-weight: 500;
+		text-decoration: none;
+		color: var(--black, #111);
+		border: 1px solid rgba(0,0,0,0.25);
+		background: transparent;
+		transition:
+			background-color 160ms ease,
+			color 160ms ease,
+			border-color 160ms ease,
+			transform 120ms ease;
+	  }
+
+		.chip:hover {
+		background: rgba(255, 0, 0, 0.06);
+		border-color: rgba(0,0,0,0.35);
+		transform: translateY(-5px);
+		}
+
+		.chip:active {
+		transform: translateY(0);
+		}
+
+	  .grid { margin-top: 2.2rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; }
+	  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+
+	  .card {
+		text-decoration: none;
+		border: 1px solid rgba(127,127,127,0.35);
+		border-radius: 16px;
+		padding: 1rem 1rem 0.95rem;
+		transition: transform 120ms ease, opacity 120ms ease;
+	  }
+	  .card:hover { transform: translateY(-2px); opacity: 0.98; }
+	  .kicker { font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.08em; }
+	  .title { font-weight: 700; margin-top: 0.25rem; }
+	  .desc { margin-top: 0.35rem; opacity: 0.85; }
+
+	  .section { margin-top: 2.4rem; }
+	  .section h2 { margin: 0 0 0.8rem; font-size: 1.1rem; letter-spacing: -0.01em; }
+
+	  .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.7rem; }
+	  .item {
+		border: 1px solid rgba(127,127,127,0.25);
+		border-radius: 14px;
+	  }
+	  .itemLink { display: block; padding: 0.9rem 1rem; text-decoration: none; }
+	  .itemTitle { font-weight: 700; }
+	  .itemDesc { margin-top: 0.25rem; opacity: 0.85; }
+
+	  .body { margin: 0; max-width: 100ch; }
+	  sup a {
+		text-decoration: none;
+		font-size: 0.75em;
+		opacity: 0.7;
+		}
+
+		sup a:hover {
+		opacity: 1;
+		}
+
+		.footnotes {
+			margin-top: 2rem;
+			font-size: 0.9rem;
+			opacity: 0.75;
+			}
+
+		.footnotes ol {
+		padding-left: 1.25rem;
+		}
+
+		.footnotes li {
+		margin-bottom: 0.5rem;
+		}
+
+		.footnote-back {
+		margin-left: 0.5rem;
+		text-decoration: none;
+		opacity: 0.6;
+		}
+
+		.footnote-back:hover {
+		opacity: 1;
+		}
+
+	  .tiny { margin-top: 2.1rem; }
+	  
+		.section.prose {
+			max-width: 68ch;               /* optimal reading width */
+			margin: 0 auto;
+			font-size: 1.05rem;
+			line-height: 1.75;
+			color: rgba(0, 0, 0, 0.88); /* assumes dark theme; adjust if light */
+		}
+
+		.section.prose p {
+			margin-bottom: 1.25rem;
+		}
+
+		.section.prose a {
+			color: inherit;
+			text-decoration: none;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+			transition: border-color 0.2s ease, opacity 0.2s ease;
+		}
+
+		.section.prose a:hover {
+			border-bottom-color: rgba(255, 0, 0, 0.6);
+			opacity: 1;
+		}
+
+		.section.prose sup {
+			font-size: 0.7em;
+			vertical-align: super;
+			line-height: 0;
+		}
+
+		.section.prose sup a {
+			opacity: 0.65;
+		}
+
+		.section.prose sup a:hover {
+			opacity: 1;
+		}
+
+		@media (max-width: 640px) {
+			.section.prose {
+			font-size: 1rem;
+			line-height: 1.7;
+			}
+		}
+
+	</style>
+  </body>
+</html>

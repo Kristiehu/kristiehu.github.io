@@ -1,0 +1,336 @@
+---
+import { Image } from 'astro:assets';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+
+// Flexible props so you can use it for Work/Research/Side without breaking anything.
+type Props = {
+  title: string;
+  description: string;
+  pubDate?: Date;
+  updatedDate?: Date;
+  heroImage?: any;
+  type?: 'research' | 'work' | 'side';
+  org?: string;
+  status?: string;
+  tags?: string[];
+  links?: {
+    github?: string;
+    demo?: string;
+    paper?: string;
+    slides?: string;
+    dataset?: string;
+  };
+  tip?: string; // ✅ add this
+};
+
+const { tip, ...rest } = Astro.props;
+
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  heroImage,
+  type,
+  org,
+  status,
+  tags = [],
+  links = {},
+} = Astro.props;
+
+
+
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} />
+    <style>
+      /* ===== Layout goals =====
+        - wider reading measure than blog (more chars per line)
+        - still comfortable on big monitors
+        - report/paper-friendly spacing + typography
+      */
+
+      main {
+        width: 100%;
+        margin: 0;
+      }
+
+      /* Wider than your blog's 720px to allow "report-like" reading */
+      .container {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 1.25rem 1rem;
+      }
+
+      /* Keep hero full-width but visually contained */
+      .hero {
+        margin: 1rem auto 0;
+      }
+      .hero img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 14px;
+        box-shadow: var(--box-shadow);
+      }
+
+      .header-block {
+        margin: 1.25rem 0 1rem;
+      }
+
+      .eyebrow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.75rem;
+        align-items: center;
+        justify-content: space-between;
+        color: rgb(var(--gray));
+        font-size: 0.95rem;
+      }
+
+      .meta-left {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.75rem;
+        align-items: center;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        border: 1px solid rgba(var(--gray), 0.25);
+        background: rgba(var(--gray-light), 0.35);
+        color: rgb(var(--gray-dark));
+        font-size: 0.85rem;
+        line-height: 1.2;
+        white-space: nowrap;
+      }
+
+      h1 {
+        margin: 0.6rem 0 0.5rem;
+        line-height: 1.15;
+        letter-spacing: -0.01em;
+        text-align: left;
+      }
+
+      .subtitle {
+        margin: 0.25rem 0 0.75rem;
+        color: rgb(var(--gray-dark));
+        font-size: 1.05rem;
+      }
+
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+      }
+      .links a {
+        text-decoration: none;
+        border: 1px solid rgba(var(--gray), 0.25);
+        border-radius: 10px;
+        padding: 0.5rem 0.75rem;
+        color: var(--black);
+        background: white;
+        box-shadow: 0 1px 0 rgba(var(--black), 0.04);
+      }
+      .links a:hover {
+        border-color: rgba(var(--gray-dark), 0.35);
+      }
+
+      /* Two-column feel for "Abstract / Key Info" + body, but collapses on small screens */
+      .grid {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 1.25rem;
+        margin-top: 1.25rem;
+      }
+      @media (max-width: 960px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 1rem;
+        align-self: start;
+        border: 1px solid rgba(var(--gray), 0.18);
+        border-radius: 14px;
+        padding: 1rem;
+        background: rgba(var(--gray-light), 0.25);
+      }
+
+      .sidebar h3 {
+        margin: 0 0 0.75rem;
+        font-size: 1rem;
+      }
+
+      .taglist {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+
+      .tag {
+        font-size: 0.82rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 999px;
+        border: 1px solid rgba(var(--gray), 0.25);
+        background: white;
+        color: rgb(var(--gray-dark));
+      }
+
+      /* The body: report/paper-friendly */
+      .prose {
+        color: rgb(var(--gray-dark));
+        line-height: 1.75;
+        font-size: 1.03rem;
+      }
+
+      /* Make headings feel like a technical doc */
+      .prose :global(h2) {
+        margin-top: 2rem;
+        padding-top: 0.25rem;
+        border-top: 1px solid rgba(var(--gray), 0.18);
+      }
+      .prose :global(h3) {
+        margin-top: 1.5rem;
+      }
+
+      /* Better tables + code blocks for STEM posts */
+      .prose :global(table) {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        font-size: 0.95rem;
+      }
+      .prose :global(th),
+      .prose :global(td) {
+        border: 1px solid rgba(var(--gray), 0.2);
+        padding: 0.6rem;
+        vertical-align: top;
+      }
+      .prose :global(pre) {
+        padding: 1rem;
+        overflow: auto;
+        border-radius: 12px;
+      }
+      .prose :global(code) {
+        font-size: 0.95em;
+      }
+
+      /* Figures/images in body */
+      .prose :global(img) {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 1px 10px rgba(var(--black), 0.06);
+      }
+
+      .updated {
+        font-style: italic;
+      }
+
+      .sidebar-section {
+        margin-top: 0.9rem;
+      }
+
+      .sidebar-section h4 {
+        margin: 0 0 0.35rem;
+        font-size: 0.92rem;
+        color: rgb(var(--gray-dark));
+        letter-spacing: 0.01em;
+      }
+
+      .sidebar-section p,
+      .sidebar-section ul {
+        margin: 0;
+        color: rgb(var(--gray));
+        font-size: 0.92rem;
+        line-height: 1.5;
+      }
+
+      .sidebar-section ul {
+        padding-left: 1.1rem;
+      }
+
+
+      
+
+
+    </style>
+  </head>
+
+  <body>
+    <Header />
+    <main>
+      <div class="container">
+        {heroImage && (
+          <div class="hero">
+            <Image width={1200} height={600} src={heroImage} alt="" />
+          </div>
+        )}
+
+        <div class="header-block">
+          <div class="eyebrow">
+            <div class="meta-left">
+              {type && <span class="pill">Type: {type}</span>}
+              {org && <span class="pill">Org: {org}</span>}
+              {status && <span class="pill">Status: {status}</span>}
+            </div>
+
+            <div>
+              {pubDate && (
+                <span class="pill">
+                  <FormattedDate date={pubDate} />
+                </span>
+              )}
+            </div>
+          </div>
+
+          <h1>{title}</h1>
+          <p class="subtitle">{description}</p>
+
+          {updatedDate && (
+            <div class="updated">
+              Last updated on <FormattedDate date={updatedDate} />
+            </div>
+          )}
+
+   
+        </div>
+
+        <div class="grid">
+          <aside class="sidebar">
+          <h3>At a glance</h3>
+          <div class="taglist">
+            {tags.map((t) => (
+              <span class="tag">{t}</span>
+            ))}
+          </div>
+
+          <hr style="margin: 1rem 0; border: none; border-top: 1px solid rgba(var(--gray), 0.18);" />
+
+          <slot name="sidebar">
+            {tip && <div class="tip">{tip}</div>}
+          </slot>
+        </aside>
+
+          <article class="prose">
+            <slot />
+          </article>
+        </div>
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>

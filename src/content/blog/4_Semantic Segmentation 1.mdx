@@ -1,0 +1,264 @@
+---
+title: "PyTorch: Semantic Segmentation using Deep Neural Networks in a GNSS-denied Underground Parking Lot"
+description: ''
+pubDate: '2023-8-17'
+heroImage: "./img/p4_1:0.png"
+draft: false
+tags: ["Deep Learning", "PyTorch", "Semantic Segmentation", "DNNs"]
+
+---
+
+### Research Background
+Deep neural networks (DNNs) in intelligent point cloud processing have achieved remarkable progress 
+ in recent years. Most existing methods and models were adopted on either outdoor or indoor scenes while 
+ very few previous studies were conducted in GNSS-denied environments. In this paper, we carried out a comparative 
+ study in semantic segmentation outputs using different DNNs in an underground parking lot dataset. Manually labeled 
+ indoor point cloud data were trained and tested using 7 different DNNs (e.g. PointNet, KPConv, FPConv, BAAF-Net, etc.).
+ Our experiments demonstrated how well different DNNs perform in GNSS-denied environments with performance assessments 
+ in mIoU, Mean Accuracy (mAcc), Overall Accuracy (OA), as well as visualization outputs. The main contribution of this 
+ comparative study is to compare state-of-the-art DNN algorithms' performance in semantic segmentation directly on the 
+ raw indoor mobile laser scanning (iMLS) data from a GNSS-denied underground parking lot and evaluate the effectiveness 
+ and potentials of different DNNs in underground 3D taskings. Draw upon that, which current algorithms are optimal and 
+ how future work in GNSS-denied environments can be inspired and implemented would be discussed.
+
+
+<div class="table-wrap">
+  <table class="perf-table">
+    <thead>
+      <tr>
+        <th>DNNs</th>
+        <th>S3DIS OA (%)</th>
+        <th>ModelNet40 OA (%)</th>
+        <th>ScanNet OA (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>PointNet</td>
+        <td>78.6</td>
+        <td>89.2</td>
+        <td>78.6</td>
+      </tr>
+      <tr>
+        <td>PointNet++</td>
+        <td>81.9</td>
+        <td>90.7 / 91.9</td>
+        <td>81.0</td>
+      </tr>
+      <tr>
+        <td>SPG</td>
+        <td>85.5</td>
+        <td>73.0</td>
+        <td>85.5</td>
+      </tr>
+      <tr>
+        <td>KPConv</td>
+        <td>–</td>
+        <td>79.1</td>
+        <td>68.0</td>
+      </tr>
+      <tr>
+        <td>FPConv</td>
+        <td>88.3</td>
+        <td>68.9</td>
+        <td>–</td>
+      </tr>
+      <tr>
+        <td>BAAF-Net</td>
+        <td>88.9</td>
+        <td>83.1</td>
+        <td>88.9</td>
+      </tr>
+      <tr>
+        <td>Stratified Transformer</td>
+        <td>91.5</td>
+        <td>78.1</td>
+        <td>–</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p style="text-align: center;">**DNN's Semantic Segmentation Results on S3DIS, ModelNet40, and ScanNet**</p>
+
+---
+
+<div style={{ height: "2rem" }} />
+### Dataset
+The dataset used in the study is a GNSS-denied point cloud 
+set collected from an underground parking lot using a 
+Backpack Laser Scanning (BLS) system (Gong et al., 
+2021) by the GIM lab, University of Waterloo. For better 
+visualization purposes, the entire dataset, which contains 
+approximately 154,122,306 points, has been sliced into 5 
+separate kits shown in Figure 1. There are 6 manually 
+categorized classes included in this underground parking 
+lot dataset: 
+
+![Underground Parking Lot Dataset Sample](./img/p4_1:3.png)
+- **Ground** (label 1): the ground surfaces with speed bumps and manholes. 
+- **Ceiling** (label 2): ceilings, beams & pipes on the top of parking lots. 
+- **Column** (label 3): all pillar and pole-like objects. 
+- **Vehicle** (label 4): includes sedans, SUVs, and trucks. 
+- **Walls** (label 5): walls & dividing walls in the middle of the parking lot. 
+- **Unclassified** (label 6): unrecognizable objects.
+
+---
+
+<div style={{ height: "2rem" }} />
+### Methodology & Experiments
+To enable a clearer comparison of semantic segmentation performance, qualitative visualization results were 
+analyzed alongside quantitative accuracy metrics. The table presents subsampled outputs from different DNNs, 
+where the first column shows the raw RGB point cloud, the second column displays the ground truth (GT), and the 
+remaining columns illustrate model-specific segmentation results. Visual inspection reveals that SPG performs poorly, 
+particularly in distinguishing vehicle, ground, and column classes, consistent with its low mIoU of 42.85%. In contrast, 
+PointNet achieves a higher mIoU of 75.74%, with segmentation outputs more closely resembling the GT, while KPConv 
+demonstrates the strongest performance among the models with an mIoU of 77.35%.
+<div class="table-wrap">
+  <table class="perf-table">
+    <thead>
+      <tr>
+        <th>DNNs</th>
+        <th>OA (%)</th>
+        <th>mAcc (%)</th>
+        <th>mIoU (%)</th>
+        <th>Ground</th>
+        <th>Ceiling</th>
+        <th>Column</th>
+        <th>Vehicle</th>
+        <th>Wall</th>
+        <th>Unclassified</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>PointNet</td>
+        <td>96.35</td>
+        <td>82.47</td>
+        <td>75.74</td>
+        <td>97.80</td>
+        <td>95.80</td>
+        <td>72.20</td>
+        <td>94.30</td>
+        <td>82.70</td>
+        <td>11.70</td>
+      </tr>
+      <tr>
+        <td>PointNet++</td>
+        <td>96.78</td>
+        <td>92.15</td>
+        <td>83.79</td>
+        <td>97.50</td>
+        <td>95.00</td>
+        <td>75.50</td>
+        <td>96.40</td>
+        <td>90.30</td>
+        <td>48.00</td>
+      </tr>
+      <tr>
+        <td>SPG</td>
+        <td>86.97</td>
+        <td>50.90</td>
+        <td>42.85</td>
+        <td>93.27</td>
+        <td>42.16</td>
+        <td>87.05</td>
+        <td>33.61</td>
+        <td>1.00</td>
+        <td>0.00</td>
+      </tr>
+      <tr>
+        <td>KPConv</td>
+        <td>–</td>
+        <td>–</td>
+        <td>77.35</td>
+        <td>97.50</td>
+        <td>95.73</td>
+        <td>79.33</td>
+        <td>97.20</td>
+        <td>93.31</td>
+        <td>1.03</td>
+      </tr>
+      <tr>
+        <td>FPConv</td>
+        <td>96.62</td>
+        <td>–</td>
+        <td>76.38</td>
+        <td>97.23</td>
+        <td>94.65</td>
+        <td>76.48</td>
+        <td>96.04</td>
+        <td>89.87</td>
+        <td>4.03</td>
+      </tr>
+      <tr>
+        <td>BAAF-Net</td>
+        <td>–</td>
+        <td>–</td>
+        <td>83.61</td>
+        <td>97.43</td>
+        <td>94.30</td>
+        <td>74.57</td>
+        <td>96.79</td>
+        <td>91.39</td>
+        <td>47.16</td>
+      </tr>
+      <tr>
+        <td>Stratified Transformer [8]</td>
+        <td>98.00</td>
+        <td>64.22</td>
+        <td>62.07</td>
+        <td>97.02</td>
+        <td>98.01</td>
+        <td>82.22</td>
+        <td>95.02</td>
+        <td>0.00</td>
+        <td>0.15</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+![semantic segmentation](./img/p4_1:a.png)
+
+A detailed comparison between PointNet and KPConv highlights their error characteristics below: PointNet primarily 
+misclassifies the upper portions of columns as ceiling, whereas KPConv occasionally labels wall regions as ceiling. As 
+summarized in Table 4, PointNet’s class IoU ranges from 72.2% (column) to 97.8% (ground), while PointNet++ improves the 
+overall mIoU by approximately 8% to 83.79%. SPG exhibits the lowest mIoU due to weak segmentation of ceiling (42.16%) and 
+vehicle (33.61%). Both KPConv and FPConv show stable and balanced performance in the underground parking environment, with 
+mIoUs of 77.35% and 76.38%, respectively. BAAF-Net achieves the highest mIoU (83.61%), whereas the Stratified Transformer 
+(ST) attains the highest overall accuracy (98.00%) but suffers from class imbalance, resulting in a lower mIoU of 62.07%.
+
+![KPConv vs. PointNet](./img/p4_1:b.png)
+
+Except for SPG, all evaluated DNNs perform reliably in a GNSS-denied environment. The column class consistently 
+exhibits the lowest IoU across models, indicating potential benefits from hybrid approaches, such as combining PointNet++ with 
+ST to leverage ST’s strong column segmentation performance (82.22%). Future work may further explore transformer-based architectures 
+to mitigate class imbalance, particularly for improving wall segmentation in GNSS-denied indoor environments.
+
+---
+<div style={{ height: "2rem" }} />
+### Conclusion & Future Work
+To sum up, we did the first comparative study in
+investigating the semantic segmentation performances of
+state-of-art DNNs within GNSS-denied environments.
+Based on the output, the mIoUs were mostly negatively
+affected by the accuracy in segmentation of “column”
+label. The BAAF-Net has the highest mIoU (83.61%) with
+high and average IoUs for each class while the ST model
+gets the highest OA (98.00%) with great output in all class
+expect for “wall”.
+Based on the quantitative result, future works can
+contribute to proposing practice measures in refining the
+3D taskings in GNSS-denied environments with optimized
+DNNs. Besides, future contributions should focus on lowlevel taskings to generate better-quality underground
+datasets (e.g., through point cloud correction and
+completion). With an optimized and standardized model
+specifically designed for GNSS-denied scenes, better
+solutions for the development of digital twins and
+autonomous driving can be applied in future. After that, we
+shall move to the next stage for exploring, popularizing,
+and commercializing 3D tasks in the industry for application in GNSS
+-denied environments such as
+underground parking lots. 
+
+

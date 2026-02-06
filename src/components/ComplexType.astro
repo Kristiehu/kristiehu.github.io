@@ -1,0 +1,117 @@
+<p class="typed">
+  <span class="anchor">I build&nbsp;</span>
+  <span id="typed" class="typed-dynamic" aria-live="polite"></span>
+  <span class="cursor" aria-hidden="true">▍</span>
+</p>
+
+<style>
+  /* One typography system */
+  .typed {
+    margin: 0;
+    line-height: 1.15;
+    white-space: nowrap;
+    font-size: clamp(1.35rem, 2.2vw, 2.05rem);
+    letter-spacing: -0.015em;
+
+    /* Use your site font stack; mono only for the dynamic part */
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Inter, Helvetica, Arial, sans-serif;
+    font-weight: 700;
+  }
+
+  /* “I engineer” = same font, just quieter */
+  .anchor {
+    font-weight: 650;           /* slightly less than the whole line */
+    opacity: 0.75;
+  }
+
+  /* Dynamic bit = subtle mono to feel technical, but not jarring */
+  .typed-dynamic {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Roboto Mono", monospace;
+    font-weight: 750;
+    letter-spacing: -0.01em;
+    opacity: 0.98;
+
+    /* cool accent underline (minimal, not neon) */
+    background: linear-gradient(transparent 70%, rgba(46, 204, 113, 0.18) 0);
+    padding: 0 0.12em;
+    border-radius: 6px;
+  }
+
+  /* Cursor separate = avoids font/weight weirdness */
+  .cursor {
+    display: inline-block;
+    margin-left: 0.18em;
+    transform: translateY(1px);
+    opacity: 0.9;
+    animation: blink 0.85s steps(1) infinite;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Don’t animate like a casino sign if user hates motion */
+  @media (prefers-reduced-motion: reduce) {
+    .cursor { animation: none; }
+  }
+</style>
+
+<script>
+  const lines = [
+  "GIS Platforms.",
+  "Database Systems.",
+  "Spatial ETL.",
+  "Urban Networks.",
+  "2D–3D Fusion.",
+  "Digital Twins.",
+  "LiDAR SLAM.",
+  "GNSS Navigation.",
+  "HSI Fine-Tuning."
+  ];
+
+  const el = document.getElementById("typed");
+  if (!el) throw new Error("TypedDescription: #typed not found");
+
+  const TYPE_MS = 28;
+  const ERASE_MS = 16;
+  const PAUSE_MS = 1000;
+  const GAP_MS = 250;
+
+  let lineIdx = 0;
+  let charIdx = 0;
+  let mode = "typing";
+
+  const tick = () => {
+    const text = lines[lineIdx];
+
+    if (mode === "typing") {
+      charIdx++;
+      el.textContent = text.slice(0, charIdx);
+      if (charIdx >= text.length) {
+        mode = "pausing";
+        setTimeout(tick, PAUSE_MS);
+        return;
+      }
+      setTimeout(tick, TYPE_MS);
+      return;
+    }
+
+    if (mode === "pausing") {
+      mode = "erasing";
+      setTimeout(tick, ERASE_MS);
+      return;
+    }
+
+    charIdx--;
+    el.textContent = text.slice(0, Math.max(0, charIdx));
+
+    if (charIdx <= 0) {
+      mode = "typing";
+      lineIdx = (lineIdx + 1) % lines.length;
+      setTimeout(tick, GAP_MS);
+      return;
+    }
+
+    setTimeout(tick, ERASE_MS);
+  };
+
+  tick();
+</script>

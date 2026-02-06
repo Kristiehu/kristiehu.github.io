@@ -5,8 +5,8 @@
  */
 
 :root {
-	--accent: #2337ff;
-	--accent-dark: #000d8a;
+	--accent: #820e0edb;
+	--accent-dark: #0700dc;
 	--black: 15, 18, 25;
 	--gray: 96, 115, 159;
 	--gray-light: 229, 233, 240;
@@ -15,6 +15,15 @@
 	--box-shadow:
 		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px
 		rgba(var(--gray), 33%);
+
+	/* Hover + motion tokens (site-wide) */
+	--hover-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+	--hover-fast: 0.2s var(--hover-ease);
+	--hover-med: 0.35s var(--hover-ease);
+
+	--shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.12);
+	--shadow-md: 0 16px 40px rgba(0, 0, 0, 0.18);
+	--accent-soft: rgba(130, 14, 14, 0.12);
 }
 @font-face {
 	font-family: "Atkinson";
@@ -83,6 +92,79 @@ a {
 }
 a:hover {
 	color: var(--accent);
+}
+
+/* =========================
+   INTERACTION SYSTEM
+   ========================= */
+
+.is-interactive {
+	transition:
+		transform var(--hover-med),
+		box-shadow var(--hover-med),
+		background-color var(--hover-fast),
+		color var(--hover-fast),
+		border-color var(--hover-fast);
+	will-change: transform;
+}
+
+.is-interactive:hover {
+	transform: translateY(-6px);
+	box-shadow: var(--shadow-md);
+}
+
+.is-interactive:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.is-interactive {
+		transition: none;
+	}
+	.is-interactive:hover {
+		transform: none;
+	}
+}
+
+/* Buttons (works for <a> too) */
+.btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.55rem 1.1rem;
+	border-radius: 999px;
+	font-weight: 600;
+	text-decoration: none;
+	border: 1px solid rgba(var(--gray), 25%);
+	background: #fff;
+	color: rgb(var(--gray-dark));
+}
+
+.btn--ghost {
+	background: transparent;
+	border-color: transparent;
+	color: var(--accent);
+	position: relative;
+}
+
+.btn--ghost::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: var(--accent-soft);
+	opacity: 0;
+	transition: opacity var(--hover-fast);
+	z-index: -1;
+}
+
+.btn--ghost:hover::after {
+	opacity: 1;
+}
+
+.btn--ghost:hover {
+	transform: translateX(4px);
 }
 p {
 	margin-bottom: 1em;
@@ -153,3 +235,146 @@ hr {
 	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
 }
+
+/* ---------- Confusion Matrix: simple + legit ---------- */
+.cm {
+  display: grid;
+  grid-template-columns: 220px repeat(4, 1fr);
+  width: 100%;
+  border: 1px solid rgba(0,0,0,.14);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 16px 0;
+  background: #fff;
+}
+
+.cm .cm-h,
+.cm .cm-c{
+  padding: 10px 12px;          /* tighter */
+  text-align: center;
+  border-right: 1px solid rgba(0,0,0,.10);
+  border-bottom: 1px solid rgba(0,0,0,.10);
+  font-variant-numeric: tabular-nums;
+}
+
+.cm .cm-h{
+  font-weight: 700;
+  background: rgba(0,0,0,.03);
+}
+
+/* row labels = first col in each data row */
+.cm .cm-r{
+  font-weight: 700;
+  text-align: left;
+  padding-left: 14px;
+}
+
+/* remove right border on last col */
+.cm > :nth-child(5n){
+  border-right: none;
+}
+
+/* remove bottom border on last row */
+.cm > :nth-last-child(-n+5){
+  border-bottom: none;
+}
+
+/* diagonal highlight (correct preds) */
+.cm .cm-diag{
+  background: rgba(0, 180, 245, .14);
+  font-weight: 800;
+}
+/* ---------- Performance Table + Slice Table ---------- */
+.perf-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #000;
+  font-size: 0.95rem;
+}
+
+.perf-table th,
+.perf-table td {
+  border: 1px solid #000;
+  padding: 0.5rem 0.6rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.perf-table th {
+  font-weight: 600;
+}
+
+/* outer box – matches your other tables */
+.table-wrap {
+  border: 2px solid #000;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+/* grid becomes table-like */
+.slice-table {
+  display: grid;
+  grid-template-columns: 160px 160px 1fr;
+  border-collapse: collapse;
+}
+
+/* headers */
+.slice-table .slice-head {
+  font-weight: 600;
+  text-align: center;
+  padding: 0.6rem;
+  border-bottom: 1px solid #000;
+  border-right: 1px solid #000;
+}
+
+.slice-table .slice-head:last-child {
+  border-right: none;
+}
+
+/* cells */
+.slice-table .slice-cell {
+  padding: 0.6rem;
+  text-align: center;
+  border-bottom: 1px solid #000;
+  border-right: 1px solid #000;
+}
+
+.slice-table .slice-cell:nth-child(3n) {
+  border-right: none;
+}
+
+/* remove bottom border on last row */
+.slice-table .slice-cell:nth-last-child(-n+3) {
+  border-bottom: none;
+}
+
+/* thumbnails */
+.slice-table .thumb {
+  max-width: 180px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* numeric alignment */
+.slice-table .mono {
+  font-variant-numeric: tabular-nums;
+}
+
+/* results table fix */
+.results-grid {
+  grid-template-columns: 220px 1fr 1fr;
+}
+
+.results-grid .img-cell img {
+  display: block;
+  width: 100%;
+  max-width: 520px;   /* controls visual weight */
+  height: auto;
+  margin: 0 auto;     /* centers image */
+}
+
+
+
+
+

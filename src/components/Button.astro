@@ -1,0 +1,19 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = HTMLAttributes<'a'> & {
+	variant?: 'solid' | 'ghost';
+};
+
+const {
+	variant = 'ghost',
+	class: className,
+	...props
+} = Astro.props as Props;
+
+const variantClass = variant === 'solid' ? 'btn' : 'btn btn--ghost';
+---
+
+<a class:list={[variantClass, 'is-interactive', className]} {...props}>
+	<slot />
+</a>

@@ -1,0 +1,202 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+
+
+const LINKS = [
+  { label: "GitHub", href: "https://github.com/KristieHu" },
+  { label: "LinkedIn", href: "https://www.kristiehu.com/" }, // <- update
+  { label: "Resume", href: "/resume.pdf" }, // drop a file into /public
+  { label: "Email", href: "mailto:kristieyet@gmail.com" }, // <- update
+];
+
+const PROJECTS = [
+  {
+    title: "University of Toronto [Part-time]",
+    desc: `1. GGRA30H3: Geographic Information Systems and Empirical Reasoning
+2. MGEA06H3: Advanced Geographic Information Systems
+3. GGR210H5S: Social Geographies
+4. GGR209H5S: Economic Geography`,
+    href: "#",
+  },
+
+//   {
+//     title: "Fiber Capacity Reporting Automation",
+//     desc: "From exports to metrics to maps—less spreadsheet pain, more signal.",
+//     href: "#",
+//   },
+
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  </head>
+
+  <body>
+    <Header />
+
+    <main class="wrap">
+ 
+        <nav class="links" aria-label="Primary">
+          {LINKS.map((l) => (
+            <a class="chip" href={l.href}>
+              {l.label}
+            </a>
+          ))}
+        </nav> 
+      </section>
+
+    <!-- QUICK NAV -->
+     <section class="section">
+		
+        <h2>University of Waterloo</h2>
+      </section>
+  
+            
+      <section class="grid">
+        <a class="card" href="/about">
+          <div class="kicker">Human Geography</div>
+          <div class="title">GEOG 101</div>
+          <div class="desc">1 | TA (Full-time)</div>
+        </a>
+        <a class="card" href="/about">
+          <div class="kicker">Multivariate Statistics</div>
+          <div class="title">GEOG 316</div>
+          <div class="desc">0.5 | TA (Part-time)</div>
+          <div class="kicker">Guest Lecturer</div>
+        </a>
+        <a class="card" href="/about">
+          <div class="kicker">Geodesy and Surveying</div>
+          <div class="title">GEOG 310</div>
+          <div class="desc">2.5 | TA (Full-time)</div>
+          <div class="kicker">Guest Lecturer</div>
+        </a>
+      </section>
+
+      
+      <section class="section">
+        <h2>Others</h2>
+        <ul class="list">
+          {PROJECTS.map((p) => (
+            <li class="item">
+              <a class="itemLink" href={p.href}>
+                <div class="itemTitle">{p.title}</div>
+                <div class="itemDesc">{p.desc}</div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+
+      
+    </main>
+
+    <Footer />
+
+	<style>
+	  :global(html) { scroll-behavior: smooth; }
+	  :global(body) {
+		margin: 0;
+
+		font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI;
+		font-weight: 500;
+		line-height: 1.6;
+	  }
+
+	  .wrap { max-width: 860px; margin: 0 auto; padding: 3.5rem 1.25rem; }
+
+	  .hero h1 { margin: 0; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.02em; }
+	  .hero {padding-bottom: 1.5rem;}
+	  .hero .name {margin-bottom: 0.6rem;}
+	  .hero h2 {margin-top: 0.4rem;}
+
+	  .name { font-size: clamp(2rem, 2vw, 2rem);
+		font-weight: 700;		
+		letter-spacing: -0.015em;
+		font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI;
+	  }
+	  .pronounce {
+		margin-left: 0.5rem;
+		font-size: 0.45em;
+		font-weight: 400;
+		opacity: 0.55;
+		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+	  }
+
+	  .muted { 
+		opacity: 0.65; 
+		font-weight: 500; 
+		font-style: italic; 
+		font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI;
+	}
+	  .tagline { margin: 0.75rem 0 0; font-weight: 600; }
+	  .lead { margin: 0.6rem 0 0; opacity: 0.9; max-width: 70ch; }
+
+	  .links { margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+	  .chip {
+		position: relative;
+		padding: 0.4rem 0.85rem;
+		border-radius: 999px;
+		font-size: 0.92rem;
+		font-weight: 500;
+		text-decoration: none;
+		color: var(--black, #111);
+		border: 1px solid rgba(0,0,0,0.25);
+		background: transparent;
+		transition:
+			background-color 160ms ease,
+			color 160ms ease,
+			border-color 160ms ease,
+			transform 120ms ease;
+	  }
+
+	.chip:hover {
+	background: rgba(255, 0, 0, 0.06);
+	border-color: rgba(0,0,0,0.35);
+	transform: translateY(-5px);
+	}
+
+	.chip:active {
+	transform: translateY(0);
+	}
+
+	  .grid { margin-top: 1.5rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; }
+	  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+
+	  .card {
+		text-decoration: none;
+		border: 1px solid rgba(127,127,127,0.35);
+		border-radius: 16px;
+		padding: 1rem 1rem 0.95rem;
+		transition: transform 120ms ease, opacity 120ms ease;
+	  }
+	  .card:hover { transform: translateY(-2px); opacity: 0.98; }
+	  .kicker { font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.08em; }
+      .card:hover { background: rgba(255, 0, 0, 0.06);
+	border-color: rgba(0,0,0,0.35);opacity: 0.85; }
+	  .title { font-weight: 700; margin-top: 0.25rem; }
+	  .desc { margin-top: 0.35rem; opacity: 0.85; }
+
+	  .section { margin-top: 2.4rem; }
+	  .section h2 { margin: 0 0 0.8rem; font-size: 1.1rem; letter-spacing: -0.01em; }
+
+	  .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.7rem; }
+	  .item {
+		border: 1px solid rgba(127,127,127,0.25);
+		border-radius: 14px;
+	  }
+	  .itemLink { display: block; padding: 0.9rem 1rem; text-decoration: none; }
+	  .itemTitle { font-weight: 700; }
+	  .itemDesc { margin-top: 0.25rem; opacity: 0.85; white-space: pre-line; }
+
+	  .body { margin: 0; max-width: 75ch; opacity: 0.92; }
+	  .tiny { margin-top: 2.1rem; }
+	</style>
+  </body>
+</html>
