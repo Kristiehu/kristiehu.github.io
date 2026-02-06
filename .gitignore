@@ -30,3 +30,5 @@ node_modules/
 dist/
 .astro/
 .DS_Store
+astro
+kristiehu.github.io@0.0.1

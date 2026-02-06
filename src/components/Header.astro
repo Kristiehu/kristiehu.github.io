@@ -9,14 +9,11 @@ import HeaderLink from './HeaderLink.astro';
       <a href="/">{SITE_TITLE}</a>
     </div>
 
-    <button
-    class="menu-btn"
-    type="button"
-    aria-expanded="false"
-    aria-controls="site-menu"
-  >
-    Menu
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-menu">
+      <span class="menu-icon" aria-hidden="true"></span>
+      <span class="menu-text">Menu</span>
     </button>
+
 
 <div class="internal-links" id="site-menu">
       <HeaderLink href="/">Home</HeaderLink>
@@ -31,20 +28,115 @@ import HeaderLink from './HeaderLink.astro';
   </nav>
 </header>
 
+
 <script>
   const btn = document.querySelector('.menu-btn');
   const menu = document.getElementById('site-menu');
+
+  function closeMenu() {
+    if (!btn || !menu) return;
+    btn.setAttribute('aria-expanded', 'false');
+    menu.classList.remove('is-open');
+  }
+
+  function toggleMenu() {
+    if (!btn || !menu) return;
+    const open = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!open));
+    menu.classList.toggle('is-open', !open);
+  }
+
   if (btn && menu) {
-    btn.addEventListener('click', () => {
-      const open = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!open));
-      menu.style.display = open ? 'none' : 'flex';
+    closeMenu(); // 保证首屏默认关闭
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMenu();
     });
+
+    // 点击菜单项后关闭
+    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+    // 点击外部关闭
+    document.addEventListener('click', closeMenu);
+
+    // 窗口变宽（回到桌面）时复位
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 720) closeMenu();
+    });
+
+    // Astro 页面切换后关闭
+    document.addEventListener('astro:page-load', closeMenu);
   }
 </script>
 
 
+
 <style>
+.menu-btn { display: none; }
+
+@media (max-width: 720px) {
+  .menu-btn{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid rgba(0,0,0,0.10);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px);
+    font-size: 0.9rem;
+  }
+
+  .menu-icon{
+    width: 16px;
+    height: 12px;
+    position: relative;
+    display: inline-block;
+  }
+  .menu-icon::before,
+  .menu-icon::after{
+    content:"";
+    position:absolute;
+    left:0; right:0;
+    height:2px;
+    background: rgba(0,0,0,0.65);
+    border-radius: 2px;
+  }
+  .menu-icon::before{ top:0; }
+  .menu-icon::after{ bottom:0; }
+
+  .nav{ position: relative; }
+
+  .internal-links{
+    display: none;
+    position: absolute;
+    right: 12px;
+    top: 54px;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 200px;
+    padding: 0.5rem;
+    background: rgba(255,255,255,0.96);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.14);
+  }
+
+  .internal-links.is-open{ display: flex; }
+
+  .internal-links a{
+    padding: 0.65rem 0.8rem;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+}
+
+
+
+
+
+
 .site-header {
   position: sticky;
   top: 0;
