@@ -37,17 +37,18 @@ main {
   max-width: var(--container);
   margin: 0 auto;
   padding: var(--pad-y) var(--pad-x);
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
 }
+
+
+
 
 html { -webkit-text-size-adjust: 100%; }
 body { overflow-x: hidden; }
 p { line-height: 1.7; }
 
-img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 12px;
-}
 
 h1, h2, h3, p, a {
   overflow-wrap: anywhere;
@@ -92,10 +93,6 @@ h1, h2, h3, p, a {
 }
 
 
-
-
-
-
 @font-face {
 	font-family: "Atkinson";
 	src: url("/fonts/atkinson-regular.woff") format("woff");
@@ -103,13 +100,8 @@ h1, h2, h3, p, a {
 	font-style: normal;
 	font-display: swap;
 }
-@font-face {
-	font-family: "Atkinson";
-	src: url("/fonts/atkinson-bold.woff") format("woff");
-	font-weight: 700;
-	font-style: normal;
-	font-display: swap;
-}
+
+
 body {
 	font-family: "Atkinson", sans-serif;
 	margin: 0;
@@ -139,21 +131,7 @@ h6 {
 	color: rgb(var(--black));
 	line-height: 1.2;
 }
-h1 {
-	font-size: 3.052em;
-}
-h2 {
-	font-size: 2.441em;
-}
-h3 {
-	font-size: 1.953em;
-}
-h4 {
-	font-size: 1.563em;
-}
-h5 {
-	font-size: 1.25em;
-}
+
 strong,
 b {
 	font-weight: 700;
@@ -240,9 +218,7 @@ a:hover {
 p {
 	margin-bottom: 1em;
 }
-.prose p {
-	margin-bottom: 2em;
-}
+
 textarea {
 	width: 100%;
 	font-size: 16px;
@@ -253,11 +229,7 @@ input {
 table {
 	width: 100%;
 }
-img {
-	max-width: 100%;
-	height: auto;
-	border-radius: 8px;
-}
+
 code {
 	padding: 2px 5px;
 	background-color: rgb(var(--gray-light));
@@ -444,6 +416,145 @@ hr {
   height: auto;
   margin: 0 auto;     /* centers image */
 }
+
+/* image safety net (size only) */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+
+/* =========================
+   Mobile layout safety net
+   (size/layout only)
+   ========================= */
+
+html, body {
+  overflow-x: hidden;
+}
+
+img, picture, svg, video, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.heroText {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.portrait {
+  width: min(520px, 38vw);
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 720px) {
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  .portrait {
+    width: min(520px, 100%);
+    margin: 0 auto;
+  }
+}
+
+/* ===== Layout safety net ===== */
+:root {
+  --container: 860px; 
+  --pad-x: clamp(1rem, 4vw, 2rem);
+  --pad-y: clamp(1.25rem, 4vw, 3.5rem);
+}
+
+
+html { -webkit-text-size-adjust: 100%; }
+
+
+main,
+.wrap {
+  width: min(100%, var(--container));
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
+  padding-block: var(--pad-y);
+}
+
+
+img,
+picture,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Hero 大图 */
+.hero img,
+img.portrait,
+.portrait {
+  width: min(200px, 100vw);
+  margin-inline: auto;
+}
+
+
+@media (max-width: 720px) {
+  .hero {
+    display: grid;        
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+  .heroText {
+    width: 100%;
+  }
+  .links {
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+}
+
+
+/* .prose, article, main {
+  max-width: 100%;
+}
+
+.prose img,
+.prose svg,
+.prose video,
+.prose canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+
+.prose * {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+
+.prose pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.prose h1 {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  line-height: 1.05;
+  text-wrap: balance;
+} */
 
 
 

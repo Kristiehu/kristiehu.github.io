@@ -17,8 +17,144 @@ const posts = (await getCollection('blog')).sort(
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
+			*, *::before, *::after { box-sizing: border-box; }
+
+			html, body { width: 100%; max-width: 100%; overflow-x: clip; } /* clip 不行就用 hidden */
+
+						/* Fix invalid CSS */
+			h1 { font-weight: 800; }
+
 			main {
-				width: 960px;
+			width: 100%;
+			max-width: 1100px;
+			margin: 0 auto;
+			padding: 2.5rem 1rem;
+			box-sizing: border-box; /* double-safe */
+			}
+			
+
+			section.prose {
+			width: 100%;
+			}
+
+			/* Card grid */
+			ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+			gap: 1.25rem;
+			}
+
+			/* Card */
+			ul li a {
+			display: grid;
+			gap: 0.65rem;
+			padding: 0.9rem;
+			border-radius: 16px;
+			border: 1px solid rgba(0,0,0,0.08);
+			background: rgba(255,255,255,0.9);
+			text-decoration: none;
+			transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+			}
+
+			ul li a:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+			border-color: rgba(0,0,0,0.18);
+			}
+
+			/* Image */
+			ul li img {
+			width: 100%;
+			height: auto;
+			display: block;
+			border-radius: 12px;
+			aspect-ratio: 16 / 9;
+			object-fit: cover;
+			}
+
+			/* Text */
+			.title {
+			margin: 0;
+			font-size: 1.05rem;
+			line-height: 1.25;
+			color: rgb(var(--black));
+			}
+
+			.date {
+			margin: 0;
+			font-size: 0.9rem;
+			color: rgb(var(--gray));
+			}
+
+			/* Mobile tweaks */
+			@media (max-width: 520px) {
+			main { padding: 1.75rem 1rem; }
+			ul { gap: 1rem; }
+			ul li a { padding: 0.85rem; }
+			}
+
+			ul li:first-child {
+			grid-column: 1 / -1;
+			}
+
+			ul li:first-child img {
+			height: 22rem;
+			}
+
+			ul li:first-child .title {
+			font-size: 2rem;
+			}
+
+
+			ul {
+			align-items: stretch;
+			}
+
+			/* Make the link fill the grid cell */
+			ul li a {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			}
+
+			/* Standardize image area */
+			ul li img {
+			width: 100%;
+			aspect-ratio: 16 / 9;   /* consistent */
+			object-fit: cover;      /* crop nicely */
+			display: block;
+			border-radius: 12px;
+			flex: 0 0 auto;
+			}
+
+			/* Standardize text area */
+			.title {
+			margin: 0;
+			flex: 0 0 auto;
+
+			display: -webkit-box;
+			-webkit-line-clamp: 3;  /* pick 2 or 3 */
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+			}
+
+			/* Keep date pinned to bottom for consistent rhythm */
+			.date {
+			margin-top: auto;
+			}
+
+
+
+
+
+
+
+			/* main {
+				width: 900px;
 			}
 			ul {
 				display: flex;
@@ -28,6 +164,7 @@ const posts = (await getCollection('blog')).sort(
 				margin: 0;
 				padding: 0;
 			}
+
 			ul li {
 				width: calc(50% - 1rem);
 			}
@@ -35,17 +172,7 @@ const posts = (await getCollection('blog')).sort(
 				text-decoration: none;
 				transition: 0.2s ease;
 			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
+			
 			ul li img {
 				margin-bottom: 0.5rem;
 				border-radius: 12px;
@@ -54,6 +181,7 @@ const posts = (await getCollection('blog')).sort(
 				display: block;
 			}
 			.title {
+				font-size: 1.5rem;
 				margin: 0;
 				color: rgb(var(--black));
 				line-height: 1;
@@ -62,6 +190,19 @@ const posts = (await getCollection('blog')).sort(
 				margin: 0;
 				color: rgb(var(--gray));
 			}
+
+			ul li:first-child {
+			grid-column: 1 / -1;
+			}
+
+			ul li:first-child img {
+			height: 22rem;
+			}
+
+			ul li:first-child .title {
+			font-size: 2rem;
+			}
+
 			ul li a:hover h4,
 			ul li a:hover .date {
 				color: rgb(var(--accent));
@@ -77,18 +218,13 @@ const posts = (await getCollection('blog')).sort(
 					width: 100%;
 					text-align: center;
 				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
 
 			p {
 				margin-bottom: 1.25rem;
 			}
 
 			a {
+				font-size: 10rem;
 				color: inherit;
 				text-decoration: none;
 				border-bottom: 1px solid rgba(255, 255, 255, 0.25);
@@ -119,12 +255,8 @@ const posts = (await getCollection('blog')).sort(
 				font-size: 1rem;
 				line-height: 1.7;
 				}
-			}
+			}} */
 			
-
-
-
-			}
 		</style>
 	</head>
 	<body>

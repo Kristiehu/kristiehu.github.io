@@ -1,57 +1,62 @@
 <p class="typed">
-  <span class="anchor">I build&nbsp;</span>
-  <span id="typed" class="typed-dynamic" aria-live="polite"></span>
-  <span class="cursor" aria-hidden="true">▍</span>
+  <span class="anchor">I build </span>
+  <span class="typed-slot">
+    <span id="typed" class="typed-dynamic" aria-live="polite"></span>
+    <span class="cursor" aria-hidden="true">▍</span>
+  </span>
 </p>
 
+
 <style>
-  /* One typography system */
-  .typed {
-    margin: 0;
-    line-height: 1.15;
-    white-space: nowrap;
-    font-size: clamp(1.35rem, 2.2vw, 2.05rem);
-    letter-spacing: -0.015em;
 
-    /* Use your site font stack; mono only for the dynamic part */
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Inter, Helvetica, Arial, sans-serif;
-    font-weight: 700;
-  }
+.typed {
+   margin: 0;
+  line-height: 1.12;
+  white-space: nowrap;
+  font-size: clamp(1.25rem, 2.1vw, 1.9rem); /* 比之前略小一点 */
+  letter-spacing: -0.01em;
+  text-align: left; /* desktop 左对齐更“系统” */
+}
 
-  /* “I engineer” = same font, just quieter */
-  .anchor {
-    font-weight: 650;           /* slightly less than the whole line */
-    opacity: 0.75;
-  }
+.anchor {
+  font-family: "Inter Tight", system-ui, sans-serif;
+  font-weight: 650;
+  opacity: 0.55;
+  letter-spacing: -0.02em;
+}
 
-  /* Dynamic bit = subtle mono to feel technical, but not jarring */
-  .typed-dynamic {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Roboto Mono", monospace;
-    font-weight: 750;
-    letter-spacing: -0.01em;
-    opacity: 0.98;
 
-    /* cool accent underline (minimal, not neon) */
-    background: linear-gradient(transparent 70%, rgba(46, 204, 113, 0.18) 0);
-    padding: 0 0.12em;
-    border-radius: 6px;
-  }
+.typed-slot{
+  display: inline-block;
+  width: 18ch;         
+  text-align: left;    
+  white-space: nowrap;
+}
 
-  /* Cursor separate = avoids font/weight weirdness */
-  .cursor {
-    display: inline-block;
-    margin-left: 0.18em;
-    transform: translateY(1px);
-    opacity: 0.9;
-    animation: blink 0.85s steps(1) infinite;
-  }
 
-  @keyframes blink { 50% { opacity: 0; } }
+.typed-dynamic{
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  padding: 0 0.14em;
+  border-radius: 6px;
+  background: linear-gradient(transparent 70%, rgba(46, 204, 113, 0.16) 0);
+}
 
-  /* Don’t animate like a casino sign if user hates motion */
-  @media (prefers-reduced-motion: reduce) {
-    .cursor { animation: none; }
-  }
+/* cursor */
+.cursor{
+  display: inline-block;
+  transform: translateY(1px);
+  opacity: 0.65;
+  animation: blink 1.4s steps(1) infinite;
+  transform: translateY(1px);
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor { animation: none; }
+}
 </style>
 
 <script>

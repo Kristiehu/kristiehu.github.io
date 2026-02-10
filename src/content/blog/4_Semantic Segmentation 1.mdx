@@ -1,5 +1,5 @@
 ---
-title: "PyTorch: Semantic Segmentation using Deep Neural Networks in a GNSS-denied Underground Parking Lot"
+title: "Semantic Segmentation using Deep Neural Networks in a GNSS-denied Underground Parking Lot"
 description: ''
 pubDate: '2023-8-17'
 heroImage: "./img/p4_1:0.png"
@@ -21,63 +21,7 @@ Deep neural networks (DNNs) in intelligent point cloud processing have achieved 
  and potentials of different DNNs in underground 3D taskings. Draw upon that, which current algorithms are optimal and 
  how future work in GNSS-denied environments can be inspired and implemented would be discussed.
 
-
-<div class="table-wrap">
-  <table class="perf-table">
-    <thead>
-      <tr>
-        <th>DNNs</th>
-        <th>S3DIS OA (%)</th>
-        <th>ModelNet40 OA (%)</th>
-        <th>ScanNet OA (%)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>PointNet</td>
-        <td>78.6</td>
-        <td>89.2</td>
-        <td>78.6</td>
-      </tr>
-      <tr>
-        <td>PointNet++</td>
-        <td>81.9</td>
-        <td>90.7 / 91.9</td>
-        <td>81.0</td>
-      </tr>
-      <tr>
-        <td>SPG</td>
-        <td>85.5</td>
-        <td>73.0</td>
-        <td>85.5</td>
-      </tr>
-      <tr>
-        <td>KPConv</td>
-        <td>–</td>
-        <td>79.1</td>
-        <td>68.0</td>
-      </tr>
-      <tr>
-        <td>FPConv</td>
-        <td>88.3</td>
-        <td>68.9</td>
-        <td>–</td>
-      </tr>
-      <tr>
-        <td>BAAF-Net</td>
-        <td>88.9</td>
-        <td>83.1</td>
-        <td>88.9</td>
-      </tr>
-      <tr>
-        <td>Stratified Transformer</td>
-        <td>91.5</td>
-        <td>78.1</td>
-        <td>–</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+![Table 1](./img/f4_1.png)
 
 <p style="text-align: center;">**DNN's Semantic Segmentation Results on S3DIS, ModelNet40, and ScanNet**</p>
 
@@ -114,110 +58,8 @@ remaining columns illustrate model-specific segmentation results. Visual inspect
 particularly in distinguishing vehicle, ground, and column classes, consistent with its low mIoU of 42.85%. In contrast, 
 PointNet achieves a higher mIoU of 75.74%, with segmentation outputs more closely resembling the GT, while KPConv 
 demonstrates the strongest performance among the models with an mIoU of 77.35%.
-<div class="table-wrap">
-  <table class="perf-table">
-    <thead>
-      <tr>
-        <th>DNNs</th>
-        <th>OA (%)</th>
-        <th>mAcc (%)</th>
-        <th>mIoU (%)</th>
-        <th>Ground</th>
-        <th>Ceiling</th>
-        <th>Column</th>
-        <th>Vehicle</th>
-        <th>Wall</th>
-        <th>Unclassified</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>PointNet</td>
-        <td>96.35</td>
-        <td>82.47</td>
-        <td>75.74</td>
-        <td>97.80</td>
-        <td>95.80</td>
-        <td>72.20</td>
-        <td>94.30</td>
-        <td>82.70</td>
-        <td>11.70</td>
-      </tr>
-      <tr>
-        <td>PointNet++</td>
-        <td>96.78</td>
-        <td>92.15</td>
-        <td>83.79</td>
-        <td>97.50</td>
-        <td>95.00</td>
-        <td>75.50</td>
-        <td>96.40</td>
-        <td>90.30</td>
-        <td>48.00</td>
-      </tr>
-      <tr>
-        <td>SPG</td>
-        <td>86.97</td>
-        <td>50.90</td>
-        <td>42.85</td>
-        <td>93.27</td>
-        <td>42.16</td>
-        <td>87.05</td>
-        <td>33.61</td>
-        <td>1.00</td>
-        <td>0.00</td>
-      </tr>
-      <tr>
-        <td>KPConv</td>
-        <td>–</td>
-        <td>–</td>
-        <td>77.35</td>
-        <td>97.50</td>
-        <td>95.73</td>
-        <td>79.33</td>
-        <td>97.20</td>
-        <td>93.31</td>
-        <td>1.03</td>
-      </tr>
-      <tr>
-        <td>FPConv</td>
-        <td>96.62</td>
-        <td>–</td>
-        <td>76.38</td>
-        <td>97.23</td>
-        <td>94.65</td>
-        <td>76.48</td>
-        <td>96.04</td>
-        <td>89.87</td>
-        <td>4.03</td>
-      </tr>
-      <tr>
-        <td>BAAF-Net</td>
-        <td>–</td>
-        <td>–</td>
-        <td>83.61</td>
-        <td>97.43</td>
-        <td>94.30</td>
-        <td>74.57</td>
-        <td>96.79</td>
-        <td>91.39</td>
-        <td>47.16</td>
-      </tr>
-      <tr>
-        <td>Stratified Transformer [8]</td>
-        <td>98.00</td>
-        <td>64.22</td>
-        <td>62.07</td>
-        <td>97.02</td>
-        <td>98.01</td>
-        <td>82.22</td>
-        <td>95.02</td>
-        <td>0.00</td>
-        <td>0.15</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+
+![Table 2](./img/f4_2.png)
 ![semantic segmentation](./img/p4_1:a.png)
 
 A detailed comparison between PointNet and KPConv highlights their error characteristics below: PointNet primarily 
@@ -260,5 +102,11 @@ shall move to the next stage for exploring, popularizing,
 and commercializing 3D tasks in the industry for application in GNSS
 -denied environments such as
 underground parking lots. 
+
+<div style={{ height: "2rem" }} />
+---
+
+<p style="text-align: center;"> *Presented at <a href = "https://doi.org/10.5194/ica-adv-4-18-2023"> ICC 2023</a> · Cape Town, South Africa* </p>
+
 
 

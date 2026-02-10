@@ -30,8 +30,9 @@ import HeaderLink from './HeaderLink.astro';
 
 
 <script>
-  const btn = document.querySelector('.menu-btn');
-  const menu = document.getElementById('site-menu');
+  const header = document.querySelector('.site-header');
+const btn = header?.querySelector('.menu-btn');
+const menu = header?.querySelector('#site-menu');
 
   function closeMenu() {
     if (!btn || !menu) return;
@@ -47,95 +48,28 @@ import HeaderLink from './HeaderLink.astro';
   }
 
   if (btn && menu) {
-    closeMenu(); // 保证首屏默认关闭
+    closeMenu(); 
 
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       toggleMenu();
     });
 
-    // 点击菜单项后关闭
     menu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
-
-    // 点击外部关闭
     document.addEventListener('click', closeMenu);
-
-    // 窗口变宽（回到桌面）时复位
+    document.addEventListener('astro:page-load', closeMenu);
     window.addEventListener('resize', () => {
       if (window.innerWidth > 720) closeMenu();
     });
-
-    // Astro 页面切换后关闭
-    document.addEventListener('astro:page-load', closeMenu);
   }
+  
 </script>
 
 
 
 <style>
+  /* Desktop default */
 .menu-btn { display: none; }
-
-@media (max-width: 720px) {
-  .menu-btn{
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.45rem 0.7rem;
-    border: 1px solid rgba(0,0,0,0.10);
-    border-radius: 999px;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(10px);
-    font-size: 0.9rem;
-  }
-
-  .menu-icon{
-    width: 16px;
-    height: 12px;
-    position: relative;
-    display: inline-block;
-  }
-  .menu-icon::before,
-  .menu-icon::after{
-    content:"";
-    position:absolute;
-    left:0; right:0;
-    height:2px;
-    background: rgba(0,0,0,0.65);
-    border-radius: 2px;
-  }
-  .menu-icon::before{ top:0; }
-  .menu-icon::after{ bottom:0; }
-
-  .nav{ position: relative; }
-
-  .internal-links{
-    display: none;
-    position: absolute;
-    right: 12px;
-    top: 54px;
-    flex-direction: column;
-    gap: 0.25rem;
-    min-width: 200px;
-    padding: 0.5rem;
-    background: rgba(255,255,255,0.96);
-    border: 1px solid rgba(0,0,0,0.08);
-    border-radius: 14px;
-    box-shadow: 0 16px 40px rgba(0,0,0,0.14);
-  }
-
-  .internal-links.is-open{ display: flex; }
-
-  .internal-links a{
-    padding: 0.65rem 0.8rem;
-    border-radius: 12px;
-    white-space: nowrap;
-  }
-}
-
-
-
-
-
 
 .site-header {
   position: sticky;
@@ -143,6 +77,19 @@ import HeaderLink from './HeaderLink.astro';
   z-index: 50;
   background: white;
   border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+@media (min-width: 721px) {
+  .site-header .nav a {
+    padding: 0.6rem 0.35rem;
+    color: var(--black);
+    border-bottom: 4px solid transparent;
+    text-decoration: none;
+  }
+
+  .site-header .nav a.active {
+    border-bottom-color: var(--accent);
+  }
 }
 
 .nav {
@@ -172,39 +119,145 @@ import HeaderLink from './HeaderLink.astro';
   opacity: 0.75;
   text-decoration: none;
 }
+.social-links,
+.social-links a {
+  display: flex;
+}
+
+/* Mobile */
+@media (max-width: 720px) {
+  .nav { position: relative; }
+
+  .menu-btn{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.75rem;
+    border: 1px solid rgba(0,0,0,0.10);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px);
+    font-size: 0.9rem;
+  }
+
+  .menu-icon{
+    width: 16px;
+    height: 12px;
+    position: relative;
+    display: inline-block;
+  }
+
+  .menu-icon::before,
+  .menu-icon::after{
+    content:"";
+    position:absolute;
+    left:0; right:0;
+    height:2px;
+    background: rgba(0,0,0,0.65);
+    border-radius: 2px;
+  }
+
+  .menu-icon::before{ top:0; }
+  .menu-icon::after{ bottom:0; }
+
+  /* Default closed */
+  .internal-links{ display: none; }
+
+  /* Open state */
+  .internal-links.is-open{
+    display: flex;
+    position: absolute;
+    right: 12px;
+    top: 54px;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 200px;
+    padding: 0.5rem;
+    background: rgba(255,255,255,0.96);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.14);
+    z-index: 9999;
+  }
+
+  .internal-links.is-open a{ 
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .internal-links.is-open a{
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0.7rem 0.9rem 0.7rem 1.2rem;
+    border-radius: 12px;
+    text-decoration: none;
+  }
+  .social-links{ display: none; }
+}
 
 
-h2 {
-		margin: 0;
-		font-size: 1em;
-	}
+@media (max-width: 720px) {
 
-	h2 a,
-	h2 a.active {
-		text-decoration: none;
-	}
-	nav {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-	nav a {
-		padding: 1em 0.5em;
-		color: var(--black);
-		border-bottom: 4px solid transparent;
-		text-decoration: none;
-	}
-	nav a.active {
-		text-decoration: none;
-		border-bottom-color: var(--accent);
-	}
-	.social-links,
-	.social-links a {
-		display: flex;
-	}
-	@media (max-width: 720px) {
-		.social-links {
-			display: none;
-		}
-	}
+  .internal-links.is-open a.active {
+    border-bottom: none !important;
+  }
+
+  .internal-links.is-open a {
+    position: relative;
+    border-radius: 12px;
+  }
+
+  .internal-links.is-open a.active {
+    background: rgba(181, 85, 79, 0.14);
+  }
+
+  .internal-links.is-open a.active::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    bottom: 10px;
+    width: 4px;
+    border-radius: 999px;
+    background: rgba(181, 85, 79, 0.9);
+  }
+
+  .internal-links a:hover{
+    background: rgba(181, 85, 79, 0.08);
+  }
+
+  .internal-links a[aria-current="page"]{
+    background: rgba(181, 85, 79, 0.14);
+  }
+
+  .internal-links a[aria-current="page"]::before{
+    content:"";
+    position:absolute;
+    left: 10px;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    border-radius: 999px;
+    background: rgba(181, 85, 79, 0.9);
+  }
+
+  .internal-links a {
+    border-bottom: none !important;
+  }
+
+}
+
+@media (max-width: 720px) {
+  .internal-links.is-open {
+    box-sizing: border-box;
+  }
+
+  .internal-links.is-open a {
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+}
+
+
 </style>

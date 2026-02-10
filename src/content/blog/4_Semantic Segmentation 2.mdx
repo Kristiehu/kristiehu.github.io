@@ -54,34 +54,8 @@ others/unclassified category (Class 07). Each class corresponds to a unique stru
 parking environment, ranging from vertical safety features and load-bearing supports to horizontal navigable surfaces and 
 miscellaneous residual points.
 
-<div class="table-wrap">
-  <table class="perf-table">
-    <thead>
-      <tr>
-        <th>Class ID</th>
-        <th>Class Name</th>
-        <th>Point Count</th>
-        <th>Percentage (%)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>01</td><td>Bollard</td><td>127,625</td><td>0.19%</td></tr>
-      <tr><td>02</td><td>Wall</td><td>5,842,108</td><td>8.50%</td></tr>
-      <tr><td>03</td><td>Pillar</td><td>469,885</td><td>0.68%</td></tr>
-      <tr><td>04</td><td>Vehicle</td><td>1,439,990</td><td>2.09%</td></tr>
-      <tr><td>05</td><td>Ceiling</td><td>35,640,963</td><td>51.83%</td></tr>
-      <tr><td>06</td><td>Floor</td><td>25,252,755</td><td>36.70%</td></tr>
-      <tr><td>07</td><td>Others / Unclassified</td><td>4,970</td><td>0.01%</td></tr>
-      <tr>
-        <td colspan="2"><strong>Total</strong></td>
-        <td><strong>68,778,296</strong></td>
-        <td><strong>100%</strong></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+![Table 1](./img/f4b_1.png)
 
-{/* ![classes](./img/p4_2:6.png) */}
 For each class, subsets were generated in both RGB and scalar field formats, with corresponding point statistics summarized in 
 table above. The distribution of points across classes is highly imbalanced: the bollard and pillar classes contain relatively 
 few points (127,625 and 469,885, respectively), while the wall and vehicle classes comprise 5,842,108 and 1,439,990 points. 
@@ -114,55 +88,13 @@ represent the full range of spatial patterns while minimizing geographic bias.
 ![classes](./img/p4_2:8.png)
 
 {/* **Training sets Details & Thumbnails (01–04.txt)** */}
-<div class="table-wrap">
-  <div class="slice-grid slice-table">
-    <div class="slice-head">Sliced Set</div>
-    <div class="slice-head">Point Size</div>
-    <div class="slice-head">Overview</div>
-
-    <div class="slice-cell"><strong>01.txt</strong></div>
-    <div class="slice-cell mono">455,896</div>
-    <div class="slice-cell">
-      <img class="thumb" src={img01.src} alt="01.txt overview" />
-    </div>
-
-    <div class="slice-cell"><strong>02.txt</strong></div>
-    <div class="slice-cell mono">526,430</div>
-    <div class="slice-cell">
-      <img class="thumb" src={img02.src} alt="02.txt overview" />
-    </div>
-
-    <div class="slice-cell"><strong>03.txt</strong></div>
-    <div class="slice-cell mono">314,182</div>
-    <div class="slice-cell">
-      <img class="thumb" src={img03.src} alt="03.txt overview" />
-    </div>
-
-    <div class="slice-cell"><strong>04.txt</strong></div>
-    <div class="slice-cell mono">489,057</div>
-    <div class="slice-cell">
-      <img class="thumb" src={img04.src} alt="04.txt overview" />
-    </div>
-  </div>
-</div>
+![Table 2](./img/f4b_2.png)
 
 - **All train (01–04.txt):** 2,285,565  
 - **Coverage:** 1,785,565 / 2,278,288 (**78.4%**)
 
 {/* **Testing sets Details & Thumbnails (00.txt)** */}
-<div class="table-wrap">
-  <div class="slice-grid slice-table">
-    <div class="slice-head">Sliced Set</div>
-    <div class="slice-head">Point Size</div>
-    <div class="slice-head">Overview</div>
-
-    <div class="slice-cell"><strong>00.txt</strong></div>
-    <div class="slice-cell mono">492,723</div>
-    <div class="slice-cell">
-      <img class="thumb" src={img00.src} alt="00.txt overview" />
-    </div>
-  </div>
-</div>
+![Table 3](./img/f4b_3.png)
 
 - **All test (00.txt):** 492,723
 - **Coverage:** 492,723 / 2,278,288 (**21.6%**)
@@ -197,84 +129,20 @@ the weights for classes 1 to 4 are *1.2672451707936863* **(wall)**, *15.95675105
 ### Quantitative Results
 **Semantic Segmentation Performance**
 ![Segmentation Results](./img/p4_2:12.png)
-<div class="table-wrap">
-  <table class="perf-table">
-    <thead>
-      <tr>
-        <th>Metric</th>
-        <th>Value</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>Average Class IoU</td><td>0.907</td></tr>
-      <tr><td>Average F1 Score</td><td>0.949</td></tr>
-      <tr><td>Overall Accuracy</td><td><strong>98.65%</strong></td></tr>
-    </tbody>
-  </table>
-</div>
-
+![Table 4](./img/f4b_4.png)
 
 The overall accuracy and average F1 score of the model are around
 98.65% and 94.88%. The average class Intersection Over Union (IoU) of the model is 90.74%,
 with the highest IoU (99.4%) in ‘ground’ and the lowest IoU (86.4%) in ‘pillar’. Similar patterns
 are also reflected in the Recall percentage, with the highest recall in ‘ground’ (99.4%) and the
 lowest recall in ‘pillar’ (80.1%)
-<div class="table-wrap">
-  <table class="perf-table">
-    <thead>
-      <tr>
-        <th>Class</th>
-        <th>Precision</th>
-        <th>Recall</th>
-        <th>Specificity</th>
-        <th>F1 Score</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>Wall</td><td>0.963</td><td>0.980</td><td>0.990</td><td>0.971</td></tr>
-      <tr><td>Pillar</td><td>0.938</td><td>0.801</td><td>0.999</td><td>0.864</td></tr>
-      <tr><td>Vehicle</td><td>0.978</td><td>0.955</td><td>0.999</td><td>0.966</td></tr>
-      <tr><td>Ground</td><td>0.995</td><td>0.994</td><td>0.987</td><td>0.994</td></tr>
-    </tbody>
-  </table>
-</div>
-
+![Table 5](./img/f4b_5.png)
 
 **Ground** class dominates accuracy (highest density, lowest ambiguity), **Pillar** shows highest misclassification rate (~20% confused as wall). While the Root cause is due to insufficient point density 
 and occlusion
 
 **Confusion Matrix**
-<div class="cm">
-  <div class="cm-h">True \ Predicted</div>
-  <div class="cm-h">Wall</div>
-  <div class="cm-h">Pillar</div>
-  <div class="cm-h">Vehicle</div>
-  <div class="cm-h">Ground</div>
-
-  <div class="cm-c cm-r">Wall</div>
-  <div class="cm-c cm-diag">99,143</div>
-  <div class="cm-c">111</div>
-  <div class="cm-c">491</div>
-  <div class="cm-c">1,398</div>
-
-  <div class="cm-c cm-r">Pillar</div>
-  <div class="cm-c">1,143</div>
-  <div class="cm-c cm-diag">4,852</div>
-  <div class="cm-c">6</div>
-  <div class="cm-c">56</div>
-
-  <div class="cm-c cm-r">Vehicle</div>
-  <div class="cm-c">804</div>
-  <div class="cm-c">169</div>
-  <div class="cm-c cm-diag">29,521</div>
-  <div class="cm-c">180</div>
-
-  <div class="cm-c cm-r">Ground</div>
-  <div class="cm-c">1,850</div>
-  <div class="cm-c">39</div>
-  <div class="cm-c">409</div>
-  <div class="cm-c cm-diag">352,551</div>
-</div>
+![Table 6](./img/f4b_6.png)
 
 The horizontal axis (True Labels) of the confusion matrix represents the ground-truth class labels in the test dataset. 
 For each column, the sum of values corresponds to the total number of points for that class, as reported in above table. 

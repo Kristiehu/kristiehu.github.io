@@ -7,12 +7,13 @@ import ComplexType from "../components/ComplexType.astro";
 import { Image } from "astro:assets";
 import portrait from "../assets/me_0.png";
 
-const NAME = "Hi, I'm Kristie Hu 静祎";
+const en = "Kristie Hu";
+const zh = '静祎'
 const PRONOUNCE = "/jing-yee hoo/";
 
 const LINKS = [
   { label: "GitHub", href: "https://github.com/KristieHu" },
-  { label: "LinkedIn", href: "https://www.kristiehu.com/" },
+  { label: "Linkedin", href: "https://www.linkedin.com/in/kristiehu/" },
   { label: "Resume", href: "/resume.pdf" },
   { label: "Email", href: "mailto:kristieyet@gmail.com" },
 ];
@@ -43,7 +44,8 @@ const LINKS = [
 
         <div class="heroText">
           <h1 class="name">
-            {NAME}
+            <span class ="en">{en}</span>
+            <span class ="zh">{zh}</span>
             <span class="pronounce">{PRONOUNCE}</span>
           </h1>
 
@@ -60,115 +62,117 @@ const LINKS = [
           </nav>
         </div>
       </section>
+      
 
-			<!-- FOOTER NOTE -->
-      <section class="section tiny">
-        <p class="muted">
+        <!-- FOOTER NOTE -->
+      <section class="hero-quote">
+        <p class="hero-quote">
           I’m driven by location intelligence — turning spatial complexity into clarity people can act on.
         </p>
       </section>
+      
     </main>
 
     <Footer />
 
+
     <style>
-      :global(html) { scroll-behavior: smooth; }
-      :global(body) {
-        margin: 0;
-        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI;
-        font-weight: 500;
-        line-height: 1.6;
-      }
 
-      .wrap { max-width: 860px; margin: 0 auto; padding: 3.5rem 1.25rem; }
-
-	  .tiny { margin-top: 2.1rem; }
-
-      .hero {
-        display: grid;
-        grid-template-columns: 200px 1fr;
-        gap: 1.5rem;
-        align-items: center;
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid rgba(0,0,0,0.06);
-      }
-
-      @media (max-width: 760px) {
-        .hero { grid-template-columns: 1fr; text-align: center; }
-      }
-	  .quote {
-		font-size: 0.95rem;
-		line-height: 1.6;
-		color: #888;
-		letter-spacing: 0.2px;
-		}
-
-		.quote span {
-		color: #111;
-		font-weight: 500;
-		}
-
-      .portrait{
-        border-radius: 999px;
-        display: block;
-        /* border: 1px solid rgba(127,127,127,0.25);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.12); */
-      } /* ✅ IMPORTANT: close this */
-
+    .hero-quote{
+      margin-top: clamp(6px, 1.6vw, 12px); 
+      font-style: italic;
+      opacity: 0.62;
+      line-height: 1.55;
+      font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+      text-align: center;
+    }
+    
+    .hero-quote p{ margin: 0; }
+    
       .name {
-        margin: 0;
-        font-size: clamp(2rem, 2vw, 2rem);
-        font-weight: 700;
-        letter-spacing: -0.015em;
+        font-size: 1.8em;
       }
+
+    .en{
+      font-family: "Inter Tight", system-ui, sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+    }
+
+    .zh{
+      letter-spacing: -0.02em;  
+      margin-left: -0.04rem;      
+      font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+    }
 
       .pronounce {
-        margin-left: 0.5rem;
+        color: #000000;
+        font-family: "Inter Tight", system-ui, sans-serif;
+        font-weight: 300;
+        font-style: italic;
         font-size: 0.45em;
-        font-weight: 400;
-        opacity: 0.55;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+        letter-spacing: -0.01em;
+        opacity: 0.6;
+        opacity: 0.45;
+        
+        
       }
 
       .type { 
-		margin-top: 0.5rem;
-		color:#3A5F8F;
-	 }
+        margin-top: 0.5rem;
+        color:#3A5F8F;
+      }
 
       .links { margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
-	  .chip {
-		position: relative;
-		padding: 0.4rem 0.85rem;
-		border-radius: 999px;
-		font-size: 0.92rem;
-		font-weight: 500;
-		text-decoration: none;
-		color: var(--black, #111);
-		border: 1px solid rgba(0,0,0,0.25);
-		background: transparent;
-		transition:
-			background-color 160ms ease,
-			color 160ms ease,
-			border-color 160ms ease,
-			transform 120ms ease;
-	  }
+      .chip {
+      position: relative;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--black, #111);
+      border: 1px solid rgba(0,0,0,0.25);
+      background: transparent;
+      transition:
+        background-color 160ms ease,
+        color 160ms ease,
+        border-color 160ms ease,
+        transform 120ms ease;
+      padding: 0.42rem 0.9rem;
+      border-radius: 12px;          
+      font-size: 0.92rem;
+      font-weight: 500;
 
-	.chip:hover {
-	background: rgba(255, 0, 0, 0.06);
-	border-color: rgba(0,0,0,0.35);
-	transform: translateY(-5px);
-	}
+      border: 1px solid rgba(58, 58, 58, 0.25);
+      background: transparent;
+      color: #111;
+      }
 
-	.chip:active {
-	transform: translateY(0);
-	}
+	    .chip:hover {
+        background: rgba(255, 0, 0, 0.06);
+        border-color: rgba(57, 57, 57, 0.35);
+        transform: translateY(-5px);
+      }
+
+      .chip:active {
+        transform: translateY(0);
+      }
+
+    
+
+      .section { margin-top: 1rem; }
+
+      .hero-divider{
+        width: min(680px, 92%);
+        height: 1px;
+        margin: clamp(14px, 2.8vw, 22px) auto; /* 上下留白 */
+        background: rgba(15, 23, 42, 0.12);    /* 你是浅底，12% 很稳 */
+      }
 
 
-
-
-      .section { margin-top: 2.4rem; }
-      .prose { max-width: 100ch; }
-      .muted { opacity: 0.65; font-style: italic; text-align: center;}
     </style>
   </body>
 </html>

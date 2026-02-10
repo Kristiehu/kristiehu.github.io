@@ -12,7 +12,7 @@ const PRONOUNCE = "/jing-yee hoo/";
 
 const LINKS = [
   { label: "GitHub", href: "https://github.com/KristieHu" },
-  { label: "LinkedIn", href: "https://www.kristiehu.com/" },
+  { label: "Linkedin", href: "https://www.linkedin.com/in/kristiehu/" },
   { label: "Resume", href: "/resume.pdf" },
   { label: "Email", href: "mailto:kristieyet@gmail.com" },
 ];
@@ -62,40 +62,41 @@ const LINKS = [
 
       <!-- BIO -->
       <section class="section prose">
-        <p>
-          I’m a <strong>GIS Application Analyst </strong>& <strong> System Design Engineer</strong> with a research-first foundation in LiDAR, hyperspectral remote sensing, 
-		  and applied machine learning, and a practical bias toward systems that scale, ship, and stay useful.
-        </p>
+       <p>
+        I’m a <strong>GIS Application Analyst</strong> and <strong>System Design Engineer</strong> with a research-first foundation in LiDAR,
+        hyperspectral remote sensing, and applied machine learning—biased toward systems that scale, ship, and stay useful.
+      </p>
 
-        <p>
-          I hold a BES and an MSc in Honours Geomatics from <a href="https://uwaterloo.ca">University of Waterloo</a>. My master's thesis, 
-		  <a href = "https://uwspace.uwaterloo.ca/items/dcb172d9-cec1-487b-8b18-1226c0156061">Semantic Modelling of an Indoor 
-		  Parking Garage Using Hand-held GeoSLAM LiDAR Point Clouds</a>, focused on building high-definition indoor digital twins in GNSS-denied 
-		  environments. The work combined LiDAR-based SLAM, 
-		  semantic segmentation, line-feature extraction, and surface reconstruction to generate accurate 3D indoor models for navigation, 
-		  emergency response, and autonomous parking use cases. Using deep-learning segmentation (DCTNet), the methodology achieved 90.74% mean 
-		  IoU and 98.65% mean F1, validating both geometric accuracy and semantic reliability <sup id="fnref-1"><a href="#fn-1" aria-describedby="footnote-label">[1]</a></sup>.
-        </p>
+      <p>
+        I earned both my <strong>BES</strong> and <strong>MSc (Honours) in Geomatics</strong> from
+        <a href="https://uwaterloo.ca">the University of Waterloo</a>. My master’s thesis,
+        <a href="https://uwspace.uwaterloo.ca/items/dcb172d9-cec1-487b-8b18-1226c0156061">
+          <em>Semantic Modelling of an Indoor Parking Garage Using Hand-held GeoSLAM LiDAR Point Clouds</em>
+        </a>,
+        focused on high-definition indoor digital twins in GNSS-denied environments, combining LiDAR-based SLAM,
+        semantic segmentation, and surface reconstruction to produce accurate, navigable 3D indoor models.
+      </p>
 
-        <p>
-		  Following graduation, I joined the <a href="https://vip.uwaterloo.ca/">Vision and Image Processing Lab (VIP Lab)</a> as a full-time Research Associate, where I worked on 
-		  hyperspectral remote sensing and applied machine learning. My research included vegetation and crop mapping using PRISMA data 
-		   and deep-learning–based object detection for Arctic imagery <sup id="fnref-1"><a href="#fn-2" aria-describedby="footnote-label">[2]</a></sup>, bridging spectral modeling, spatial analysis, and real-world data constraints. 
-        </p>
-		<p>
-			In industry, I own the design and delivery of automated geospatial ETL pipelines for fiber systems. I’ve developed Bash- and Python-based 
-			frameworks that transformed ad hoc reporting into reliable, repeatable pipelines, reducing turnaround time by ~75%. My work covers full 
-			lifecycle ETL, internal network-analysis tooling, and system design including PostGIS data modeling, lightweight API prototypes, planning dashboards, 
-			and production documentation designed to scale beyond a single contributor.
-		</p>
-		<p>
-			Across research and production environments, my interests converge on hyperspectral imaging, LiDAR and point-cloud processing, digital 
-			twins, and pragmatic ML deployed in real-world geospatial systems where robustness matters more than novelty.
-		</p>
-        <p>
-          Outside of work, I enjoy photography, handcrafting, doodling, and cooking—anything iterative and hands-on. I’m an
-          <strong>INTJ</strong> with a fire sun and earth rising, which likely explains the quiet focus and work-driven tendencies.
-        </p>
+      <p>
+        After graduation, I joined the
+        <a href="https://vip.uwaterloo.ca/">Vision and Image Processing Lab (VIP Lab)</a>
+        as a full-time Research Associate, working on hyperspectral remote sensing and applied ML.
+        My work included PRISMA-based vegetation and crop mapping and deep-learning object detection for Arctic imagery,
+        bridging spectral modeling with real-world data constraints.
+      </p>
+
+      <p>
+        In industry, I design and deliver automated geospatial ETL pipelines for fiber systems.
+        I build Bash- and Python-based frameworks that turn ad hoc reporting into reliable, repeatable pipelines—cutting
+        turnaround time by ~75%. My scope spans full-lifecycle ETL, PostGIS data modeling, internal analytics tooling,
+        lightweight API prototypes, and production documentation built to scale beyond a single contributor.
+      </p>
+
+      <p>
+        My interests converge on hyperspectral imaging, LiDAR and point-cloud processing, digital twins,
+        and pragmatic machine learning deployed in production geospatial systems—where robustness matters more than novelty.
+      </p>
+
       </section>
 
 	  <!-- FOOTER NOTE -->
@@ -125,198 +126,108 @@ const LINKS = [
     </main>
     <Footer />
 
-	<style>
-		.type { 
-		margin-top: 0.5rem;
-		color:#3A5F8F;
-	 }
-	  .quote {
-		font-size: 0.95rem;
-		line-height: 1.6;
-		color: #888;
-		letter-spacing: 0.2px;
-		}
+<style>
+  /* small accent line */
+  .type {
+    margin-top: 0.5rem;
+    color: #3A5F8F;
+  }
 
-		.quote span {
-		color: #111;
-		font-weight: 500;
-		}
+  
+  /* Links chips */
+  .links { margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .chip {
+    position: relative;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.92rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--black, #111);
+    border: 1px solid rgba(0,0,0,0.25);
+    background: transparent;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease,
+      border-color 160ms ease,
+      transform 120ms ease;
 
-	  :global(html) { scroll-behavior: smooth; }
-	  :global(body) {
-		margin: 0;
+	padding: 0.42rem 0.9rem;
+      border-radius: 12px;          
+      font-size: 0.92rem;
+      font-weight: 500;
 
-		font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI;
-		font-weight: 500;
-		line-height: 1.6;
-	  }
+      border: 1px solid rgba(58, 58, 58, 0.25);
+      background: transparent;
+      color: #111;
+  }
+  .chip:hover {
+    background: rgba(255, 0, 0, 0.06);
+    border-color: rgba(0,0,0,0.35);
+    transform: translateY(-5px);
+  }
+  .chip:active { transform: translateY(0); }
 
-	  .wrap { max-width: 860px; margin: 0 auto; padding: 3.5rem 1.25rem; }
+  /* ===== Content ===== */
+  .section { margin-top: 2.4rem; }
 
-	  .hero h1 { margin: 0; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.02em; }
-	  .hero {padding-bottom: 1.5rem;}
-	  .hero .name {margin-bottom: 0.6rem;}
-	  .hero h2 {margin-top: 0.4rem;}
+  .section.prose {
+    max-width: 68ch;
+    margin: 0 auto;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: rgba(0, 0, 0, 0.88);
+  }
 
-	  .name { font-size: clamp(2rem, 2vw, 2rem);
-		font-weight: 700;		
-		letter-spacing: -0.015em;
-		font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI;
-	  }
-	  .pronounce {
-		margin-left: 0.5rem;
-		font-size: 0.45em;
-		font-weight: 400;
-		opacity: 0.55;
-		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
-	  }
+  .section.prose p { margin-bottom: 1.25rem; }
 
-	  .muted { 
-		opacity: 0.65; 
-		font-weight: 500; 
-		font-style: italic; 
-		font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI;
-	}
-	  .tagline { margin: 0.75rem 0 0; font-weight: 600; }
-	  .lead { margin: 0.6rem 0 0; opacity: 0.9; max-width: 70ch; }
+  .section.prose a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    transition: border-color 0.2s ease, opacity 0.2s ease;
+  }
+  .section.prose a:hover {
+    border-bottom-color: rgba(255, 0, 0, 0.6);
+    opacity: 1;
+  }
 
-	  .links { margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
-	  .chip {
-		position: relative;
-		padding: 0.4rem 0.85rem;
-		border-radius: 999px;
-		font-size: 0.92rem;
-		font-weight: 500;
-		text-decoration: none;
-		color: var(--black, #111);
-		border: 1px solid rgba(0,0,0,0.25);
-		background: transparent;
-		transition:
-			background-color 160ms ease,
-			color 160ms ease,
-			border-color 160ms ease,
-			transform 120ms ease;
-	  }
+  sup a {
+    text-decoration: none;
+    font-size: 0.75em;
+    opacity: 0.7;
+  }
+  sup a:hover { opacity: 1; }
 
-		.chip:hover {
-		background: rgba(255, 0, 0, 0.06);
-		border-color: rgba(0,0,0,0.35);
-		transform: translateY(-5px);
-		}
+  /* Footnotes */
+  .footnotes {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    opacity: 0.75;
+  }
+  .footnotes ol { padding-left: 1.25rem; }
+  .footnotes li { margin-bottom: 0.5rem; }
+  .footnote-back {
+    margin-left: 0.5rem;
+    text-decoration: none;
+    opacity: 0.6;
+  }
+  .footnote-back:hover { opacity: 1; }
 
-		.chip:active {
-		transform: translateY(0);
-		}
+  /* screen-reader only */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 
-	  .grid { margin-top: 2.2rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; }
-	  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+</style>
 
-	  .card {
-		text-decoration: none;
-		border: 1px solid rgba(127,127,127,0.35);
-		border-radius: 16px;
-		padding: 1rem 1rem 0.95rem;
-		transition: transform 120ms ease, opacity 120ms ease;
-	  }
-	  .card:hover { transform: translateY(-2px); opacity: 0.98; }
-	  .kicker { font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.08em; }
-	  .title { font-weight: 700; margin-top: 0.25rem; }
-	  .desc { margin-top: 0.35rem; opacity: 0.85; }
-
-	  .section { margin-top: 2.4rem; }
-	  .section h2 { margin: 0 0 0.8rem; font-size: 1.1rem; letter-spacing: -0.01em; }
-
-	  .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.7rem; }
-	  .item {
-		border: 1px solid rgba(127,127,127,0.25);
-		border-radius: 14px;
-	  }
-	  .itemLink { display: block; padding: 0.9rem 1rem; text-decoration: none; }
-	  .itemTitle { font-weight: 700; }
-	  .itemDesc { margin-top: 0.25rem; opacity: 0.85; }
-
-	  .body { margin: 0; max-width: 100ch; }
-	  sup a {
-		text-decoration: none;
-		font-size: 0.75em;
-		opacity: 0.7;
-		}
-
-		sup a:hover {
-		opacity: 1;
-		}
-
-		.footnotes {
-			margin-top: 2rem;
-			font-size: 0.9rem;
-			opacity: 0.75;
-			}
-
-		.footnotes ol {
-		padding-left: 1.25rem;
-		}
-
-		.footnotes li {
-		margin-bottom: 0.5rem;
-		}
-
-		.footnote-back {
-		margin-left: 0.5rem;
-		text-decoration: none;
-		opacity: 0.6;
-		}
-
-		.footnote-back:hover {
-		opacity: 1;
-		}
-
-	  .tiny { margin-top: 2.1rem; }
-	  
-		.section.prose {
-			max-width: 68ch;               /* optimal reading width */
-			margin: 0 auto;
-			font-size: 1.05rem;
-			line-height: 1.75;
-			color: rgba(0, 0, 0, 0.88); /* assumes dark theme; adjust if light */
-		}
-
-		.section.prose p {
-			margin-bottom: 1.25rem;
-		}
-
-		.section.prose a {
-			color: inherit;
-			text-decoration: none;
-			border-bottom: 1px solid rgba(255, 255, 255, 0.25);
-			transition: border-color 0.2s ease, opacity 0.2s ease;
-		}
-
-		.section.prose a:hover {
-			border-bottom-color: rgba(255, 0, 0, 0.6);
-			opacity: 1;
-		}
-
-		.section.prose sup {
-			font-size: 0.7em;
-			vertical-align: super;
-			line-height: 0;
-		}
-
-		.section.prose sup a {
-			opacity: 0.65;
-		}
-
-		.section.prose sup a:hover {
-			opacity: 1;
-		}
-
-		@media (max-width: 640px) {
-			.section.prose {
-			font-size: 1rem;
-			line-height: 1.7;
-			}
-		}
-
-	</style>
   </body>
 </html>
