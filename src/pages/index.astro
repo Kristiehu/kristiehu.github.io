@@ -115,10 +115,15 @@ const LINKS = [
     }
 
     .zh{
-      letter-spacing: -0.02em;  
-      margin-left: -0.04rem;      
+      /* letter-spacing: -0.02em;   */
+ 
       font-size: clamp(1.7rem, 3.5vw, 2.4rem);
-      font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+      /* font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif; */
+      font-family: "Noto Sans SC", sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+
+
       font-weight: 400;
     }
 
@@ -142,35 +147,36 @@ const LINKS = [
 
       .links { margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
       .chip {
-      position: relative;
-      padding: 0.4rem 0.85rem;
-      border-radius: 999px;
-      font-size: 0.92rem;
-      font-weight: 500;
-      text-decoration: none;
-      color: var(--black, #111);
-      border: 1px solid rgba(0,0,0,0.25);
-      background: transparent;
-      transition:
-        background-color 160ms ease,
-        color 160ms ease,
-        border-color 160ms ease,
-        transform 120ms ease;
-      padding: 0.42rem 0.9rem;
-      border-radius: 12px;          
-      font-size: 0.92rem;
-      font-weight: 500;
+        position: relative;
+        padding: 0.4rem 0.85rem;
+        border-radius: 999px;
+        font-size: 0.92rem;
+        font-weight: 500;
+        text-decoration: none;
+        color: var(--black, #111);
+        border: 1px solid rgba(0,0,0,0.25);
+        background: transparent;
+        transition:
+          background-color 160ms ease,
+          color 160ms ease,
+          border-color 160ms ease,
+          transform 120ms ease;
+        padding: 0.42rem 0.9rem;
+        border-radius: 12px;          
+        font-size: 0.92rem;
+        font-weight: 500;
 
-      border: 1px solid rgba(58, 58, 58, 0.25);
-      background: transparent;
-      color: #111;
+        border: 1px solid rgba(58, 58, 58, 0.25);
+        background: transparent;
+        color: #111;
       }
 
 	    .chip:hover {
-        background: rgba(255, 0, 0, 0.06);
-        border-color: rgba(57, 57, 57, 0.35);
-        transform: translateY(-5px);
+        background: rgba(58, 95, 143, 0.08);
+        border-color: rgba(58, 95, 143, 0.25);
+        transform: translateY(-3px);
       }
+
 
       .chip:active {
         transform: translateY(0);
