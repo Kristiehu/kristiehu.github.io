@@ -60,6 +60,9 @@ const LINKS = [
               </a>
             ))}
           </nav>
+           <p class="hero-quote-zh">
+          不坠青云志，常怀赤子心。
+        </p>
         </div>
       </section>
       
@@ -87,7 +90,17 @@ const LINKS = [
       text-align: center;
     }
     
-    .hero-quote p{ margin: 0; }
+
+    .hero-quote-zh {
+      margin-top: 0.45rem;
+      font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+      letter-spacing: 0.12em;          
+      line-height: 1.6;
+      opacity: 0.78;
+
+      font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+      font-weight: 400;
+    }
     
       .name {
         font-size: 1.8em;
@@ -105,6 +118,8 @@ const LINKS = [
       letter-spacing: -0.02em;  
       margin-left: -0.04rem;      
       font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+      font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+      font-weight: 400;
     }
 
       .pronounce {
@@ -168,8 +183,8 @@ const LINKS = [
       .hero-divider{
         width: min(680px, 92%);
         height: 1px;
-        margin: clamp(14px, 2.8vw, 22px) auto; /* 上下留白 */
-        background: rgba(15, 23, 42, 0.12);    /* 你是浅底，12% 很稳 */
+        margin: clamp(14px, 2.8vw, 22px) auto;
+        background: rgba(15, 23, 42, 0.12);   
       }
 
 
