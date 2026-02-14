@@ -124,24 +124,63 @@ const menu = header?.querySelector('#site-menu');
   display: flex;
 }
 
+
+
 /* Mobile */
 @media (max-width: 720px) {
+  :root{
+    /* 雾蓝体系：低饱和、偏灰蓝 */
+    --mist-blue: rgba(58, 95, 143, 0.90);      /* 主色 */
+    --mist-blue-weak: rgba(58, 95, 143, 0.12); /* hover bg */
+    --mist-blue-soft: rgba(58, 95, 143, 0.18); /* active bg */
+    --mist-ink: rgba(17, 24, 39, 0.82);        /* 深色文字 */
+    --mist-border: rgba(58, 95, 143, 0.18);    /* 边框 */
+    --mist-shadow: 0 18px 50px rgba(17, 24, 39, 0.14);
+  }
+
   .nav { position: relative; }
 
+  /* ===== MENU BUTTON ===== */
   .menu-btn{
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.45rem 0.75rem;
-    border: 1px solid rgba(0,0,0,0.10);
+    gap: 0.55rem;
+    padding: 0.50rem 0.85rem;
     border-radius: 999px;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(10px);
-    font-size: 0.9rem;
+
+    background: rgba(240, 246, 255, 0.78); /* 雾蓝玻璃 */
+    border: 1px solid var(--mist-border);
+    color: var(--mist-ink);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+
+    transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
   }
 
+  .menu-btn:hover{
+    background: rgba(240, 246, 255, 0.90);
+    border-color: rgba(58, 95, 143, 0.26);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px rgba(17, 24, 39, 0.10);
+  }
+
+  .menu-btn:active{
+    transform: translateY(0);
+  }
+
+  .menu-btn:focus-visible{
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(58, 95, 143, 0.18);
+  }
+
+  /* ===== HAMBURGER → X (using aria-expanded) ===== */
   .menu-icon{
-    width: 16px;
+    width: 18px;
     height: 12px;
     position: relative;
     display: inline-block;
@@ -153,85 +192,94 @@ const menu = header?.querySelector('#site-menu');
     position:absolute;
     left:0; right:0;
     height:2px;
-    background: rgba(0,0,0,0.65);
-    border-radius: 2px;
+    background: var(--mist-blue);
+    border-radius: 999px;
+    transition: transform 180ms ease, top 180ms ease, bottom 180ms ease, opacity 180ms ease;
   }
 
   .menu-icon::before{ top:0; }
   .menu-icon::after{ bottom:0; }
 
+  /* Middle line */
+  .menu-icon span{
+    display:none;
+  }
+
+  /* When open: turn into X */
+  .menu-btn[aria-expanded="true"] .menu-icon::before{
+    top: 5px;
+    transform: rotate(45deg);
+  }
+  .menu-btn[aria-expanded="true"] .menu-icon::after{
+    bottom: 5px;
+    transform: rotate(-45deg);
+  }
+
   /* Default closed */
   .internal-links{ display: none; }
 
-  /* Open state */
+  /* ===== DROPDOWN ===== */
   .internal-links.is-open{
     display: flex;
     position: absolute;
     right: 12px;
     top: 54px;
     flex-direction: column;
-    gap: 0.25rem;
-    min-width: 200px;
-    padding: 0.5rem;
-    background: rgba(255,255,255,0.96);
-    border: 1px solid rgba(0,0,0,0.08);
-    border-radius: 14px;
-    box-shadow: 0 16px 40px rgba(0,0,0,0.14);
+    gap: 0.3rem;
+
+    min-width: 210px;
+    padding: 0.55rem;
+
+    background: rgba(248, 251, 255, 0.92);
+    border: 1px solid rgba(58, 95, 143, 0.16);
+    border-radius: 16px;
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    box-shadow: var(--mist-shadow);
     z-index: 9999;
+
+    transform-origin: top right;
+    animation: menuPop 140ms ease-out;
   }
 
-  .internal-links.is-open a{ 
-    width: 100%;
-    overflow: hidden;
+  @keyframes menuPop{
+    from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
   .internal-links.is-open a{
     position: relative;
     display: flex;
     align-items: center;
-    padding: 0.7rem 0.9rem 0.7rem 1.2rem;
+
+    width: 100%;
+    padding: 0.72rem 0.95rem 0.72rem 1.05rem;
+
     border-radius: 12px;
     text-decoration: none;
-  }
-  .social-links{ display: none; }
-}
 
+    color: rgba(17, 24, 39, 0.82);
+    font-weight: 600;
+    letter-spacing: 0.01em;
 
-@media (max-width: 720px) {
-
-  .internal-links.is-open a.active {
-    border-bottom: none !important;
+    transition: background 140ms ease, color 140ms ease;
   }
 
-  .internal-links.is-open a {
-    position: relative;
-    border-radius: 12px;
+  .internal-links.is-open a:hover{
+    background: var(--mist-blue-weak);
+    color: rgba(17, 24, 39, 0.92);
   }
 
-  .internal-links.is-open a.active {
-    background: rgba(181, 85, 79, 0.14);
+  /* Active / current page: 雾蓝高亮条 */
+  .internal-links.is-open a.active,
+  .internal-links.is-open a[aria-current="page"]{
+    background: var(--mist-blue-soft);
   }
 
-  .internal-links.is-open a.active::before {
-    content: "";
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    bottom: 10px;
-    width: 4px;
-    border-radius: 999px;
-    background: rgba(181, 85, 79, 0.9);
-  }
-
-  .internal-links a:hover{
-    background: rgba(181, 85, 79, 0.08);
-  }
-
-  .internal-links a[aria-current="page"]{
-    background: rgba(181, 85, 79, 0.14);
-  }
-
-  .internal-links a[aria-current="page"]::before{
+  .internal-links.is-open a.active::before,
+  .internal-links.is-open a[aria-current="page"]::before{
     content:"";
     position:absolute;
     left: 10px;
@@ -239,25 +287,40 @@ const menu = header?.querySelector('#site-menu');
     bottom: 10px;
     width: 3px;
     border-radius: 999px;
-    background: rgba(181, 85, 79, 0.9);
+    background: rgba(58, 95, 143, 0.92);
   }
 
-  .internal-links a {
+  /* Kill desktop underline style in mobile menu */
+  .internal-links a{
     border-bottom: none !important;
   }
 
+  /* social links hidden on mobile (keep your behavior) */
+  .social-links{ display: none; }
 }
 
-@media (max-width: 720px) {
-  .internal-links.is-open {
+ .menu-btn{ position: relative; z-index: 10001; }
+
+  /* dropdown 不再跟着 nav 跑，用 fixed 锁死在视口右上 */
+  .internal-links.is-open{
+    position: fixed !important;
+    right: 14px !important;
+    top: 68px !important; /* 让它在 header 下方 */
+    left: auto !important;
+
+    width: min(92vw, 320px) !important;  /* 防止太宽导致“探出屏幕” */
+    max-width: 320px !important;
+
     box-sizing: border-box;
   }
 
-  .internal-links.is-open a {
+  /* 避免每个 item 被拉成一整块大阴影 */
+  .internal-links.is-open a{
+    width: 100%;
     box-sizing: border-box;
-    max-width: 100%;
   }
 }
+
 
 
 </style>
