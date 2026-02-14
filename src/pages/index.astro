@@ -6,6 +6,7 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import ComplexType from "../components/ComplexType.astro";
 import { Image } from "astro:assets";
 import portrait from "../assets/me_0.png";
+import { Github, Linkedin, FileText, Mail } from "lucide-astro";
 
 const en = "Kristie Hu";
 const zh = '静祎'
@@ -14,7 +15,7 @@ const PRONOUNCE = "/jing-yee hoo/";
 const LINKS = [
   { label: "GitHub", href: "https://github.com/KristieHu" },
   { label: "Linkedin", href: "https://www.linkedin.com/in/kristiehu/" },
-  { label: "Resume", href: "/resume.pdf" },
+  { label: "Resume", href: "/Kristie-Hu-CV-2026.pdf" },
   { label: "Email", href: "mailto:kristieyet@gmail.com" },
 ];
 ---
@@ -52,17 +53,33 @@ const LINKS = [
           <div class="type">
             <ComplexType />
           </div>
+          <p class="hero-quote-zh">
+            不坠青云志，常怀赤子心。
+          </p>
 
-          <nav class="links" aria-label="Primary">
-            {LINKS.map((l) => (
-              <a class="chip" href={l.href} target={l.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer">
-                {l.label}
-              </a>
-            ))}
+          <nav class="social" aria-label="External links">
+            <a href="https://github.com/KristieHu" target="_blank" class="icon-link">
+              <Github size={25} />
+              <span class="tooltip">GitHub</span>
+            </a>
+
+            <a href="https://www.linkedin.com/in/kristiehu/" target="_blank" class="icon-link">
+              <Linkedin size={25} />
+              <span class="tooltip">LinkedIn</span>
+            </a>
+
+            <a href="/Kristie-Hu-CV-2026.pdf" class="icon-link">
+              <FileText size={25} />
+              <span class="tooltip">Resume</span>
+            </a>
+
+            <a href="mailto:kristieyet@gmail.com" class="icon-link">
+              <Mail size={25} />
+              <span class="tooltip">Email</span>
+            </a>
           </nav>
-           <p class="hero-quote-zh">
-          不坠青云志，常怀赤子心。
-        </p>
+
+           
         </div>
       </section>
       
@@ -192,6 +209,63 @@ const LINKS = [
         margin: clamp(14px, 2.8vw, 22px) auto;
         background: rgba(15, 23, 42, 0.12);   
       }
+
+
+
+
+
+
+      .social {
+  display: flex;
+  gap: 20px;
+  margin-top: 28px;
+}
+
+/* ICON LINK CONTAINER */
+.icon-link {
+  position: relative;
+  color: #8c97a3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+/* HOVER STATE */
+.icon-link:hover {
+  color: #3a5d90;
+  transform: translateY(-1px);
+}
+
+/* TOOLTIP */
+.tooltip {
+  position: absolute;
+  bottom: -26px;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+
+  font-size: 11px;
+  color: #7d8894;
+  white-space: nowrap;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.18s ease;
+}
+
+/* SHOW ON HOVER */
+.icon-link:hover .tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (hover: none) {
+  .tooltip {
+    display: none;
+  }
+}
+
+
 
 
     </style>

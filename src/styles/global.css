@@ -455,6 +455,10 @@ img, picture, svg, video, canvas {
   width: min(520px, 38vw);
   max-width: 100%;
   height: auto;
+  opacity: 0.95;
+filter: saturate(0.9);
+
+
 }
 
 @media (max-width: 720px) {

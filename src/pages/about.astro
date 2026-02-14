@@ -6,6 +6,8 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import ComplexType from "../components/ComplexType.astro";
 import { Image } from "astro:assets";
 import portrait from "../assets/me_0.png";
+import { Github, Linkedin, FileText, Mail } from "lucide-astro";
+
 
 const NAME = "Kristie Hu 静祎";
 const PRONOUNCE = "/jing-yee hoo/";
@@ -13,7 +15,7 @@ const PRONOUNCE = "/jing-yee hoo/";
 const LINKS = [
   { label: "GitHub", href: "https://github.com/KristieHu" },
   { label: "Linkedin", href: "https://www.linkedin.com/in/kristiehu/" },
-  { label: "Resume", href: "/resume.pdf" },
+  { label: "Resume", href: "/Kristie-Hu-CV-2026.pdf" },
   { label: "Email", href: "mailto:kristieyet@gmail.com" },
 ];
 ---
@@ -49,14 +51,26 @@ const LINKS = [
           <div class="type">
             <ComplexType />
           </div>
+          <p class="hero-quote-zh">
+            不坠青云志，常怀赤子心。
+          </p>
 
-          <nav class="links" aria-label="Primary">
-            {LINKS.map((l) => (
-              <a class="chip" href={l.href} target={l.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer">
-                {l.label}
-              </a>
-            ))}
+          <nav class="social" aria-label="External links">
+            <a href="https://github.com/KristieHu" target="_blank">
+              <Github size={20} />
+            </a>
+            <a href="https://www.linkedin.com/in/kristiehu/" target="_blank">
+              <Linkedin size={20} />
+            </a>
+            <a href="/Kristie-Hu-CV-2026.pdf">
+              <FileText size={20} />
+            </a>
+            <a href="mailto:kristieyet@gmail.com">
+              <Mail size={20} />
+            </a>
           </nav>
+
+
         </div>
       </section>
 
@@ -128,6 +142,38 @@ const LINKS = [
     <Footer />
 
 <style>
+
+  .hero-quote-zh {
+      margin-top: 0.45rem;
+      font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+      letter-spacing: 0.12em;          
+      line-height: 1.6;
+      opacity: 0.78;
+
+      font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+      font-weight: 400;
+    }
+  .social {
+  display: flex;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.social a {
+  color: #9aa3ad;
+  transition: all 0.2s ease;
+}
+
+.social a:hover {
+  color: #5a80b9;
+  transform: translateY(-1px);
+
+
+}
+
+
+
+
   /* small accent line */
   .type {
     margin-top: 0.5rem;
