@@ -32,15 +32,20 @@
   --pad-y: clamp(1rem, 3vw, 2.5rem);
 }
 
-
 main {
   width: 100%;
   max-width: var(--container);
   margin: 0 auto;
   padding: var(--pad-y) var(--pad-x);
   min-height: 100svh;
-  display: block; /* or just remove display entirely */
+  display: block;        /* ✅ 全站 main 用正常文档流 */
 }
+
+main.wrap {
+  display: grid;         /* ✅ 只让首页这种 wrap 继续居中 */
+  place-items: center;
+}
+
 
 
 
