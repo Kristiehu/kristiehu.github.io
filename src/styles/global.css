@@ -38,11 +38,11 @@ main {
   margin: 0 auto;
   padding: var(--pad-y) var(--pad-x);
   min-height: 100svh;
-  display: block;        /* ✅ 全站 main 用正常文档流 */
+  display: block;        
 }
 
 main.wrap {
-  display: grid;         /* ✅ 只让首页这种 wrap 继续居中 */
+  display: grid;      
   place-items: center;
 }
 
