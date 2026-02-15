@@ -32,14 +32,14 @@
   --pad-y: clamp(1rem, 3vw, 2.5rem);
 }
 
+
 main {
   width: 100%;
   max-width: var(--container);
   margin: 0 auto;
   padding: var(--pad-y) var(--pad-x);
   min-height: 100svh;
-  display: grid;
-  place-items: center;
+  display: block; /* or just remove display entirely */
 }
 
 
@@ -115,12 +115,13 @@ body {
 	font-size: 20px;
 	line-height: 1.7;
 }
-main {
-	width: 720px;
-	max-width: calc(100% - 2em);
-	margin: auto;
-	padding: 3em 1em;
+.wrap {
+  width: 720px;
+  max-width: calc(100% - 2em);
+  margin: auto;
+  padding: 3em 1em;
 }
+
 h1,
 h2,
 h3,
@@ -529,37 +530,36 @@ img.portrait,
   }
 }
 
-
-/* .prose, article, main {
-  max-width: 100%;
+/* Force-reset markdown indentation site-wide */
+.prose ul,
+.prose ol {
+  padding-inline-start: 1.2rem !important; /* beats 40px */
+  margin-inline-start: 0 !important;
 }
 
-.prose img,
-.prose svg,
-.prose video,
-.prose canvas {
-  max-width: 100%;
-  height: auto;
+/* Your code blocks are coming from astro/shiki classes */
+.prose pre,
+.prose pre.astro-code,
+.prose .astro-code {
+  padding-left: 1rem !important;  /* beats ~27px */
+  padding-right: 1rem !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 
-.prose * {
-  overflow-wrap: anywhere;
-  word-break: break-word;
+
+ul li:first-child {
+  grid-column: auto !important;
 }
 
-
-.prose pre {
-  max-width: 100%;
-  overflow-x: auto;
+ul li:first-child a {
+  flex-direction: column !important;
 }
 
-.prose h1 {
-  font-size: clamp(2rem, 6vw, 3.5rem);
-  line-height: 1.05;
-  text-wrap: balance;
-} */
-
+ul li:first-child img {
+  aspect-ratio: 16 / 9 !important;
+}
 
 
 

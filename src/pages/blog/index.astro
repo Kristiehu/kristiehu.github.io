@@ -17,11 +17,10 @@ const posts = (await getCollection('blog')).sort(
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
+			
 			*, *::before, *::after { box-sizing: border-box; }
 
-			html, body { width: 100%; max-width: 100%; overflow-x: clip; } /* clip 不行就用 hidden */
-
-						/* Fix invalid CSS */
+			html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
 			h1 { font-weight: 800; }
 
 			main {
@@ -49,8 +48,11 @@ const posts = (await getCollection('blog')).sort(
 			}
 
 			/* Card */
+
+			
 			ul li a {
-			display: grid;
+			display: flex;
+			flex-direction: column;
 			gap: 0.65rem;
 			padding: 0.9rem;
 			border-radius: 16px;
@@ -91,35 +93,13 @@ const posts = (await getCollection('blog')).sort(
 			}
 
 			/* Mobile tweaks */
-			@media (max-width: 520px) {
+			@media (max-width: 720px) {
 			main { padding: 1.75rem 1rem; }
-			ul { gap: 1rem; }
-			ul li a { padding: 0.85rem; }
+			ul { 
+				gap: 1rem;
+				align-items: stretch;
 			}
 
-			ul li:first-child {
-			grid-column: 1 / -1;
-			}
-
-			ul li:first-child img {
-			height: 22rem;
-			}
-
-			ul li:first-child .title {
-			font-size: 2rem;
-			}
-
-
-			ul {
-			align-items: stretch;
-			}
-
-			/* Make the link fill the grid cell */
-			ul li a {
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-			}
 
 			/* Standardize image area */
 			ul li img {
@@ -145,117 +125,11 @@ const posts = (await getCollection('blog')).sort(
 			/* Keep date pinned to bottom for consistent rhythm */
 			.date {
 			margin-top: auto;
-			}
+			}}
 
-
-
-
-
-
-
-			/* main {
-				width: 900px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
 			
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				font-size: 1.5rem;
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
 
-			ul li:first-child {
-			grid-column: 1 / -1;
-			}
 
-			ul li:first-child img {
-			height: 22rem;
-			}
-
-			ul li:first-child .title {
-			font-size: 2rem;
-			}
-
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-
-			p {
-				margin-bottom: 1.25rem;
-			}
-
-			a {
-				font-size: 10rem;
-				color: inherit;
-				text-decoration: none;
-				border-bottom: 1px solid rgba(255, 255, 255, 0.25);
-				transition: border-color 0.2s ease, opacity 0.2s ease;
-			}
-
-			a:hover {
-				border-bottom-color: rgba(255, 0, 0, 0.6);
-				opacity: 1;
-			}
-
-			sup {
-				font-size: 0.7em;
-				vertical-align: super;
-				line-height: 0;
-			}
-
-			sup a {
-				opacity: 0.65;
-			}
-
-			sup a:hover {
-				opacity: 1;
-			}
-
-			@media (max-width: 640px) {
-				.section.prose {
-				font-size: 1rem;
-				line-height: 1.7;
-				}
-			}} */
 			
 		</style>
 	</head>

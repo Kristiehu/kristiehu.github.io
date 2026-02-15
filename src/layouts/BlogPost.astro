@@ -15,10 +15,15 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
-			/* Stop mobile horizontal overflow */
+		html, body {
+		width: 100%;
+		margin: 0;
+		overflow-x: hidden;
+		}
+
+		/* Stop mobile horizontal overflow */
 		*, *::before, *::after { box-sizing: border-box; }
 
-		html, body { width: 100%; max-width: 100%; overflow-x: clip; } /* clip 不行就用 hidden */
 
 					/* Fix invalid CSS */
 		h1 { font-weight: 800; }
@@ -92,62 +97,9 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		overflow-x: auto;
 		}
 
+		/* --- Fix Astro prose default left shift --- */
 
 
-
-
-
-
-			/* main {
-			width: 100%;
-			max-width: var(--container);
-			margin: 0 auto;
-			padding: var(--pad-y) var(--pad-x);
-			min-height: 100svh;
-
-
-			display: block;
-			}
-
-			article {
-			width: 100%;
-			}
-
-			.hero-image {
-			width: 100%;
-			margin: 0 0 1.5rem 0;
-			}
-
-
-			.hero-image :global(img) {
-			width: 100%;
-			max-width: 100%;
-			height: auto;
-			display: block;
-			}
-
-
-			.prose {
-			width: 100%;
-			}
-
-			.prose :global(img),
-			.prose :global(svg),
-			.prose :global(video),
-			.prose :global(canvas) {
-			max-width: 100%;
-			height: auto;
-			}
-
-			.prose :global(pre) {
-			overflow-x: auto;
-			}
-
-			.prose :global(table) {
-			display: block;
-			overflow-x: auto;
-			max-width: 100%;
-			} */
 
 	
 		</style>
