@@ -27,7 +27,7 @@ This project documents the design and implementation of a web-based geospatial d
 - Automated ETL pipelines for continuous data updates
 
 
-
+<div style={{ height: "2rem" }} />
 ## Challenges
 
 
@@ -44,17 +44,17 @@ Planners needed to answer critical operational questions:
 2. Where should infrastructure investment be prioritized?
 3. How do capacity constraints evolve spatially over time?
 
-Traditional static reporting workflows could not support these requirements due to: 
+{/* Traditional static reporting workflows could not support these requirements due to: 
 - Long reporting cycles; 
 - Limited interactivity; 
 - Difficult cross-layer analysis; 
-- High manual effort.
+- High manual effort. */}
 
 
-
+<div style={{ height: "2rem" }} />
 ## Architecture Overview
 
-![](./img/p7_1.png)
+![](./img/p7_12.png)
 The system was designed as a lightweight yet scalable spatial analytics architecture capable of supporting continuous infrastructure monitoring. Key components include:
 
 
@@ -67,6 +67,7 @@ The system was designed as a lightweight yet scalable spatial analytics architec
 4. **Frontend Visualization**: Leaflet.js renders interactive map layers; Dynamic styling reflects capacity conditions.
 
 
+<div style={{ height: "2rem" }} />
 ## Dashboard System Overview
 
 This project consists of three integrated dashboards designed to support infrastructure monitoring, operational analytics, and capacity planning across the fiber network ecosystem:
@@ -83,6 +84,7 @@ Offers detailed, entity-level inspection capabilities, enabling interactive quer
 Together, these dashboards form a scalable decision-support system that bridges high-level spatial intelligence with granular operational data insights.
 
 
+<div style={{ height: "2rem" }} />
 ## Key Features & Functionality
 
 This interface provides a real-time overview of network utilization across city infrastructure. Planners can quickly identify high-load corridors through intuitive color-coded capacity indicators.
@@ -115,6 +117,8 @@ A heatmap layer visualizes spatial patterns of infrastructure demand, highlighti
 
 Individual facilities can be examined within their geographic surroundings, improving spatial situational awareness for operational teams.
 
+
+<div style={{ height: "2rem" }} />
 ## Key Engineering Insights
 
 Building this system changed how I think about spatial data work.
