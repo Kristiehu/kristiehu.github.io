@@ -20,9 +20,9 @@ const { title, description, image } = Astro.props as Props;
 // - Otherwise fall back to a stable public asset (no bundler import)
 const ogUrl = image?.src
   ? new URL(image.src, Astro.url)
-  : new URL('/og-default.jpg', Astro.site ?? Astro.url);
+  : new URL('/og-new.png', Astro.site ?? Astro.url);
 
-const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
+const pageTitle = title && title !== SITE_TITLE ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
 ---
 
 <meta charset="utf-8" />
@@ -45,6 +45,9 @@ const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
 
 <link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin />
 <link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin />
+
+<!-- 🌍 Icon -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>" />
 
 <link rel="canonical" href={canonicalURL} />
 
