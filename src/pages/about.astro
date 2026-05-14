@@ -56,17 +56,24 @@ const LINKS = [
           </p>
 
           <nav class="social" aria-label="External links">
-            <a href="https://github.com/KristieHu" target="_blank">
-              <Github size={20} />
+            <a href="https://github.com/KristieHu" target="_blank" rel="noopener noreferrer" class="icon-link">
+              <Github size={25} />
+              <span class="tooltip">GitHub</span>
             </a>
-            <a href="https://www.linkedin.com/in/kristiehu/" target="_blank">
-              <Linkedin size={20} />
+          
+            <a href="https://www.linkedin.com/in/kristiehu/" target="_blank" rel="noopener noreferrer" class="icon-link">
+              <Linkedin size={25} />
+              <span class="tooltip">LinkedIn</span>
             </a>
-            <a href="/Kristie-Hu-CV-2026.pdf">
-              <FileText size={20} />
+          
+            <a href="/CV-2026.pdf" class="icon-link">
+              <FileText size={25} />
+              <span class="tooltip">Resume</span>
             </a>
-            <a href="mailto:kristieyet@gmail.com">
-              <Mail size={20} />
+          
+            <a href="mailto:kristieyet@gmail.com" class="icon-link">
+              <Mail size={25} />
+              <span class="tooltip">Email</span>
             </a>
           </nav>
 
@@ -143,6 +150,43 @@ const LINKS = [
 
 <style>
 
+/* ICON LINK CONTAINER */
+.icon-link {
+  position: relative;
+  color: #8c97a3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+/* HOVER STATE */
+.icon-link:hover {
+  color: #3a5d90;
+  transform: translateY(-1px);
+}
+
+.icon-link:hover .tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* TOOLTIP */
+.tooltip {
+  position: absolute;
+  bottom: -26px;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+
+  font-size: 11px;
+  color: #7d8894;
+  white-space: nowrap;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.18s ease;
+}
+
   .hero-quote-zh {
       margin-top: 0.45rem;
       font-size: clamp(1.05rem, 1.4vw, 1.2rem);
@@ -158,20 +202,6 @@ const LINKS = [
   gap: 18px;
   margin-top: 20px;
 }
-
-.social a {
-  color: #9aa3ad;
-  transition: all 0.2s ease;
-}
-
-.social a:hover {
-  color: #5a80b9;
-  transform: translateY(-1px);
-
-
-}
-
-
 
 
   /* small accent line */
