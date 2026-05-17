@@ -247,6 +247,28 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 	border-radius: 14px;
 	background: rgba(0,0,0,0.03);
 	}
+
+	.t-top{
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+	}
+
+	.t-title{
+	font-size: 1rem;
+	font-weight: 600;
+	letter-spacing: -0.005em;
+	}
+
+	.t-desc{
+	margin: 0.45rem 0 0;
+	font-size: 0.95rem;
+	line-height: 1.55;
+	opacity: 0.85;
+	}
+
 	.t-meta {
 	font-size: 0.8rem;
 	color: #6b7280;
@@ -483,16 +505,6 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 		.course-item{ grid-template-columns: 1fr; }
 		.course-meta{ justify-content:flex-start; }
 		}
-
-		main {
-			width: 100%;
-			max-width: 1100px;
-			margin: 0 auto;
-			padding: 2.5rem 1rem;
-			box-sizing: border-box; /* double-safe */
-			}
-
-
     </style>
   </body>
 </html>
