@@ -15,15 +15,11 @@ import HeaderLink from './HeaderLink.astro';
     </button>
 
 
-<div class="internal-links" id="site-menu">
+    <div class="internal-links" id="site-menu">
       <HeaderLink href="/">Home</HeaderLink>
-      <HeaderLink href="/blog">Lab</HeaderLink>
-      <HeaderLink href="/teaching">Teaching</HeaderLink>
+      <HeaderLink href="/blog">Recent Work</HeaderLink>
+      <HeaderLink href="/teaching">Teaching & Service</HeaderLink>
       <HeaderLink href="/about">About</HeaderLink>
-    </div>
-
-    <div class="social-links">
-      {Astro.slots.default}
     </div>
   </nav>
 </header>
@@ -119,10 +115,6 @@ const menu = header?.querySelector('#site-menu');
   opacity: 0.75;
   text-decoration: none;
 }
-.social-links,
-.social-links a {
-  display: flex;
-}
 
 
 
@@ -145,6 +137,8 @@ const menu = header?.querySelector('#site-menu');
     display: inline-flex;
     align-items: center;
     gap: 0.55rem;
+    position: relative;
+    z-index: 10001;
     padding: 0.50rem 0.85rem;
     border-radius: 999px;
 
@@ -219,15 +213,17 @@ const menu = header?.querySelector('#site-menu');
   .internal-links{ display: none; }
 
   /* ===== DROPDOWN ===== */
+  /* fixed 锁死在视口右上，不跟着 nav 跑 */
   .internal-links.is-open{
     display: flex;
-    position: absolute;
-    right: 12px;
-    top: 54px;
+    position: fixed;
+    right: 14px;
+    top: 68px; /* header 下方 */
     flex-direction: column;
     gap: 0.3rem;
 
-    min-width: 210px;
+    width: min(92vw, 320px); /* 防止太宽探出屏幕 */
+    box-sizing: border-box;
     padding: 0.55rem;
 
     background: rgba(248, 251, 255, 0.92);
@@ -255,6 +251,7 @@ const menu = header?.querySelector('#site-menu');
     align-items: center;
 
     width: 100%;
+    box-sizing: border-box;
     padding: 0.72rem 0.95rem 0.72rem 1.05rem;
 
     border-radius: 12px;
@@ -295,30 +292,6 @@ const menu = header?.querySelector('#site-menu');
     border-bottom: none !important;
   }
 
-  /* social links hidden on mobile (keep your behavior) */
-  .social-links{ display: none; }
-}
-
- .menu-btn{ position: relative; z-index: 10001; }
-
-  /* dropdown 不再跟着 nav 跑，用 fixed 锁死在视口右上 */
-  .internal-links.is-open{
-    position: fixed !important;
-    right: 14px !important;
-    top: 68px !important; /* 让它在 header 下方 */
-    left: auto !important;
-
-    width: min(92vw, 320px) !important;  /* 防止太宽导致“探出屏幕” */
-    max-width: 320px !important;
-
-    box-sizing: border-box;
-  }
-
-  /* 避免每个 item 被拉成一整块大阴影 */
-  .internal-links.is-open a{
-    width: 100%;
-    box-sizing: border-box;
-  }
 }
 
 
