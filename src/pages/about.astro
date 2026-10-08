@@ -2,309 +2,360 @@
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
-import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
-import ComplexType from "../components/ComplexType.astro";
-import { Image } from "astro:assets";
-import portrait from "../assets/me_0.png";
-import { Github, Linkedin, FileText, Mail } from "lucide-astro";
+import PointPortrait from "../components/PointPortrait.astro";
+import { Github, Linkedin, Satellite, Mail } from "lucide-astro";
+import PubList from "../components/PubList.astro";
+import { PROFILE, EDUCATION, EXPERIENCE, PUBLICATIONS, AWARDS, TRAINING } from "../data/profile";
 
+// Facts live in src/data/profile.ts; this page only lays them out.
 
-const NAME = "Kristie Hu 静祎";
-const PRONOUNCE = "/jing-yee hoo/";
-
-const LINKS = [
-  { label: "GitHub", href: "https://github.com/KristieHu" },
-  { label: "Linkedin", href: "https://www.linkedin.com/in/kristiehu/" },
-  { label: "Resume", href: "/CV-2026.pdf" },
-  { label: "Email", href: "mailto:kristieyet@gmail.com" },
-];
+const DESCRIPTION =
+  "About Kristie Hu: PhD student at the University of Waterloo (GIM Lab) working on Earth-observation foundation models, LiDAR point clouds and production geospatial data systems.";
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title="About" description={SITE_DESCRIPTION} />
+    <BaseHead title="About" description={DESCRIPTION} />
   </head>
 
   <body>
     <Header />
 
-    <main class="wrap">
+    <main class="about">
       <!-- HERO -->
       <section class="hero">
-        <Image
-			src={portrait}
-			alt="Kristie Hu portrait"
-			width={200}
-			height={200}
-			sizes="200px"
-			widths={[200, 400]}
-			quality={95}
-			class="portrait"
-			/>
+        <PointPortrait width={120} />
 
         <div class="heroText">
-          <h1 class="name">
-            About Me
+          <p class="kicker">About</p>
+          <h1 class="page-title name">
+            {PROFILE.name} <span class="zh">{PROFILE.nameZh}</span>
           </h1>
-
-          <div class="type">
-            <ComplexType />
-          </div>
-          <p class="hero-quote-zh">
-            不坠青云志，常怀赤子心。
-          </p>
+          <p class="pronounce">{PROFILE.pronounce}</p>
+          <ul class="identity">
+            {
+              PROFILE.identity.map((x) => (
+                <li>{x.role}&nbsp;<span class="sep">·</span> <a href={x.href} target="_blank" rel="noopener noreferrer">{x.org}</a></li>
+              ))
+            }
+          </ul>
 
           <nav class="social" aria-label="External links">
-            <a href="https://github.com/KristieHu" target="_blank" rel="noopener noreferrer" class="icon-link">
-              <Github size={25} />
+            <a href={PROFILE.links.github} target="_blank" rel="noopener noreferrer" class="icon-link">
+              <Github size={24} />
               <span class="tooltip">GitHub</span>
             </a>
-          
-            <a href="https://www.linkedin.com/in/kristiehu/" target="_blank" rel="noopener noreferrer" class="icon-link">
-              <Linkedin size={25} />
+            <a href={PROFILE.links.linkedin} target="_blank" rel="noopener noreferrer" class="icon-link">
+              <Linkedin size={24} />
               <span class="tooltip">LinkedIn</span>
             </a>
-          
-            <a href="/CV-2026.pdf" class="icon-link">
-              <FileText size={25} />
-              <span class="tooltip">Resume</span>
+            <a href={PROFILE.links.lab} target="_blank" rel="noopener noreferrer" class="icon-link">
+              <Satellite size={24} />
+              <span class="tooltip">GIM Lab</span>
             </a>
-          
-            <a href="mailto:kristieyet@gmail.com" class="icon-link">
-              <Mail size={25} />
+            <a href={PROFILE.links.email} class="icon-link">
+              <Mail size={24} />
               <span class="tooltip">Email</span>
             </a>
           </nav>
-
-
         </div>
       </section>
 
       <!-- BIO -->
-      <section class="section prose">
-       <p>
-        I’m a <strong>Data Analyst</strong> and <strong>System Design Engineer</strong> with a research-driven mindset in LiDAR,
-        hyperspectral remote sensing, and applied machine learning—biased toward systems that scale, ship, and stay useful.
-      </p>
-
-      <p>
-        I earned both my <strong>BES</strong> and <strong>MSc (Honours) in Geospatial Data Science</strong> at the
-        <a href="https://uwaterloo.ca">University of Waterloo</a>. At the <a href="https://uwaterloo.ca/geospatial-intelligence/">
-          Geospatial Intelligence and Mapping (GIM) Lab</a>, I defended my master’s thesis
-        <a href="https://uwspace.uwaterloo.ca/items/dcb172d9-cec1-487b-8b18-1226c0156061">
-          <em>Semantic Modelling of an Indoor Parking Garage Using Hand-held GeoSLAM LiDAR Point Clouds</em>
-        </a>,
-        focused on high-definition indoor digital twins in GNSS-denied environments, combining LiDAR-based SLAM,
-        semantic segmentation, and surface reconstruction to produce accurate, navigable 3D indoor models.
-      </p>
-
-      <p>
-        After graduation, I joined the
-        <a href="https://vip.uwaterloo.ca/">Vision and Image Processing Lab (VIP Lab)</a>
-        as a full-time Research Associate, working on hyperspectral remote sensing and applied ML.
-        My work included PRISMA-based vegetation and crop mapping and deep-learning object detection for Arctic imagery,
-        bridging spectral modeling with real-world data constraints.
-      </p>
-
-      <p>
-        In industry, I design and deliver automated geospatial ETL pipelines for fiber systems.
-        I build Bash- and Python-based frameworks that turn unstructured and manual reporting into reliable, repeatable pipelines—cutting
-        turnaround time by ~75%. My scope spans full-lifecycle ETL, PostGIS data modeling, internal analytics tooling,
-        lightweight API prototypes, and production documentation built to scale beyond a single contributor.
-      </p>
-
-      <p>
-        My interests converge on LiDAR point-cloud processing, digital twins, multi-modal fusion in structured indoor and unstructured outdoor scenes, 
-        and pragmatic machine learning deployed in production geospatial systems—where both robustness and novelty matter.
-      </p>
-
+      <section class="bio">
+        <p>
+          I’m a PhD student in Civil and Environmental Engineering at the University of Waterloo, working in the
+          <a href="https://uwaterloo.ca/geospatial-intelligence/">Geospatial Intelligence and Mapping (GIM) Lab</a>.
+          I study what Earth-observation foundation models learn from satellite data and how well that knowledge
+          carries over to new regions and sensors, especially when few labels are available. I also explore how
+          spectral and 3D data can work together beyond simply stacking their features. Much of this work involves
+          close collaboration with
+          <a href="https://research.aalto.fi/en/persons/kyle-gao/">Dr. Kyle Gao</a> at Aalto University and the TESSERA team at the University of
+          Cambridge, and runs on computing resources from
+          <a href="https://csc.fi/en/">CSC</a>, the Finnish IT Center for Science.
+        </p>
+        <p>
+          These questions grew out of projects that kept running into messy data: modelling a GNSS-denied parking garage
+          from handheld LiDAR for my MSc, mapping crops with PRISMA hyperspectral imagery and detecting Arctic seals at the
+          <a href="https://vip.uwaterloo.ca/">Vision and Image Processing Lab</a>, and measuring methane plumes over a
+          mountain coal mine.
+        </p>
+        <p>
+          Alongside research, I work full-time at Beanfield Metroconnect, building the automated geospatial pipelines and
+          internal tools behind a Toronto fibre network: 450+ files a month, with capacity reporting time cut by 75%. That
+          job keeps my research honest. I care most about methods that are not only new but robust, repeatable and useful
+          at scale. <a href="/blog">See the work<span class="arr" aria-hidden="true">→</span></a>
+        </p>
       </section>
 
-	  <!-- FOOTER NOTE -->
-	  <!-- <sup id="fnref-1"><a href="#fn-2" aria-describedby="footnote-label">[3]</a></sup> -->
-	  <!-- <section class="footnotes">
-    <h2 id="footnote-label" class="sr-only">Footnotes</h2>
-    <ol>		
-		<li id="fn-1">
-			University of Waterloo, Geomatics - 
-			<a href="https://uwaterloo.ca/geospatial-intelligence/" target="_blank" rel="noopener noreferrer">Geospatial Intelligence & Mapping Lab</a>
-            <a href="#fnref-2" class="footnote-back">↩</a>
-		</li>
-		<li id="fn-2">
-			University of Waterloo, System Design Engineering - 
-			<a href="https://vip.uwaterloo.ca/" target="_blank" rel="noopener noreferrer">Vision & Image Processing Lab</a>
-            <a href="#fnref-2" class="footnote-back">↩</a>
-		</li>
-		<li id="fn-3">
-			Liberty Village, Telecom, Utilities & Infrustructure  - 
-			<a href="https://www.beanfield.com/en/tor/about-us" target="_blank" rel="noopener noreferrer">Beanfield Metroconnect</a>
-            <a href="#fnref-2" class="footnote-back">↩</a>
-		</li> -->
-		
-		
-    </ol>
-	</section>
+      <!-- EDUCATION -->
+      <section class="block" id="education">
+        <h2 class="section-title">Education</h2>
+        <ul class="cv">
+          {
+            EDUCATION.map((e) => (
+              <li>
+                <div class="cv-main">
+                  <span class="cv-title">{e.title}</span>
+                  <span class="cv-org">{e.org}</span>
+                  {e.note && (
+                    <span class="cv-note">
+                      {e.href ? <a href={e.href} target="_blank" rel="noopener noreferrer">{e.note}</a> : e.note}
+                    </span>
+                  )}
+                </div>
+                <span class="cv-dates">{e.dates}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <!-- EXPERIENCE -->
+      <section class="block" id="experience">
+        <h2 class="section-title">Experience</h2>
+        <ul class="cv">
+          {
+            EXPERIENCE.map((e) => (
+              <li>
+                <div class="cv-main">
+                  <span class="cv-title">{e.title}</span>
+                  <span class="cv-org">{e.org}</span>
+                  {e.note && <span class="cv-note">{e.note}</span>}
+                </div>
+                <span class="cv-dates">{e.dates}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <!-- PUBLICATIONS -->
+      <section class="block" id="publications">
+        <h2 class="section-title">Publications</h2>
+        {
+          PUBLICATIONS.map((g) => (
+            <div class="pub-group">
+              <h3>{g.group}</h3>
+              <PubList items={g.items} />
+            </div>
+          ))
+        }
+      </section>
+
+      <!-- AWARDS + TRAINING -->
+      <section class="block two-col">
+        <div>
+          <h2 class="section-title">Awards</h2>
+          <ul class="simple">
+            {AWARDS.map((a) => <li><span>{a.title}</span><span class="cv-dates">{a.dates}</span></li>)}
+          </ul>
+        </div>
+        <div>
+          <h2 class="section-title">Training &amp; certifications</h2>
+          <ul class="simple">
+            {
+              TRAINING.map((t) => (
+                <li>
+                  <span>
+                    {t.href ? <a href={t.href} target="_blank" rel="noopener noreferrer">{t.title}</a> : t.title}
+                    <span class="cv-org"> · {t.org}</span>
+                  </span>
+                  <span class="cv-dates">{t.dates}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </section>
+
+      <p class="more">
+        Leadership, service and teaching are on <a href="/teaching">Teaching &amp; Service</a>.
+      </p>
+      <p class="motto">{PROFILE.motto}</p>
     </main>
+
     <Footer />
 
-<style>
+    <style>
+      .about {
+        display: block;
+        box-sizing: border-box; /* the global main rule adds padding to a 100% width */
+        --col: 760px;
+      }
 
-/* ICON LINK CONTAINER */
-.icon-link {
-  position: relative;
-  color: #8c97a3;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s ease, transform 0.2s ease;
-}
+      /* ===== Hero ===== */
+      /* name: the shared page-title face (global .page-title) */
+      .name {
+        margin: 0.5rem 0 0;
+        font-size: clamp(2.1rem, 4vw, 2.8rem);
+      }
+      .pronounce {
+        margin: 0.3rem 0 0.7rem;
+        font: italic 400 0.98rem var(--font-display);
+        letter-spacing: 0;
+        color: rgb(var(--gray));
+      }
+      /* Roles in neutral grey; the place names are the links (site-wide link style) */
+      .identity {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 0.3rem;
+        font-size: 0.95rem;
+        line-height: 1.45;
+        color: rgba(var(--ink), 0.55);
+      }
+      .identity .sep {
+        color: rgba(var(--ink), 0.3);
+      }
+      .identity a {
+        white-space: nowrap; /* on a phone a place name moves to the next line whole */
+      }
+      .social {
+        display: flex;
+        gap: 18px;
+        margin-top: 18px;
+      }
+      .icon-link {
+        position: relative;
+        color: #8c97a3;
+        display: inline-flex;
+        transition: color 0.2s ease, transform 0.2s ease;
+      }
+      .icon-link:hover {
+        color: var(--blue);
+        transform: translateY(-1px);
+      }
+      .tooltip {
+        position: absolute;
+        bottom: -24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(6px);
+        font-size: 11px;
+        color: #7d8894;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.18s ease;
+      }
+      .icon-link:hover .tooltip {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      @media (hover: none) {
+        .tooltip {
+          display: none;
+        }
+      }
 
-/* HOVER STATE */
-.icon-link:hover {
-  color: #3a5d90;
-  transform: translateY(-1px);
-}
+      /* ===== Bio ===== */
+      .bio {
+        max-width: var(--col);
+        margin: 2.2rem auto 0;
+        font-size: 1.02rem;
+        line-height: 1.75;
+        color: rgba(var(--ink), 0.86);
+      }
+      .bio p {
+        margin: 0 0 1.1rem;
+      }
+      /* .bio, .cv-note and .more links use the site-wide text-link style (global.css) */
 
-.icon-link:hover .tooltip {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
+      /* ===== Sections ===== */
+      .block {
+        max-width: var(--col);
+        margin: 2.4rem auto 0;
+      }
+      .block h3 {
+        font-size: 0.95rem;
+        margin: 1.1rem 0 0.4rem;
+        color: rgba(var(--ink), 0.7);
+      }
 
-/* TOOLTIP */
-.tooltip {
-  position: absolute;
-  bottom: -26px;
-  left: 50%;
-  transform: translateX(-50%) translateY(6px);
+      .cv {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 0.9rem;
+      }
+      .cv li {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 1rem;
+        align-items: baseline;
+      }
+      .cv-main {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .cv-title {
+        font-weight: 700;
+        font-size: 0.98rem;
+      }
+      .cv-org {
+        font-size: 0.92rem;
+        color: rgba(var(--ink), 0.7);
+      }
+      .cv-note {
+        font-size: 0.86rem;
+        color: rgba(var(--ink), 0.6);
+        line-height: 1.5;
+      }
+      .cv-dates {
+        font-size: 0.84rem;
+        color: rgb(var(--gray));
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
 
-  font-size: 11px;
-  color: #7d8894;
-  white-space: nowrap;
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+      .simple {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 0.55rem;
+        font-size: 0.9rem;
+      }
+      .simple li {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.75rem;
+        align-items: baseline;
+      }
 
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.18s ease;
-}
+      .more {
+        max-width: var(--col);
+        margin: 2.4rem auto 0;
+        font-size: 0.95rem;
+      }
+      .motto {
+        margin: 2.4rem auto 0;
+        text-align: center;
+        font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+        letter-spacing: 0.12em;
+        opacity: 0.6;
+      }
 
-  .hero-quote-zh {
-      margin-top: 0.45rem;
-      font-size: clamp(1.05rem, 1.4vw, 1.2rem);
-      letter-spacing: 0.12em;          
-      line-height: 1.6;
-      opacity: 0.78;
-
-      font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
-      font-weight: 400;
-    }
-  .social {
-  display: flex;
-  gap: 18px;
-  margin-top: 20px;
-}
-
-
-  /* small accent line */
-  .type {
-    margin-top: 0.5rem;
-    color: #3A5F8F;
-  }
-
-  
-  /* Links chips */
-  .links { margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
-  .chip {
-    position: relative;
-    padding: 0.4rem 0.85rem;
-    border-radius: 999px;
-    font-size: 0.92rem;
-    font-weight: 500;
-    text-decoration: none;
-    color: var(--black, #111);
-    border: 1px solid rgba(0,0,0,0.25);
-    background: transparent;
-    transition:
-      background-color 160ms ease,
-      color 160ms ease,
-      border-color 160ms ease,
-      transform 120ms ease;
-
-	padding: 0.42rem 0.9rem;
-      border-radius: 12px;          
-      font-size: 0.92rem;
-      font-weight: 500;
-
-      border: 1px solid rgba(58, 58, 58, 0.25);
-      background: transparent;
-      color: #111;
-  }
-  .chip:hover {
-    background: rgba(58, 95, 143, 0.08);
-    border-color: rgba(58, 95, 143, 0.25);
-    transform: translateY(-3px);
-  }
-  .chip:active { transform: translateY(0); }
-
-  /* ===== Content ===== */
-  .section { margin-top: 2.4rem; }
-
-  .section.prose {
-    max-width: 68ch;
-    margin: 0 auto;
-    font-size: 1.05rem;
-    line-height: 1.75;
-    color: rgba(0, 0, 0, 0.88);
-  }
-
-  .section.prose p { margin-bottom: 1.25rem; }
-
-  .section.prose a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
-    transition: border-color 0.2s ease, opacity 0.2s ease;
-  }
-  .section.prose a:hover {
-    border-bottom-color: rgba(255, 0, 0, 0.6);
-    opacity: 1;
-  }
-
-  sup a {
-    text-decoration: none;
-    font-size: 0.75em;
-    opacity: 0.7;
-  }
-  sup a:hover { opacity: 1; }
-
-  /* Footnotes */
-  .footnotes {
-    margin-top: 2rem;
-    font-size: 0.9rem;
-    opacity: 0.75;
-  }
-  .footnotes ol { padding-left: 1.25rem; }
-  .footnotes li { margin-bottom: 0.5rem; }
-  .footnote-back {
-    margin-left: 0.5rem;
-    text-decoration: none;
-    opacity: 0.6;
-  }
-  .footnote-back:hover { opacity: 1; }
-
-  /* screen-reader only */
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-</style>
-
+      @media (max-width: 720px) {
+        .two-col {
+          grid-template-columns: 1fr;
+          gap: 1.4rem;
+        }
+        .cv li {
+          grid-template-columns: 1fr;
+          gap: 0.15rem;
+        }
+      }
+    </style>
   </body>
 </html>

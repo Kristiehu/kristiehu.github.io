@@ -1,161 +1,129 @@
 ---
-import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
+// Lab: every project as a card. Each card carries its main tag (one of three directions,
+// `direction:` in the post's frontmatter); the chips filter by it via /blog/<direction>/.
+// Posts without a direction are listed under "Earlier projects".
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import LabNav from '../../components/LabNav.astro';
+import PostCard from '../../components/PostCard.astro';
+import { DIRECTIONS } from '../../data/directions';
+import { getPosts } from '../../lib/posts';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const posts = await getPosts(); // newest first; drafts only in `npm run dev`
+const work = posts.filter((p) => p.data.direction);
+const earlier = posts.filter((p) => !p.data.direction);
+const counts = Object.fromEntries(DIRECTIONS.map((d) => [d.id, work.filter((p) => p.data.direction === d.id).length]));
+
+const DESCRIPTION =
+	'Kristie Hu’s projects and papers: LiDAR point clouds and 3D scenes, Earth-observation AI, and production spatial data systems.';
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title="Research & Work" description={SITE_DESCRIPTION} />
-		<style>
-			
-			*, *::before, *::after { box-sizing: border-box; }
-
-			html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
-			h1 { font-weight: 800; }
-
-			main {
-			width: 100%;
-			max-width: 1100px;
-			margin: 0 auto;
-			padding: 2.5rem 1rem;
-			box-sizing: border-box; /* double-safe */
-			}
-			
-
-			section.prose {
-			width: 100%;
-			}
-
-			/* Card grid */
-			ul {
-			list-style: none;
-			margin: 0;
-			padding: 0;
-
-			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-			gap: 1.25rem;
-			}
-
-			/* Card */
-
-			
-			ul li a {
-			display: flex;
-			flex-direction: column;
-			gap: 0.65rem;
-			padding: 0.9rem;
-			border-radius: 16px;
-			border: 1px solid rgba(0,0,0,0.08);
-			background: rgba(255,255,255,0.9);
-			text-decoration: none;
-			transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-			}
-
-			ul li a:hover {
-			transform: translateY(-2px);
-			box-shadow: 0 10px 30px rgba(0,0,0,0.10);
-			border-color: rgba(0,0,0,0.18);
-			}
-
-			/* Image */
-			ul li img {
-			width: 100%;
-			height: auto;
-			display: block;
-			border-radius: 12px;
-			aspect-ratio: 16 / 9;
-			object-fit: cover;
-			}
-
-			/* Text */
-			.title {
-			margin: 0;
-			font-size: 1.05rem;
-			line-height: 1.25;
-			color: rgb(var(--black));
-			}
-
-			.date {
-			margin: 0;
-			font-size: 0.9rem;
-			color: rgb(var(--gray));
-			}
-
-			/* Mobile tweaks */
-			@media (max-width: 720px) {
-			main { padding: 1.75rem 1rem; }
-			ul { 
-				gap: 1rem;
-				align-items: stretch;
-			}
-
-
-			/* Standardize image area */
-			ul li img {
-			width: 100%;
-			aspect-ratio: 16 / 9;   /* consistent */
-			object-fit: cover;      /* crop nicely */
-			display: block;
-			border-radius: 12px;
-			flex: 0 0 auto;
-			}
-
-			/* Standardize text area */
-			.title {
-			margin: 0;
-			flex: 0 0 auto;
-
-			display: -webkit-box;
-			-webkit-line-clamp: 3;  /* pick 2 or 3 */
-			-webkit-box-orient: vertical;
-			overflow: hidden;
-			}
-
-			/* Keep date pinned to bottom for consistent rhythm */
-			.date {
-			margin-top: auto;
-			}}
-
-			
-
-
-			
-		</style>
+		<BaseHead title="Work" description={DESCRIPTION} />
 	</head>
 	<body>
 		<Header />
-		<main>
-			<section class='prose'>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
+		<main class="lab">
+			<header class="lab-head">
+				<p class="kicker">Work</p>
+				<h1 class="page-title">Projects, papers and tools</h1>
+				<p class="lede">
+					A collection of my research and applied work. Explore all projects below, or choose a research area to browse.
+				</p>
+				<LabNav counts={counts} />
+			</header>
+
+			<ul class="cards">
+				{
+					work.map((post) => (
+						<li>
+							<PostCard post={post} />
+						</li>
+					))
+				}
+			</ul>
+
+			{
+				earlier.length > 0 && (
+					<section class="earlier" id="earlier">
+						<h2 class="section-title">Earlier projects</h2>
+						<ul>
+							{earlier.map((p) => (
+								<li>
+									<a href={`/blog/${p.id}/`}>{p.data.short ?? p.data.title}</a>
+									<span class="yr">{p.data.pubDate.getUTCFullYear()}</span>
+								</li>
+							))}
+						</ul>
+					</section>
+				)
+			}
 		</main>
 		<Footer />
+
+		<style>
+			.lab {
+				box-sizing: border-box; /* the global main rule adds padding to a 100% width */
+				width: min(100%, 1100px);
+				max-width: none; /* global.css caps main at --container */
+				padding: 2.75rem 1.25rem 3.5rem;
+			}
+
+			.lab-head .lede {
+				margin-bottom: 1.3rem;
+			}
+			.cards {
+				list-style: none;
+				margin: 2rem 0 0;
+				padding: 0;
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+				gap: 1.25rem;
+			}
+
+			.earlier {
+				margin-top: 3.4rem;
+				max-width: 44rem;
+			}
+			.earlier ul {
+				list-style: none;
+				margin: 0.9rem 0 0;
+				padding: 0;
+			}
+			.earlier li {
+				display: flex;
+				justify-content: space-between;
+				align-items: baseline;
+				gap: 0.75rem;
+				padding: 0.45rem 0;
+				border-top: 1px solid rgba(var(--ink), 0.08);
+				font-size: 0.9rem;
+			}
+			.earlier a {
+				color: rgba(var(--ink), 0.7);
+				text-decoration: none;
+				overflow-wrap: normal;
+			}
+			.earlier a:hover {
+				color: var(--blue);
+				text-decoration: underline;
+				text-underline-offset: 3px;
+			}
+			.yr {
+				flex: none;
+				font-size: 0.8rem;
+				color: rgb(var(--gray));
+				font-variant-numeric: tabular-nums;
+			}
+
+			@media (max-width: 720px) {
+				.lab {
+					padding: 2.25rem 1rem 3rem;
+				}
+			}
+		</style>
 	</body>
 </html>

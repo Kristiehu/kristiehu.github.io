@@ -1,0 +1,154 @@
+---
+// One Lab direction: /blog/lidar/, /blog/earth-observation/, /blog/data-systems/.
+// Text and cover: src/data/directions.ts. Posts: `direction:` in frontmatter. Papers: `direction` in profile.ts.
+import BaseHead from '../../components/BaseHead.astro';
+import DirectionCover from '../../components/DirectionCover.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import InlineLinks from '../../components/InlineLinks.astro';
+import LabNav from '../../components/LabNav.astro';
+import PostCard from '../../components/PostCard.astro';
+import PubList from '../../components/PubList.astro';
+import { DIRECTIONS, type Direction } from '../../data/directions';
+import { PUBLICATIONS } from '../../data/profile';
+import { getPosts } from '../../lib/posts';
+
+export function getStaticPaths() {
+	return DIRECTIONS.map((d) => ({ params: { direction: d.id }, props: { d } }));
+}
+
+const { d } = Astro.props as { d: Direction };
+const posts = (await getPosts()).filter((p) => p.data.direction === d.id);
+const papers = PUBLICATIONS.flatMap((g) => g.items).filter((p) => p.direction === d.id);
+const i = DIRECTIONS.findIndex((x) => x.id === d.id);
+const prev = DIRECTIONS[i - 1];
+const next = DIRECTIONS[i + 1];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`${d.title} · Work`} description={`${d.line} Projects and papers by Kristie Hu.`} />
+	</head>
+	<body>
+		<Header />
+		<main class="dirpage">
+			<LabNav current={d.id} />
+
+			<section class="dir-hero">
+				<div class="hero-text">
+					<h1 class="page-title">{d.title}</h1>
+					{d.intro.map((para) => <p class="intro"><InlineLinks text={para} /></p>)}
+				</div>
+				<figure class="window">
+					<DirectionCover d={d} widths={[480, 760, 1100]} sizes="(max-width: 860px) 92vw, 480px" eager />
+				</figure>
+			</section>
+
+			{
+				posts.length > 0 && (
+					<section class="block">
+						<h2 class="section-title">Projects</h2>
+						<ul class="cards">
+							{posts.map((post) => (
+								<li>
+									<PostCard post={post} showDirection={false} />
+								</li>
+							))}
+						</ul>
+					</section>
+				)
+			}
+
+			{
+				papers.length > 0 && (
+					<section class="block">
+						<h2 class="section-title">Papers</h2>
+						<PubList items={papers} />
+					</section>
+				)
+			}
+
+			<nav class="pager" aria-label="Other directions">
+				{prev ? <a href={`/blog/${prev.id}/`}><span class="arr back" aria-hidden="true">←</span>{prev.title}</a> : <span />}
+				{next ? <a class="next" href={`/blog/${next.id}/`}>{next.title}<span class="arr" aria-hidden="true">→</span></a> : <a class="next" href="/blog/">All my work<span class="arr" aria-hidden="true">→</span></a>}
+			</nav>
+		</main>
+		<Footer />
+
+		<style>
+			.dirpage {
+				box-sizing: border-box; /* the global main rule adds padding to a 100% width */
+				width: min(100%, 1100px);
+				max-width: none; /* global.css caps main at --container */
+				padding: 2rem 1.25rem 3.5rem;
+			}
+
+			/* ===== Hero ===== */
+			.dir-hero {
+				margin-top: 1.4rem;
+				display: grid;
+				grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+				gap: clamp(1.5rem, 4vw, 3rem);
+				align-items: center;
+			}
+			.dir-hero .page-title {
+				margin-bottom: 1rem;
+			}
+			.intro {
+				margin: 0 0 0.9rem;
+				font-size: 1.02rem;
+				line-height: 1.7;
+				color: rgba(var(--ink), 0.82);
+			}
+			.window {
+				margin: 0;
+			}
+
+			/* ===== Sections ===== */
+			.block {
+				margin-top: 3rem;
+			}
+			.cards {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+				gap: 1.25rem;
+			}
+
+			/* ===== Pager ===== */
+			.pager {
+				margin-top: 3.4rem;
+				padding-top: 1.2rem;
+				border-top: 1px solid rgba(var(--ink), 0.08);
+				display: flex;
+				justify-content: space-between;
+				gap: 1rem;
+				flex-wrap: wrap;
+				font-size: 0.95rem;
+			}
+			.pager a {
+				color: var(--blue);
+				text-decoration: none;
+			}
+			.pager a:hover {
+				text-decoration: underline;
+				text-underline-offset: 3px;
+			}
+			.pager .next {
+				margin-left: auto;
+			}
+
+			@media (max-width: 860px) {
+				.dirpage {
+					padding: 1.75rem 1rem 3rem;
+				}
+				.dir-hero {
+					grid-template-columns: 1fr;
+				}
+			}
+		</style>
+	</body>
+</html>

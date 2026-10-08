@@ -1,0 +1,46 @@
+---
+// A direction's cover in both themes: the dark art on the dark theme, its light version on the light theme.
+// Either way the edges fade out, so the picture sits on the page without a box.
+import { Image } from 'astro:assets';
+import type { Direction } from '../data/directions';
+
+interface Props {
+	d: Direction;
+	sizes: string;
+	widths?: number[];
+	eager?: boolean;
+}
+const { d, sizes, widths = [420, 720, 1000], eager = false } = Astro.props;
+const loading = eager ? 'eager' : 'lazy';
+---
+
+<span class="dcover">
+	<Image class="for-light" src={d.coverLight} alt={d.coverAlt} widths={widths} sizes={sizes} loading={loading} />
+	<Image class="for-dark" src={d.cover} alt="" widths={widths} sizes={sizes} loading={loading} />
+</span>
+
+<style>
+	.dcover {
+		display: block;
+		transition: transform 0.2s ease;
+	}
+	:global(a:hover) > .dcover {
+		transform: translateY(-3px);
+	}
+	.dcover :global(img) {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 4 / 3;
+		object-fit: cover;
+		-webkit-mask-image: radial-gradient(closest-side, #000 76%, transparent 100%);
+		mask-image: radial-gradient(closest-side, #000 76%, transparent 100%);
+	}
+	.dcover :global(.for-dark),
+	:global(:root[data-theme='dark']) .dcover :global(.for-light) {
+		display: none;
+	}
+	:global(:root[data-theme='dark']) .dcover :global(.for-dark) {
+		display: block;
+	}
+</style>

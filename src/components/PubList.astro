@@ -1,0 +1,65 @@
+---
+// A numbered list of publications, with Kristie's name in bold and "paper"/"post" links.
+// Used on the About page and on each Lab direction page. Data: PUBLICATIONS in src/data/profile.ts.
+import type { Publication } from '../data/profile';
+import { getPosts } from '../lib/posts';
+
+interface Props {
+	items: Publication[];
+}
+const { items } = Astro.props;
+
+const publishedPosts = new Set((await getPosts()).map((p) => p.id)); // drafts only count in `npm run dev`
+const ME = /(Hu, K\.(?: J\.)?)/; // highlight Kristie's name in author lists
+---
+
+<ol class="pubs">
+	{
+		items.map((p) => (
+			<li>
+				<span class="authors">
+					{p.authors.split(ME).map((part, i) => (i % 2 === 1 ? <strong>{part}</strong> : part))}
+				</span>{' '}
+				({p.year}). <span class="ptitle">{p.title}</span>. <em>{p.venue}</em>.
+				{p.url && (
+					<a class="pub-link" href={p.url} target="_blank" rel="noopener noreferrer">
+						paper
+					</a>
+				)}
+				{p.post && publishedPosts.has(p.post) && (
+					<a class="pub-link" href={`/blog/${p.post}/`}>
+						post
+					</a>
+				)}
+			</li>
+		))
+	}
+</ol>
+
+<style>
+	.pubs {
+		margin: 0;
+		padding-left: 1.3rem;
+		display: grid;
+		gap: 0.6rem;
+		font-size: 0.88rem;
+		line-height: 1.55;
+		color: rgba(var(--ink), 0.8);
+	}
+	.ptitle {
+		color: rgba(var(--ink), 0.92);
+	}
+	.pub-link {
+		margin-left: 0.4rem;
+		padding: 0.02rem 0.45rem;
+		border-radius: 999px;
+		border: 1px solid rgba(var(--blue-rgb), 0.35);
+		color: var(--blue);
+		font-size: 0.76rem;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+	.pub-link:hover {
+		background: rgba(var(--blue-rgb), 0.08);
+	}
+</style>

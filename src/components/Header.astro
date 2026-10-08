@@ -1,6 +1,7 @@
 ---
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
+import { Moon, Sun } from 'lucide-astro';
 ---
 
 <header class="site-header">
@@ -17,10 +18,16 @@ import HeaderLink from './HeaderLink.astro';
 
     <div class="internal-links" id="site-menu">
       <HeaderLink href="/">Home</HeaderLink>
-      <HeaderLink href="/blog">Recent Work</HeaderLink>
-      <HeaderLink href="/teaching">Teaching & Service</HeaderLink>
+      <HeaderLink href="/blog">Work</HeaderLink>
+      <HeaderLink href="/teaching">Community</HeaderLink>
       <HeaderLink href="/about">About</HeaderLink>
     </div>
+
+    <button class="theme-toggle" type="button" aria-label="Switch between light and dark theme" title="Light / dark">
+      <span class="icon-moon" aria-hidden="true"><Moon size={18} /></span>
+      <span class="icon-sun" aria-hidden="true"><Sun size={18} /></span>
+    </button>
+
   </nav>
 </header>
 
@@ -71,20 +78,56 @@ const menu = header?.querySelector('#site-menu');
   position: sticky;
   top: 0;
   z-index: 50;
-  background: white;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  background: var(--header-bg);
+  border-bottom: 1px solid rgba(var(--ink),0.06);
 }
 
+/* Desktop links: a thin blue line grows in under a link on hover (half strength) and stays under the current page */
 @media (min-width: 721px) {
-  .site-header .nav a {
-    padding: 0.6rem 0.35rem;
-    color: var(--black);
-    border-bottom: 4px solid transparent;
+  .internal-links :global(a) {
+    position: relative;
+    padding: 0.55rem 0.1rem;
+    color: rgb(var(--gray-dark));
+    opacity: 0.72;
     text-decoration: none;
+    transition: opacity 160ms ease, color 160ms ease;
   }
-
-  .site-header .nav a.active {
-    border-bottom-color: var(--accent);
+  .internal-links :global(a)::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.15rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--blue);
+    transform: scaleX(0);
+    transition: transform 220ms var(--hover-ease), opacity 160ms ease;
+  }
+  .internal-links :global(a:hover),
+  .internal-links :global(a:focus-visible),
+  .internal-links :global(a.active) {
+    opacity: 1;
+    color: rgb(var(--black));
+  }
+  .internal-links :global(a:hover)::after,
+  .internal-links :global(a:focus-visible)::after {
+    transform: scaleX(1);
+    opacity: 0.5;
+  }
+  .internal-links :global(a.active)::after {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  .internal-links :global(a:focus-visible) {
+    outline: 2px solid rgba(var(--blue-rgb), 0.6);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+}
+@media (min-width: 721px) and (prefers-reduced-motion: reduce) {
+  .internal-links :global(a)::after {
+    transition: none;
   }
 }
 
@@ -102,7 +145,11 @@ const menu = header?.querySelector('#site-menu');
   font-weight: 600;
   letter-spacing: 0.02em;
   text-decoration: none;
-  color: var(--black);
+  color: rgb(var(--black));
+  transition: color 160ms ease;
+}
+.brand a:hover {
+  color: var(--blue);
 }
 
 .internal-links {
@@ -112,7 +159,6 @@ const menu = header?.querySelector('#site-menu');
 }
 
 .internal-links a {
-  opacity: 0.75;
   text-decoration: none;
 }
 
@@ -122,11 +168,11 @@ const menu = header?.querySelector('#site-menu');
 @media (max-width: 720px) {
   :root{
     /* 雾蓝体系：低饱和、偏灰蓝 */
-    --mist-blue: rgba(58, 95, 143, 0.90);      /* 主色 */
-    --mist-blue-weak: rgba(58, 95, 143, 0.12); /* hover bg */
-    --mist-blue-soft: rgba(58, 95, 143, 0.18); /* active bg */
+    --mist-blue: rgba(var(--blue-rgb), 0.90);      /* 主色 */
+    --mist-blue-weak: rgba(var(--blue-rgb), 0.12); /* hover bg */
+    --mist-blue-soft: rgba(var(--blue-rgb), 0.18); /* active bg */
     --mist-ink: rgba(17, 24, 39, 0.82);        /* 深色文字 */
-    --mist-border: rgba(58, 95, 143, 0.18);    /* 边框 */
+    --mist-border: rgba(var(--blue-rgb), 0.18);    /* 边框 */
     --mist-shadow: 0 18px 50px rgba(17, 24, 39, 0.14);
   }
 
@@ -158,7 +204,7 @@ const menu = header?.querySelector('#site-menu');
 
   .menu-btn:hover{
     background: rgba(240, 246, 255, 0.90);
-    border-color: rgba(58, 95, 143, 0.26);
+    border-color: rgba(var(--blue-rgb), 0.26);
     transform: translateY(-1px);
     box-shadow: 0 10px 26px rgba(17, 24, 39, 0.10);
   }
@@ -169,7 +215,7 @@ const menu = header?.querySelector('#site-menu');
 
   .menu-btn:focus-visible{
     outline: none;
-    box-shadow: 0 0 0 4px rgba(58, 95, 143, 0.18);
+    box-shadow: 0 0 0 4px rgba(var(--blue-rgb), 0.18);
   }
 
   /* ===== HAMBURGER → X (using aria-expanded) ===== */
@@ -227,7 +273,7 @@ const menu = header?.querySelector('#site-menu');
     padding: 0.55rem;
 
     background: rgba(248, 251, 255, 0.92);
-    border: 1px solid rgba(58, 95, 143, 0.16);
+    border: 1px solid rgba(var(--blue-rgb), 0.16);
     border-radius: 16px;
 
     backdrop-filter: blur(14px);
@@ -284,7 +330,7 @@ const menu = header?.querySelector('#site-menu');
     bottom: 10px;
     width: 3px;
     border-radius: 999px;
-    background: rgba(58, 95, 143, 0.92);
+    background: rgba(var(--blue-rgb), 0.92);
   }
 
   /* Kill desktop underline style in mobile menu */
@@ -296,4 +342,99 @@ const menu = header?.querySelector('#site-menu');
 
 
 
+</style>
+
+<script>
+  // Light / dark toggle. The first paint is handled by the inline script in BaseHead.astro.
+  const themeBtn = document.querySelector('.theme-toggle');
+  themeBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem('theme', next); } catch (err) {}
+  });
+</script>
+
+<style>
+  /* ===== Light / dark toggle ===== */
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    margin-left: 1rem;
+    padding: 0;
+    border-radius: 999px;
+    border: 1px solid rgba(var(--ink), 0.12);
+    background: transparent;
+    color: rgb(var(--gray-dark));
+    cursor: pointer;
+    transition: background 140ms ease, border-color 140ms ease;
+  }
+  .theme-toggle:hover {
+    background: rgba(var(--ink), 0.06);
+    border-color: rgba(var(--ink), 0.22);
+  }
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+  }
+  .icon-moon {
+    display: inline-flex;
+  }
+  .icon-sun {
+    display: none;
+  }
+  :global(:root[data-theme='dark']) .icon-moon {
+    display: none;
+  }
+  :global(:root[data-theme='dark']) .icon-sun {
+    display: inline-flex;
+  }
+
+  @media (min-width: 721px) {
+    .nav {
+      justify-content: flex-start;
+    }
+    .internal-links {
+      margin-left: auto;
+    }
+  }
+  @media (max-width: 720px) {
+    .theme-toggle {
+      order: 2;
+      margin-left: auto;
+    }
+    .menu-btn {
+      order: 3;
+      margin-left: 0.5rem;
+    }
+  }
+
+  /* ===== Dark theme: header and mobile menu ===== */
+  :global(:root[data-theme='dark']) .site-header {
+    border-bottom-color: rgba(var(--ink), 0.07);
+  }
+  :global(:root[data-theme='dark']) .menu-btn {
+    background: rgba(20, 24, 32, 0.85);
+    border-color: rgba(var(--blue-rgb), 0.3);
+    color: rgba(238, 236, 230, 0.9);
+  }
+  :global(:root[data-theme='dark']) .menu-icon::before,
+  :global(:root[data-theme='dark']) .menu-icon::after {
+    background: var(--blue);
+  }
+  :global(:root[data-theme='dark']) .internal-links.is-open {
+    background: rgba(16, 20, 28, 0.96);
+    border-color: rgba(var(--blue-rgb), 0.22);
+  }
+  :global(:root[data-theme='dark']) .internal-links.is-open a {
+    color: rgba(238, 236, 230, 0.86);
+  }
+  :global(:root[data-theme='dark']) .internal-links.is-open a:hover {
+    background: rgba(var(--blue-rgb), 0.16);
+    color: rgba(238, 236, 230, 0.96);
+  }
 </style>

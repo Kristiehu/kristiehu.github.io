@@ -1,0 +1,419 @@
+---
+// Kristie's portrait as a 3D point cloud (Home and About).
+// The points are made by `python scripts/render-portrait.py` from src/assets/me_0.png and saved in
+// src/assets/portrait/. This component draws them on a canvas in the current theme's colours,
+// sweeps them in once like a scan, turns them a few degrees toward the mouse wherever it is on the
+// page (like a glance; not on touch screens), and keeps the lighter's flame flickering (warm, with a
+// blue base). The animation pauses when the portrait is off screen. Reduced motion: a still picture
+// with a still flame. No JavaScript: a light-theme still.
+import { Image } from 'astro:assets';
+import meta from '../assets/portrait/meta.json';
+import fallback from '../assets/portrait/fallback.png';
+
+interface Props {
+	width?: number; // CSS px
+	label?: string;
+}
+const { width = 240, label = 'Kristie Hu, drawn as a 3D point cloud' } = Astro.props;
+---
+
+<span class="pp" role="img" aria-label={label} style={`--pp-w: ${width}px; aspect-ratio: 1 / ${meta.aspect};`}>
+	<canvas aria-hidden="true"></canvas>
+	<noscript><Image src={fallback} alt="" width={width * 2} /></noscript>
+</span>
+
+<script>
+	import meta from '../assets/portrait/meta.json';
+	import pointsUrl from '../assets/portrait/points.bin?url';
+
+	// Per-theme look. Keep in step with THEMES in scripts/render-portrait.py.
+	// tone = how bright the drawing is under a point (dark theme) or how dark (light theme)
+	const THEMES = {
+		dark: { gamma: 0.8, floor: 0.36, cap: 1.0, rmax: 1.05, rmin: 0.25 },
+		light: { gamma: 1.25, floor: 0.14, cap: 0.66, rmax: 0.9, rmin: 0.22 },
+	};
+	const LEVELS = 24; // dots are batched by opacity into this many steps
+	const SCAN_MS = 1500; // the sweep on first view
+	const SPARKS = 30; // dots rising in the flame
+	// Following the mouse. The most she turns is meta.tilt (TILT in the script, which sizes the frame).
+	const REACH = 360; // px: the mouse this far from her eyes turns her about 70% of the way
+	const FOLLOW_MS = 220; // how quickly she catches up with the mouse (a little lag reads as a glance)
+	const EYES = 0.2; // eye height, as a share of the portrait's height
+	const D2R = Math.PI / 180;
+	const TAU = Math.PI * 2;
+
+	type Cloud = {
+		n: number;
+		x: Int16Array;
+		y: Int16Array;
+		z: Int16Array;
+		refl: Uint8Array;
+		lam: Uint8Array;
+		edge: Uint8Array;
+		fade: Uint8Array;
+		front: Uint8Array;
+	};
+
+	let cloud: Promise<Cloud> | undefined;
+	const load = () =>
+		(cloud ??= fetch(pointsUrl)
+			.then((r) => r.arrayBuffer())
+			.then((buf) => {
+				const n = new Uint32Array(buf, 0, 1)[0];
+				let o = 8;
+				const i16 = () => ((o += 2 * n), new Int16Array(buf, o - 2 * n, n));
+				const u8 = () => ((o += n), new Uint8Array(buf, o - n, n));
+				return { n, x: i16(), y: i16(), z: i16(), refl: u8(), lam: u8(), edge: u8(), fade: u8(), front: u8() };
+			}));
+
+	const still = matchMedia('(prefers-reduced-motion: reduce)');
+	const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
+
+	class Portrait {
+		el: HTMLElement;
+		cv: HTMLCanvasElement;
+		ctx: CanvasRenderingContext2D;
+		layer = document.createElement('canvas'); // the points, redrawn only when the view changes
+		lctx: CanvasRenderingContext2D;
+		c: Cloud;
+		alpha: Float32Array;
+		size: Float32Array;
+		px: Float32Array;
+		py: Float32Array;
+		pz: Float32Array;
+		dark = false;
+		ink = '#000';
+		yaw = meta.view.yaw;
+		pitch = meta.view.pitch;
+		toYaw = meta.view.yaw;
+		toPitch = meta.view.pitch;
+		mx = NaN; // last mouse position in the window (NaN: none, or it left)
+		my = NaN;
+		tick = 0; // time of the last animation frame
+		scan = 1; // 0 → 1 while sweeping in
+		scanStart = 0;
+		dirty = true;
+		visible = false;
+		raf = 0;
+		last = 0;
+		fx = 0; // flame base on the canvas
+		fy = 0;
+		fh = 0; // flame height on the canvas
+		flameIn = 0; // 0 → 1 as the sweep reaches the lighter
+		born = new Float32Array(SPARKS);
+		life = new Float32Array(SPARKS);
+		sx = new Float32Array(SPARKS);
+		ph = new Float32Array(SPARKS);
+		sz = new Float32Array(SPARKS);
+
+		constructor(el: HTMLElement, c: Cloud) {
+			this.el = el;
+			this.cv = el.querySelector('canvas')!;
+			this.ctx = this.cv.getContext('2d')!;
+			this.lctx = this.layer.getContext('2d')!;
+			this.c = c;
+			this.alpha = new Float32Array(c.n);
+			this.size = new Float32Array(c.n);
+			this.px = new Float32Array(c.n);
+			this.py = new Float32Array(c.n);
+			this.pz = new Float32Array(c.n);
+			const t0 = performance.now();
+			for (let i = 0; i < SPARKS; i++) this.spark(i, t0 - Math.random() * 900);
+			if (!still.matches) this.scan = 0; // sweep in when it comes into view
+			this.colours();
+			this.resize();
+			new ResizeObserver(() => this.resize()).observe(el);
+			new MutationObserver(() => (this.colours(), this.paint(performance.now()))).observe(document.documentElement, {
+				attributes: true,
+				attributeFilter: ['data-theme'],
+			});
+			if (still.matches) {
+				this.flameIn = 1;
+				this.paint(t0);
+			} else {
+				new IntersectionObserver((entries) => {
+					this.visible = entries.some((e) => e.isIntersecting);
+					if (this.visible && !this.scanStart) this.scanStart = performance.now();
+					if (this.visible) (this.aim(), this.loop());
+				}).observe(el);
+				if (finePointer.matches) {
+					const opts = { passive: true };
+					addEventListener(
+						'pointermove',
+						(e) => {
+							if (e.pointerType === 'touch') return;
+							this.mx = e.clientX;
+							this.my = e.clientY;
+							this.aim();
+						},
+						opts,
+					);
+					addEventListener('scroll', () => this.aim(), opts); // the page moves under a still mouse
+					addEventListener('pointerout', (e) => e.relatedTarget || this.rest()); // left the window
+					addEventListener('blur', () => this.rest());
+				}
+			}
+			this.el.classList.add('ready');
+		}
+
+		// Turn toward the mouse: a lot when it is far away, hardly at all when it is on her face
+		aim() {
+			if (!this.visible || Number.isNaN(this.mx)) return;
+			const r = this.el.getBoundingClientRect();
+			const dx = this.mx - (r.left + r.width / 2);
+			const dy = this.my - (r.top + r.height * EYES);
+			const d = Math.hypot(dx, dy, REACH);
+			this.toYaw = meta.view.yaw + (meta.tilt.yaw * dx) / d;
+			this.toPitch = meta.view.pitch - (meta.tilt.pitch * dy) / d;
+		}
+
+		// The mouse left the window: settle back to the default view
+		rest() {
+			this.mx = this.my = NaN;
+			this.toYaw = meta.view.yaw;
+			this.toPitch = meta.view.pitch;
+		}
+
+		// Opacity and size of each dot for the current theme (render-portrait.py: alpha_size)
+		colours() {
+			this.dark = document.documentElement.dataset.theme === 'dark';
+			const T = this.dark ? THEMES.dark : THEMES.light;
+			this.ink = getComputedStyle(this.el).color;
+			const { refl, lam, edge, fade } = this.c;
+			for (let i = 0; i < this.c.n; i++) {
+				const r = refl[i] / 255;
+				const t = Math.pow(this.dark ? r : 1 - r, T.gamma);
+				const e = edge[i] / 255;
+				const a = (T.floor + (1 - T.floor) * t) * (0.65 + (0.35 * lam[i]) / 255) * (fade[i] / 255) * (0.12 + 0.88 * e);
+				this.alpha[i] = Math.min(a, T.cap);
+				this.size[i] = (T.rmin + (T.rmax - T.rmin) * t) * (0.7 + 0.3 * e);
+			}
+			this.dirty = true;
+		}
+
+		resize() {
+			const dpr = Math.min(window.devicePixelRatio || 1, 3);
+			const { width, height } = this.el.getBoundingClientRect();
+			this.cv.width = this.layer.width = Math.max(1, Math.round(width * dpr));
+			this.cv.height = this.layer.height = Math.max(1, Math.round(height * dpr));
+			this.dirty = true;
+			this.paint(performance.now());
+		}
+
+		loop() {
+			if (this.raf) return;
+			const step = (now: number) => {
+				this.raf = 0;
+				if (!this.visible) return;
+				const dt = Math.min(64, this.tick ? now - this.tick : 16);
+				this.tick = now;
+				let moving = false;
+				if (this.scan < 1) {
+					const t = Math.min(1, (now - this.scanStart) / SCAN_MS);
+					this.scan = 1 - Math.pow(1 - t, 3);
+					this.dirty = true;
+					moving = true;
+				}
+				const dy = this.toYaw - this.yaw;
+				const dp = this.toPitch - this.pitch;
+				if (Math.abs(dy) > 0.01 || Math.abs(dp) > 0.01) {
+					const f = 1 - Math.exp(-dt / FOLLOW_MS); // eases in the same at any frame rate
+					this.yaw += dy * f;
+					this.pitch += dp * f;
+					this.dirty = true;
+					moving = true;
+				}
+				// the flame alone only needs about 30 frames a second
+				if (moving || now - this.last > 32) this.paint(now);
+				this.raf = requestAnimationFrame(step);
+			};
+			this.raf = requestAnimationFrame(step);
+		}
+
+		paint(now: number) {
+			this.last = now;
+			if (this.dirty) this.points();
+			const { ctx, cv } = this;
+			ctx.clearRect(0, 0, cv.width, cv.height);
+			ctx.drawImage(this.layer, 0, 0);
+			if (this.scan >= 1 || this.fy < this.scan * cv.height) this.flameIn = Math.min(1, this.flameIn + 0.08);
+			if (this.flameIn > 0) this.flame(now);
+			if (this.scan < 1) {
+				// the sweep line itself
+				const y = Math.min(this.scan * cv.height * 1.04, cv.height - 1);
+				const g = ctx.createLinearGradient(0, 0, cv.width, 0);
+				const blue = getComputedStyle(this.el).getPropertyValue('--blue').trim() || '#4e7ab2';
+				g.addColorStop(0, 'transparent');
+				g.addColorStop(0.5, blue);
+				g.addColorStop(1, 'transparent');
+				ctx.globalAlpha = 0.6 * (1 - this.scan);
+				ctx.fillStyle = g;
+				ctx.fillRect(0, y, cv.width, Math.max(1, (cv.width / 240) * 0.6));
+				ctx.globalAlpha = 1;
+			}
+		}
+
+		// Draw the points into the cached layer
+		points() {
+			this.dirty = false;
+			const { lctx: ctx, layer, c, px, py, pz } = this;
+			const W = layer.width;
+			const H = layer.height;
+			ctx.clearRect(0, 0, W, H);
+			const s = W / meta.frame.w; // canvas px per source px
+			const k = W / 240; // dot radii are in CSS px for a 240 px wide portrait
+			const u = 1 / meta.unit;
+			const a = this.yaw * D2R;
+			const b = this.pitch * D2R;
+			const ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b);
+			const project = (X: number, Y: number, Z: number) => {
+				const x1 = ca * X + sa * Z;
+				const z1 = -sa * X + ca * Z;
+				return [(x1 - meta.frame.x0) * s, (cb * Y - sb * z1 - meta.frame.y0) * s, sb * Y + cb * z1];
+			};
+			for (let i = 0; i < c.n; i++) {
+				const [x, y, z] = project(c.x[i] * u, c.y[i] * u, c.z[i] * u);
+				px[i] = x;
+				py[i] = y;
+				pz[i] = z;
+			}
+			[this.fx, this.fy] = project(meta.flame.x, meta.flame.y, meta.flame.z);
+			this.fh = meta.flame.h * s * 1.25;
+			// What the hand hides: depth of the hand's points on a coarse grid
+			const cell = 6 * s;
+			const gw = Math.ceil(W / cell) + 2;
+			const grid = new Float32Array(gw * (Math.ceil(H / cell) + 2)).fill(-1e9);
+			for (let i = 0; i < c.n; i++) {
+				if (!c.front[i]) continue;
+				const gx = (px[i] / cell) | 0, gy = (py[i] / cell) | 0;
+				for (let oy = -1; oy <= 1; oy++)
+					for (let ox = -1; ox <= 1; ox++) {
+						const g = (gy + oy) * gw + gx + ox;
+						if (g >= 0 && g < grid.length && grid[g] < pz[i]) grid[g] = pz[i];
+					}
+			}
+			const sweep = this.scan * H * 1.04;
+			const band = 14 * k;
+			const paths = Array.from({ length: LEVELS }, () => new Path2D());
+			for (let i = 0; i < c.n; i++) {
+				if (py[i] > sweep) continue;
+				let al = this.alpha[i];
+				if (py[i] > sweep - band) al *= (sweep - py[i]) / band;
+				if (!c.front[i] && grid[((py[i] / cell) | 0) * gw + ((px[i] / cell) | 0)] > pz[i] + 12) continue;
+				const lvl = Math.round(al * (LEVELS - 1));
+				if (lvl < 1) continue;
+				const r = this.size[i] * k;
+				paths[lvl].moveTo(px[i] + r, py[i]);
+				paths[lvl].arc(px[i], py[i], r, 0, TAU);
+			}
+			ctx.fillStyle = this.ink;
+			for (let l = 1; l < LEVELS; l++) {
+				ctx.globalAlpha = l / (LEVELS - 1);
+				ctx.fill(paths[l]);
+			}
+			ctx.globalAlpha = 1;
+		}
+
+		spark(i: number, now: number) {
+			this.born[i] = now;
+			this.life[i] = 520 + Math.random() * 420;
+			this.sx[i] = Math.random() * 2 - 1;
+			this.ph[i] = Math.random() * TAU;
+			this.sz[i] = 0.55 + Math.random() * 0.5;
+		}
+
+		// The lighter's flame: a soft glow, a warm core with a blue base, and dots rising through it
+		flame(now: number) {
+			const { ctx, fx: bx, fy: by, fh: h } = this;
+			const k = this.cv.width / 240;
+			const on = this.flameIn;
+			const flick = 1 + 0.07 * Math.sin(now * 0.013) + 0.05 * Math.sin(now * 0.029 + 1.3) + 0.03 * Math.sin(now * 0.061);
+			const lean = 0.07 * Math.sin(now * 0.0021) + 0.035 * Math.sin(now * 0.0093 + 2);
+			ctx.save();
+			ctx.globalCompositeOperation = this.dark ? 'lighter' : 'source-over';
+			// glow
+			const gy = by - h * 0.45;
+			const gr = h * 1.5;
+			const ga = (this.dark ? 0.3 : 0.2) * (0.85 + 0.15 * flick) * on;
+			let g = ctx.createRadialGradient(bx, gy, 0, bx, gy, gr);
+			g.addColorStop(0, `rgba(255,150,70,${ga})`);
+			g.addColorStop(0.45, `rgba(255,140,60,${ga * 0.35})`);
+			g.addColorStop(1, 'rgba(255,140,60,0)');
+			ctx.fillStyle = g;
+			ctx.fillRect(bx - gr, gy - gr, gr * 2, gr * 2);
+			// core, leaning and flickering
+			ctx.save();
+			ctx.translate(bx, by);
+			ctx.transform(1, 0, -lean, 1, 0, 0);
+			ctx.scale(0.36, flick);
+			const cy = -h * 0.42;
+			const cr = h * 0.55;
+			g = ctx.createRadialGradient(0, cy + cr * 0.35, 0, 0, cy, cr);
+			// on white, pale yellow vanishes: the light theme uses deeper oranges
+			g.addColorStop(0, this.dark ? `rgba(255,246,214,${0.95 * on})` : `rgba(255,176,64,${0.95 * on})`);
+			g.addColorStop(0.35, this.dark ? `rgba(255,196,96,${0.75 * on})` : `rgba(255,140,40,${0.8 * on})`);
+			g.addColorStop(0.7, `rgba(255,118,40,${(this.dark ? 0.35 : 0.45) * on})`);
+			g.addColorStop(1, 'rgba(255,110,40,0)');
+			ctx.fillStyle = g;
+			ctx.beginPath();
+			ctx.arc(0, cy, cr, 0, TAU);
+			ctx.fill();
+			g = ctx.createRadialGradient(0, -h * 0.06, 0, 0, -h * 0.06, h * 0.2);
+			g.addColorStop(0, `rgba(110,150,235,${0.85 * on})`);
+			g.addColorStop(1, 'rgba(110,150,235,0)');
+			ctx.fillStyle = g;
+			ctx.beginPath();
+			ctx.arc(0, -h * 0.06, h * 0.2, 0, TAU);
+			ctx.fill();
+			ctx.restore();
+			// rising dots
+			for (let i = 0; i < SPARKS; i++) {
+				let age = now - this.born[i];
+				if (age > this.life[i] || age < 0) {
+					this.spark(i, now);
+					age = 0;
+				}
+				const u = age / this.life[i];
+				const rise = u * (0.3 + 0.7 * u);
+				const y = by - h * 1.15 * rise * flick;
+				const x = bx + this.sx[i] * h * 0.17 * Math.pow(1 - u, 0.9) + Math.sin(now * 0.008 + this.ph[i]) * h * 0.05 * u - lean * h * rise;
+				const a = Math.pow(1 - u, 1.3) * on;
+				const mid = this.dark ? '255,236,170' : '255,160,60';
+				const top = this.dark ? '255,150,64' : '236,96,30';
+				ctx.fillStyle = u < 0.1 ? `rgba(110,150,235,${a})` : `rgba(${u < 0.4 ? mid : top},${u < 0.4 ? a : a * 0.9})`;
+				ctx.beginPath();
+				ctx.arc(x, y, this.sz[i] * k * (1 - 0.6 * u), 0, TAU);
+				ctx.fill();
+			}
+			ctx.restore();
+		}
+	}
+
+	const els = document.querySelectorAll<HTMLElement>('.pp');
+	if (els.length) load().then((c) => els.forEach((el) => new Portrait(el, c)));
+</script>
+
+<style>
+	.pp {
+		position: relative;
+		display: block;
+		width: var(--pp-w);
+		max-width: 100%;
+		color: rgb(var(--black)); /* dots use the heading colour of the current theme */
+	}
+	.pp canvas {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		opacity: 0;
+		transition: opacity 0.4s ease;
+	}
+	.pp.ready canvas {
+		opacity: 1;
+	}
+	.pp :global(img) {
+		width: 100%;
+		height: auto;
+	}
+</style>

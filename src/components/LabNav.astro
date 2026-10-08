@@ -1,0 +1,41 @@
+---
+// Filter row for the Lab: "All" plus one chip per direction (its main tag). Each chip is a page,
+// so the filtered lists are shareable links: /blog/, /blog/lidar/, /blog/earth-observation/, /blog/data-systems/.
+// Chip styles are global (.chip in src/styles/global.css).
+import { DIRECTIONS } from '../data/directions';
+
+interface Props {
+	current?: string; // direction id, or undefined for "All"
+	counts?: Record<string, number>;
+}
+const { current, counts } = Astro.props;
+---
+
+<nav class="labnav" aria-label="Lab tags">
+	<a class:list={['chip', { on: !current }]} href="/blog/" aria-current={!current ? 'page' : undefined}>All</a>
+	{
+		DIRECTIONS.map((d) => (
+			<a
+				class:list={['chip', { on: current === d.id }]}
+				href={`/blog/${d.id}/`}
+				style={`--c: ${d.accent}`}
+				aria-current={current === d.id ? 'page' : undefined}
+			>
+				<span class="dot" aria-hidden="true" />
+				{d.kicker}
+				{counts && counts[d.id] !== undefined && <span class="n">{counts[d.id]}</span>}
+			</a>
+		))
+	}
+</nav>
+
+<style>
+	.labnav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	.n {
+		color: rgb(var(--gray));
+	}
+</style>

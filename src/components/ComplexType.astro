@@ -19,9 +19,9 @@
 }
 
 .anchor {
-  font-family: "Inter Tight", system-ui, sans-serif;
+  font-family: inherit;
   font-weight: 650;
-  opacity: 0.55;
+  opacity: 0.8; /* at least 3:1 contrast in both themes */
   letter-spacing: -0.02em;
 }
 
@@ -35,12 +35,12 @@
 
 
 .typed-dynamic{
-  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-weight: 400;
   letter-spacing: -0.015em;
   padding: 0 0.14em;
   border-radius: 6px;
-  background: linear-gradient(transparent 70%, rgba(46, 204, 113, 0.16) 0);
+  background: linear-gradient(transparent 70%, rgba(var(--blue-rgb), 0.16) 0);
 }
 
 /* cursor */
@@ -61,15 +61,17 @@
 
 <script>
   const lines = [
-  "GIS Platforms.",
-  "Database Systems.",
-  "Spatial ETL.",
+  "GeoFMs.",
   "Urban Networks.",
+  "Spatial ETL.",
+  "EO Foundation Models.",
+  "Urban Networks.",
+  "Spatial Databases.",
+  "LiDAR & 3D Mapping.",
+  "Point Cloud Segmentation.",
   "2D–3D Fusion.",
-  "Digital Twins.",
-  "LiDAR SLAM.",
-  "GNSS Navigation.",
-  "HSI Fine-Tuning."
+  "Hyperspectral RS.",
+  "Object Detection."
   ];
 
   const el = document.getElementById("typed");

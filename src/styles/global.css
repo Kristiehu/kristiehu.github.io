@@ -5,8 +5,7 @@
  */
 
  :root {
-	--accent: #820e0edb;
-	--accent-dark: #0700dc;
+	--accent: var(--blue); /* one brand colour (defined with the theme tokens below): links, current page, focus */
 	--black: 15, 18, 25;
 	--gray: 96, 115, 159;
 	--gray-light: 229, 233, 240;
@@ -23,7 +22,7 @@
 
 	--shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.12);
 	--shadow-md: 0 16px 40px rgba(0, 0, 0, 0.18);
-	--accent-soft: rgba(130, 14, 14, 0.12);
+	--accent-soft: rgba(var(--blue-rgb), 0.12);
 }
 
 :root {
@@ -51,7 +50,8 @@ main.wrap {
 
 
 html { -webkit-text-size-adjust: 100%; }
-body { overflow-x: hidden; }
+/* clip, not hidden: hidden on html/body makes them scroll boxes, which breaks the sticky header */
+body { overflow-x: hidden; overflow-x: clip; }
 p { line-height: 1.7; }
 
 
@@ -67,9 +67,9 @@ h1, h2, h3, p, a {
     display: inline-flex;
     align-items: center;
     padding: 0.45rem 0.75rem;
-    border: 1px solid rgba(0,0,0,0.12);
+    border: 1px solid rgba(var(--ink),0.12);
     border-radius: 10px;
-    background: #fff;
+    background: rgb(var(--paper));
     font-size: 0.9rem;
   }
 
@@ -84,8 +84,8 @@ h1, h2, h3, p, a {
     gap: 0.25rem;
     min-width: 180px;
     padding: 0.5rem;
-    background: #fff;
-    border: 1px solid rgba(0,0,0,0.08);
+    background: rgb(var(--paper));
+    border: 1px solid rgba(var(--ink),0.08);
     border-radius: 12px;
     box-shadow: 0 12px 30px rgba(0,0,0,0.12);
   }
@@ -98,17 +98,8 @@ h1, h2, h3, p, a {
 }
 
 
-@font-face {
-	font-family: "Atkinson";
-	src: url("/fonts/atkinson-regular.woff") format("woff");
-	font-weight: 400;
-	font-style: normal;
-	font-display: swap;
-}
-
-
 body {
-	font-family: "Atkinson", sans-serif;
+	font-family: var(--font-text);
 	margin: 0;
 	padding: 0;
 	text-align: left;
@@ -134,6 +125,8 @@ h4,
 h5,
 h6 {
 	margin: 0 0 0.5rem 0;
+	font-family: var(--font-display);
+	font-weight: 600;
 	color: rgb(var(--black));
 	line-height: 1.2;
 }
@@ -142,11 +135,60 @@ strong,
 b {
 	font-weight: 700;
 }
+/* Links. A text link carries a faint underline that turns solid on hover or keyboard focus.
+   Links styled as labels, chips or cards set text-decoration: none and keep their own hover. */
 a {
 	color: var(--accent);
+	text-decoration-thickness: 1px;
+	text-decoration-color: rgba(var(--blue-rgb), 0.35);
+	text-underline-offset: 0.2em;
+	transition: color var(--hover-fast), text-decoration-color var(--hover-fast);
 }
-a:hover {
+a:hover,
+a:focus-visible {
 	color: var(--accent);
+	text-decoration-color: currentColor;
+}
+:where(a):focus-visible {
+	outline: 2px solid rgba(var(--blue-rgb), 0.55);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+/* Arrows in links lean a few pixels in their direction: <span class="arr">→</span>,
+   .arr.back for ←, .arr.down for ↓, .arr.out for ↗ */
+a .arr {
+	display: inline-block; /* not underlined with the text */
+	margin-left: 0.3em;
+	transition: transform var(--hover-fast);
+}
+a .arr.back {
+	margin-left: 0;
+	margin-right: 0.3em;
+}
+a:hover .arr,
+a:focus-visible .arr {
+	transform: translateX(3px);
+}
+a:hover .arr.back,
+a:focus-visible .arr.back {
+	transform: translateX(-3px);
+}
+a:hover .arr.down,
+a:focus-visible .arr.down {
+	transform: translateY(2px);
+}
+a:hover .arr.out,
+a:focus-visible .arr.out {
+	transform: translate(2px, -2px);
+}
+@media (prefers-reduced-motion: reduce) {
+	a .arr {
+		transition: none;
+	}
+	a:hover .arr,
+	a:focus-visible .arr {
+		transform: none;
+	}
 }
 
 /* =========================
@@ -192,7 +234,7 @@ a:hover {
 	font-weight: 600;
 	text-decoration: none;
 	border: 1px solid rgba(var(--gray), 25%);
-	background: #fff;
+	background: rgb(var(--paper));
 	color: rgb(var(--gray-dark));
 }
 
@@ -238,11 +280,15 @@ table {
 
 code {
 	padding: 2px 5px;
+	font-family: var(--font-mono);
+	font-size: 0.88em;
 	background-color: rgb(var(--gray-light));
 	border-radius: 2px;
 }
 pre {
 	padding: 1.5em;
+	font-family: var(--font-mono);
+	font-size: 0.82em;
 	border-radius: 8px;
 }
 pre > code {
@@ -290,25 +336,25 @@ hr {
   display: grid;
   grid-template-columns: 220px repeat(4, 1fr);
   width: 100%;
-  border: 1px solid rgba(0,0,0,.14);
+  border: 1px solid rgba(var(--ink),.14);
   border-radius: 10px;
   overflow: hidden;
   margin: 16px 0;
-  background: #fff;
+  background: rgb(var(--paper));
 }
 
 .cm .cm-h,
 .cm .cm-c{
   padding: 10px 12px;          /* tighter */
   text-align: center;
-  border-right: 1px solid rgba(0,0,0,.10);
-  border-bottom: 1px solid rgba(0,0,0,.10);
+  border-right: 1px solid rgba(var(--ink),.10);
+  border-bottom: 1px solid rgba(var(--ink),.10);
   font-variant-numeric: tabular-nums;
 }
 
 .cm .cm-h{
   font-weight: 700;
-  background: rgba(0,0,0,.03);
+  background: rgba(var(--ink),.03);
 }
 
 /* row labels = first col in each data row */
@@ -337,13 +383,13 @@ hr {
 .perf-table {
   width: 100%;
   border-collapse: collapse;
-  border: 2px solid #000;
+  border: 2px solid rgba(var(--ink), 0.85);
   font-size: 0.95rem;
 }
 
 .perf-table th,
 .perf-table td {
-  border: 1px solid #000;
+  border: 1px solid rgba(var(--ink), 0.85);
   padding: 0.5rem 0.6rem;
   text-align: center;
   vertical-align: middle;
@@ -355,7 +401,7 @@ hr {
 
 /* outer box – matches your other tables */
 .table-wrap {
-  border: 2px solid #000;
+  border: 2px solid rgba(var(--ink), 0.85);
   margin: 1.5rem 0;
   overflow-x: auto;
 }
@@ -372,8 +418,8 @@ hr {
   font-weight: 600;
   text-align: center;
   padding: 0.6rem;
-  border-bottom: 1px solid #000;
-  border-right: 1px solid #000;
+  border-bottom: 1px solid rgba(var(--ink), 0.85);
+  border-right: 1px solid rgba(var(--ink), 0.85);
 }
 
 .slice-table .slice-head:last-child {
@@ -384,8 +430,8 @@ hr {
 .slice-table .slice-cell {
   padding: 0.6rem;
   text-align: center;
-  border-bottom: 1px solid #000;
-  border-right: 1px solid #000;
+  border-bottom: 1px solid rgba(var(--ink), 0.85);
+  border-right: 1px solid rgba(var(--ink), 0.85);
 }
 
 .slice-table .slice-cell:nth-child(3n) {
@@ -438,6 +484,7 @@ img {
 
 html, body {
   overflow-x: hidden;
+  overflow-x: clip; /* keeps the header sticky (see the note near the top) */
 }
 
 img, picture, svg, video, canvas {
@@ -564,4 +611,180 @@ ul li:first-child a {
 
 ul li:first-child img {
   aspect-ratio: 16 / 9 !important;
+}
+
+/* =========================
+   Light / dark theme
+   <html data-theme="light|dark"> is set by the script in BaseHead.astro and switched by the
+   button in Header.astro. Write colours with these tokens so both themes work:
+     headings rgb(var(--black)) · body text rgb(var(--gray-dark)) · muted rgb(var(--gray))
+     faint text, lines, tints rgba(var(--ink), a) · surfaces rgba(var(--paper), a)
+     brand var(--blue) / rgba(var(--blue-rgb), a): the only accent colour, identical in both themes
+       (#4e7ab2 has the same contrast on white and on the dark page, 4.4:1, so nothing shifts on switching)
+   ========================= */
+:root {
+  color-scheme: light;
+  --ink: 0, 0, 0;
+  --paper: 255, 255, 255;
+  --page-bg: #ffffff;
+  --header-bg: #ffffff;
+  --blue: #4e7ab2;
+  --blue-rgb: 78, 122, 178;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --black: 238, 236, 230;
+  --gray: 150, 160, 176;
+  --gray-light: 34, 40, 50;
+  --gray-dark: 206, 210, 216;
+  --gray-gradient: #0a0c10, #0a0c10;
+  --shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 16px 40px rgba(0, 0, 0, 0.6);
+  --ink: 255, 255, 255;
+  --paper: 20, 24, 32;
+  --page-bg: #0a0c10; /* same as the Lab covers, so they blend into the page */
+  --header-bg: #0a0c10;
+}
+
+html,
+body {
+  background-color: var(--page-bg);
+}
+
+/* The header stays on screen (position: sticky in Header.astro): in-page links stop just below it */
+html {
+  scroll-padding-top: 76px;
+}
+
+/* Figures with transparent backgrounds have dark text: give them a white backing in the dark theme */
+:root[data-theme="dark"] .prose img,
+:root[data-theme="dark"] .hero-image img,
+:root[data-theme="dark"] .card img {
+  background: #fff;
+  border-radius: 6px;
+}
+/* Lab cards in the dark theme: most thumbnails are white figures, so keep them quiet until hovered */
+:root[data-theme="dark"] .card img {
+  opacity: 0.78;
+  transition: opacity 0.2s ease;
+}
+:root[data-theme="dark"] .card:hover img,
+:root[data-theme="dark"] .card:focus-visible img {
+  opacity: 1;
+}
+
+/* =========================
+   Type system: one family on every page (fonts are loaded once, in BaseHead.astro)
+   - text:    reading text                                  → Source Serif 4        (--font-text)
+   - display: page titles, the name, all headings h1–h6      → .page-title, h1–h6    (Source Serif 4, upright, 600)
+   - ui:      labels, chips, tags, dates                       → .kicker, .section-title, .chip, and the block below (Source Sans 3, --font-ui)
+              (the header and footer use the text face, so the site name and menu match the page)
+   - mono:    code, and the typed text on the homepage         → Source Code Pro       (--font-mono)
+   - Chinese: Source Han Serif (思源宋体), the same design family as Source Serif
+   Titles stay upright; italic is only for quotes and the pronunciation. Labels are small uppercase
+   with light tracking (0.07–0.09em). Use these classes and tokens instead of setting fonts page by page.
+   ========================= */
+:root {
+  --font-text: "Source Serif 4 Variable", "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --font-display: var(--font-text);
+  --font-ui: "Source Sans 3 Variable", "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Source Code Pro Variable", "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-cjk-serif: "Source Han Serif SC", "Noto Serif SC", "Noto Serif CJK SC", "Songti SC", serif;
+}
+
+/* Buttons don't inherit the page font by default (the mobile "Menu" button has text) */
+button {
+  font-family: inherit;
+}
+
+/* Small print and meta lines use the UI face */
+.date,
+.last-updated-on,
+.post-meta,
+.post-tags,
+.tags {
+  font-family: var(--font-ui);
+}
+
+.kicker {
+  margin: 0;
+  font: 600 0.72rem / 1.5 var(--font-ui);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgb(var(--gray));
+}
+.kicker .accent {
+  color: var(--blue);
+}
+
+.page-title {
+  margin: 0.7rem 0 0;
+  font: 600 clamp(2rem, 4.4vw, 3rem) / 1.12 var(--font-display);
+  letter-spacing: -0.012em;
+  color: rgb(var(--black));
+  overflow-wrap: normal;
+}
+.page-title em {
+  font-style: italic;
+  color: var(--blue);
+}
+/* Chinese name next to the Latin one: a smaller, lighter second line of voice, not a second headline */
+.page-title .zh {
+  margin-left: 0.28em;
+  font-family: var(--font-cjk-serif);
+  font-style: normal;
+  font-weight: 300;
+  font-size: 0.58em;
+  letter-spacing: 0.14em;
+  color: rgba(var(--ink), 0.62);
+}
+
+.lede {
+  margin: 0.9rem 0 0;
+  max-width: 44rem;
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: rgba(var(--ink), 0.72);
+}
+
+.section-title {
+  margin: 0 0 1rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid rgba(var(--ink), 0.1);
+  font: 600 0.75rem / 1.4 var(--font-ui);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgb(var(--black));
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.32rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--ink), 0.14);
+  color: rgb(var(--gray-dark));
+  font: 600 0.72rem / 1.4 var(--font-ui);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+.chip:hover {
+  color: rgb(var(--black));
+  background: rgba(var(--ink), 0.05);
+  border-color: rgba(var(--ink), 0.24);
+}
+.chip.on {
+  background: rgba(var(--ink), 0.08);
+  border-color: rgba(var(--ink), 0.3);
+  color: rgb(var(--black));
+}
+.chip .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgb(var(--c, var(--gray)));
 }

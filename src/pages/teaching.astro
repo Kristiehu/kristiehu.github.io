@@ -2,223 +2,180 @@
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
-import { SITE_DESCRIPTION } from "../consts";
+import InlineLinks from "../components/InlineLinks.astro";
+import { LEADERSHIP, TEACHING, COURSEWORK } from "../data/teaching";
+
+// Content lives in src/data/teaching.ts; this page only lays it out.
+const DESCRIPTION =
+  "Kristie Hu's service, leadership and teaching: AAAI-27 Student Abstract and Poster Program committee, CE²GA Vice President, ISPRS STEP Ambassador, IEEE CSYPC 2026, and teaching assistant roles in geomatics and statistics.";
+
+const sections = [
+  { id: "service", label: "Leadership & Service", show: LEADERSHIP.length > 0 },
+  { id: "teaching", label: "Teaching", show: TEACHING.length > 0 },
+  { id: "coursework", label: "Coursework", show: COURSEWORK.length > 0 },
+].filter((s) => s.show);
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title="Teaching" description={SITE_DESCRIPTION} />
+    <BaseHead title="Teaching & Service" description={DESCRIPTION} />
   </head>
 
   <body>
     <Header />
 
     <main class="page">
-      <section class="teaching-block">
-        <h1 class="page-title">Teaching</h1>
-        <p class="intro">
-          I support geospatial and remote sensing teaching through
-          <strong>guest lectures</strong>, <strong>labs</strong>,
-          <strong>tutorials</strong>, and
-          <strong>course material development</strong>—focused on practical
-          workflows and clear delivery.
+      <header class="page-head">
+        <h1 class="page-title">Teaching &amp; Service</h1>
+        <p class="lede">
+          Outside research and work, I help run a graduate student association, take part in student leadership
+          programs with ISPRS and IEEE, and support local community services. I’ve taught tutorials, labs and 
+          lectures in geomatics, statistics and GIS, and I’m now completing the
+          <a href="https://uwaterloo.ca/centre-for-teaching-excellence/support-graduate-students/fundamentals-university-teaching-program"
+            target="_blank" rel="noopener noreferrer">Fundamentals of University Teaching program</a>
+          at the University of Waterloo.
         </p>
+        <nav class="jump" aria-label="On this page">
+          {sections.map((s) => <a class="chip" href={`#${s.id}`}>{s.label}</a>)}
+        </nav>
+      </header>
 
-        <!-- Timeline -->
-        <ol class="timeline" aria-label="Teaching contributions timeline">
-          <li class="t-item">
-            <span class="t-dot" aria-hidden="true"></span>
-            <div class="t-card">
-              <div class="t-top">
-                <span class="t-title">
-                  <strong>Course Development &amp; Material</strong>
-                </span>
-                <span class="t-meta">Slides · Assignments · Labs</span>
-              </div>
-              <p class="t-desc">
-                Drafted and refined lecture slides, lab exercises, and
-                assignment instructions; improved clarity and reproducibility.
-              </p>
+      <!-- LEADERSHIP & SERVICE -->
+      {
+        LEADERSHIP.length > 0 && (
+          <section id="service" class="section">
+            <h2 class="section-title">Leadership &amp; Service</h2>
+            <ol class="timeline">
+              {LEADERSHIP.map((r) => (
+                <li class="t-item">
+                  <span class="t-dot" aria-hidden="true" />
+                  <div class="t-card">
+                    <div class="t-top">
+                      <span class="t-role">{r.role}</span>
+                      <span class="t-date">
+                        {r.start}
+                        {r.end ? ` – ${r.end}` : ""}
+                      </span>
+                    </div>
+                    <div class="t-org"><InlineLinks text={r.org} /></div>
+                    {r.points && r.points.length > 0 && (
+                      <ul class="t-points">
+                        {r.points.map((p) => (
+                          <li><InlineLinks text={p} /></li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )
+      }
+
+      <!-- TEACHING -->
+      {
+        TEACHING.length > 0 && (
+          <section id="teaching" class="section">
+            <h2 class="section-title">Teaching</h2>
+            <div class="inst-grid">
+              {TEACHING.map((inst) => (
+                <article class="panel">
+                  <div class="panel-head">
+                    <h3 class="panel-title">{inst.institution}</h3>
+                    {inst.role && <span class="muted">{inst.role}</span>}
+                  </div>
+                  <ul class="course-list">
+                    {inst.courses.map((c) => (
+                      <li class="course-item">
+                        <div class="course-main">
+                          <span class="course-code">{c.code}</span>
+                          <span class="course-name">{c.title}</span>
+                        </div>
+                        {((c.roles && c.roles.length > 0) || (c.tasks && c.tasks.length > 0) || (c.terms && c.terms.length > 0)) && (
+                          <div class="course-meta">
+                            {c.roles?.map((r) => (
+                              <span class="badge role">{r}</span>
+                            ))}
+                            {c.tasks?.map((t) => (
+                              <span class="badge task">{t}</span>
+                            ))}
+                            {c.terms && c.terms.length > 0 && <span class="badge term">{c.terms.join(" · ")}</span>}
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
             </div>
-          </li>
+          </section>
+        )
+      }
 
-          <li class="t-item">
-            <span class="t-dot" aria-hidden="true"></span>
-            <div class="t-card">
-              <div class="t-top">
-                <span class="t-title">
-                  <strong>Laboratories &amp; Tutorials</strong>
-                </span>
-                <span class="t-meta">Small-group support</span>
-              </div>
-              <p class="t-desc">
-                Led hands-on labs and tutorials, supported student workflows,
-                and provided structured feedback on coursework.
-              </p>
-            </div>
-          </li>
-
-          <li class="t-item">
-            <span class="t-dot" aria-hidden="true"></span>
-            <div class="t-card">
-              <div class="t-top">
-                <span class="t-title">
-                  <strong>Research-to-Classroom Bridging</strong>
-                </span>
-                <span class="t-meta">Methods → instruction</span>
-              </div>
-              <p class="t-desc">
-                Helped align research methods with classroom teaching—turning
-                complex concepts into teachable steps and demos.
-              </p>
-            </div>
-          </li>
-        </ol>
-
-        <!-- Main appointment -->
-        <h2 class="section-title">Main</h2>
-        <div class="panel">
-          <div class="panelTitle">
-            University of Waterloo <span class="muted">[Full-time]</span>
-          </div>
-
-          <ul class="course-list">
-            <li class="course-item">
-              <div class="course-main">
-                <span class="course-code">GEOG 101</span>
-                <span class="course-name">Human Geography</span>
-              </div>
-              <div class="course-meta">
-                <span class="badge role">TA</span>
-                <span class="badge dur">1.0</span>
-                <span class="badge task">Tutorial</span>
-                <span class="badge task">Grading</span>
-              </div>
-            </li>
-
-            <li class="course-item">
-              <div class="course-main">
-                <span class="course-code">GEOG 310</span>
-                <span class="course-name">Geodesy &amp; Land Surveying</span>
-              </div>
-              <div class="course-meta">
-                <span class="badge role">TA</span>
-                <span class="badge role">Guest Lecture</span>
-                <span class="badge dur">2.5</span>
-                <span class="badge task">Lab</span>
-                <span class="badge task">Tutorial</span>
-                <span class="badge task">Materials</span>
-                <span class="badge task">Grading</span>
-              </div>
-            </li>
-
-            <li class="course-item">
-              <div class="course-main">
-                <span class="course-code">GEOG 316</span>
-                <span class="course-name">Multivariate Statistics</span>
-              </div>
-              <div class="course-meta">
-                <span class="badge role">TA</span>
-                <span class="badge role">Guest Lecture</span>
-                <span class="badge dur">1.0</span>
-                <span class="badge task">Lab</span>
-                <span class="badge task">Materials</span>
-                <span class="badge task">Grading</span>
-              </div>
-            </li>
-          </ul>
-        </div>
-
-        <!-- Other appointments -->
-        <h2 class="section-title">Others</h2>
-        <div class="panel">
-          <div class="panelTitle">
-            University of Toronto <span class="muted">[Part-time]</span>
-          </div>
-
-          <ul class="simple-list">
-            <li>
-              <span class="course-code">GGRA30H3</span>
-              Geographic Information Systems and Empirical Reasoning
-            </li>
-            <li>
-              <span class="course-code">MGEA06H3</span>
-              Advanced Geographic Information Systems
-            </li>
-            <li>
-              <span class="course-code">GGR210H5S</span>
-              Social Geographies
-            </li>
-            <li>
-              <span class="course-code">GGR209H5S</span>
-              Economic Geography
-            </li>
-          </ul>
-        </div>
-      </section>
+      <!-- COURSEWORK (hidden until src/data/teaching.ts has entries) -->
+      {
+        COURSEWORK.length > 0 && (
+          <section id="coursework" class="section">
+            <h2 class="section-title">Coursework</h2>
+            <ul class="course-list panel">
+              {COURSEWORK.map((c) => (
+                <li class="course-item">
+                  <div class="course-main">
+                    <span class="course-code">{c.code}</span>
+                    <span class="course-name">{c.title}</span>
+                  </div>
+                  {c.term && (
+                    <div class="course-meta">
+                      <span class="badge term">{c.term}</span>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
     </main>
 
     <Footer />
 
     <style>
-      /* ============================================================
-         Page container
-         ============================================================ */
       .page {
-        max-width: 980px;
+        box-sizing: border-box; /* the global main rule adds padding to a 100% width */
+        width: 100%;
+        max-width: 900px;
         margin: 0 auto;
         padding: 2.75rem 1.25rem 3.5rem;
       }
 
-      .teaching-block {
-        margin-bottom: 2.5rem;
-        width: 100%;
-        box-sizing: border-box;
+      .jump {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+      .section {
+        margin-top: 2.6rem;
       }
 
-      .page-title {
-        margin: 0;
-        font-size: 2rem;
-        letter-spacing: -0.02em;
-      }
-
-      .intro {
-        margin: 0.75rem 0 0;
-        max-width: 72ch;
-        line-height: 1.65;
-        opacity: 0.9;
-      }
-
-      .section-title {
-        margin: 2rem 0 1rem;
-        font-size: 1.05rem;
-        font-weight: 650;
-        letter-spacing: -0.01em;
-      }
-
-      /* ============================================================
-         Timeline
-         ============================================================ */
+      /* ===== Timeline (Leadership & Service) ===== */
       .timeline {
-        --axis-x: 12px; /* vertical axis x-position */
-        --dot: 10px;    /* dot size */
-        --col: 34px;    /* left column width */
-
+        --axis-x: 12px;
+        --dot: 10px;
+        --col: 34px;
         list-style: none;
         padding: 0;
         margin: 0;
-        width: 100%;
       }
-
       .t-item {
         position: relative;
         display: grid;
         grid-template-columns: var(--col) 1fr;
         gap: 0.9rem;
-        padding: 0.95rem 0;
+        padding: 0.6rem 0;
       }
-
       .t-item::before {
         content: "";
         position: absolute;
@@ -226,125 +183,107 @@ import { SITE_DESCRIPTION } from "../consts";
         top: 0;
         bottom: 0;
         width: 2px;
-        background: rgba(0, 0, 0, 0.08);
+        background: rgba(var(--ink), 0.08);
       }
-
+      .t-item:first-child::before {
+        top: 18px;
+      }
       .t-item:last-child::before {
-        bottom: 18px;
+        bottom: calc(100% - 18px);
       }
-
       .t-dot {
         position: relative;
         width: var(--dot);
         height: var(--dot);
-        margin-top: 6px;
-        left: calc(var(--axis-x) - (var(--dot) / 2));
+        margin-top: 1.05rem;
+        left: calc(var(--axis-x) - (var(--dot) / 2) + 1px);
         border-radius: 999px;
-        background: rgba(181, 85, 79, 0.85);
+        background: rgba(var(--blue-rgb), 0.85);
         box-shadow: 0 0 0 4px rgba(181, 85, 79, 0.12);
       }
-
       .t-card {
-        padding: 0.9rem 1rem;
+        padding: 0.85rem 1rem;
         border-radius: 14px;
-        background: rgba(0, 0, 0, 0.03);
+        background: rgba(var(--ink), 0.03);
       }
-
       .t-top {
         display: flex;
-        align-items: baseline;
         justify-content: space-between;
-        gap: 0.75rem;
+        align-items: baseline;
         flex-wrap: wrap;
+        gap: 0.5rem;
       }
-
-      .t-title {
+      .t-role {
+        font-weight: 700;
         font-size: 1rem;
-        font-weight: 600;
-        letter-spacing: -0.005em;
       }
-
-      .t-desc {
-        margin: 0.45rem 0 0;
-        font-size: 0.95rem;
-        line-height: 1.55;
-        opacity: 0.85;
-      }
-
-      .t-meta {
-        padding: 0.2rem 0.55rem;
+      .t-date {
+        padding: 0.12rem 0.55rem;
         border-radius: 999px;
-        font-size: 0.8rem;
-        color: #6b7280;
-        background: rgba(181, 85, 79, 0.08);
+        font-size: 0.78rem;
+        color: rgb(var(--gray));
+        background: rgba(var(--blue-rgb), 0.08);
+        white-space: nowrap;
+      }
+      .t-org {
+        margin-top: 0.15rem;
+        font-size: 0.92rem;
+        color: rgba(var(--ink), 0.72);
+      }
+      .t-points {
+        margin: 0.5rem 0 0;
+        padding-left: 1.1rem;
+        font-size: 0.88rem;
+        line-height: 1.55;
+        color: rgba(var(--ink), 0.75);
+      }
+      .t-points li + li {
+        margin-top: 0.25rem;
       }
 
-      /* ============================================================
-         Panel + lists
-         ============================================================ */
+      /* ===== Teaching panels ===== */
+      .inst-grid {
+        display: grid;
+        gap: 1rem;
+      }
       .panel {
-        width: 100%;
         padding: 1rem 1.05rem;
         border-radius: 16px;
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        background: rgba(0, 0, 0, 0.02);
-        box-sizing: border-box;
+        border: 1px solid rgba(var(--ink), 0.06);
+        background: rgba(var(--ink), 0.02);
       }
-
-      .panelTitle {
+      .panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 0.5rem;
         margin-bottom: 0.75rem;
-        font-weight: 650;
       }
-
-      .muted {
-        opacity: 0.65;
-        font-weight: 500;
-      }
-
-      /* Simple list (Others panel) */
-      .simple-list {
-        list-style: none;
-        padding: 0;
+      .panel-title {
         margin: 0;
-        width: 100%;
-        display: grid;
-        gap: 0.6rem;
+        font-size: 1rem;
       }
-
-      .simple-list li {
-        width: 100%;
-        padding: 0.7rem 0.85rem;
-        border-radius: 12px;
-        background: rgba(181, 85, 79, 0.04);
-        box-sizing: border-box;
-        min-width: 0;
-        overflow-wrap: anywhere;
-        word-break: break-word;
+      .muted {
+        font-size: 0.85rem;
+        opacity: 0.65;
       }
-
-      /* Course list (Main panel) */
       .course-list {
         list-style: none;
         padding: 0;
         margin: 0;
-        width: 100%;
         display: grid;
-        gap: 0.6rem;
+        gap: 0.55rem;
       }
-
       .course-item {
-        width: 100%;
-        padding: 0.8rem 0.9rem;
+        padding: 0.7rem 0.85rem;
         border-radius: 12px;
-        background: rgba(181, 85, 79, 0.04);
-        box-sizing: border-box;
-
+        background: rgba(var(--blue-rgb), 0.04);
         display: grid;
         grid-template-columns: 1fr auto;
         gap: 0.75rem;
-        align-items: start;
+        align-items: center;
       }
-
       .course-main {
         min-width: 0;
         display: flex;
@@ -352,85 +291,57 @@ import { SITE_DESCRIPTION } from "../consts";
         flex-wrap: wrap;
         align-items: baseline;
       }
-
       .course-code {
         padding: 0.1rem 0.45rem;
         border-radius: 999px;
         font-weight: 800;
-        letter-spacing: -0.02em;
-        background: rgba(181, 85, 79, 0.14);
-        color: rgba(181, 85, 79, 0.95);
+        font-size: 0.85rem;
+        letter-spacing: -0.01em;
+        background: rgba(var(--blue-rgb), 0.14);
+        color: rgba(var(--blue-rgb), 0.95);
+        white-space: nowrap;
       }
-
       .course-name {
-        opacity: 0.9;
+        font-size: 0.95rem;
       }
-
       .course-meta {
         display: flex;
         flex-wrap: wrap;
         justify-content: flex-end;
         gap: 0.35rem;
-        min-width: 0;
       }
-
-      /* ============================================================
-         Badges
-         ============================================================ */
       .badge {
         display: inline-block;
-        padding: 0.12rem 0.5rem;
+        padding: 0.1rem 0.5rem;
         border-radius: 999px;
-        font-size: 0.82rem;
+        font-family: var(--font-ui);
+        font-size: 0.76rem;
         white-space: nowrap;
       }
-
       .badge.role {
-        background: rgba(181, 85, 79, 0.14);
-        color: rgba(181, 85, 79, 0.95);
+        background: rgba(var(--blue-rgb), 0.14);
+        color: rgba(var(--blue-rgb), 0.95);
       }
-
-      .badge.dur {
-        background: rgba(0, 0, 0, 0.07);
-        color: rgba(0, 0, 0, 0.75);
-      }
-
       .badge.task {
-        background: rgba(0, 0, 0, 0.05);
-        color: rgba(0, 0, 0, 0.7);
+        background: rgba(var(--ink), 0.05);
+        color: rgba(var(--ink), 0.7);
+      }
+      .badge.term {
+        background: rgba(var(--blue-rgb), 0.1);
+        color: var(--blue);
       }
 
-      /* ============================================================
-         Mobile
-         ============================================================ */
       @media (max-width: 720px) {
         .page {
           padding: 2.25rem 1rem 3rem;
         }
-
-        .page-title {
-          font-size: 1.75rem;
-        }
-
         .timeline {
           --axis-x: 10px;
-          --col: 30px;
+          --col: 28px;
         }
-
-        .t-top {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 0.15rem;
-        }
-
-        .t-meta {
-          white-space: normal;
-        }
-
         .course-item {
           grid-template-columns: 1fr;
         }
-
         .course-meta {
           justify-content: flex-start;
         }

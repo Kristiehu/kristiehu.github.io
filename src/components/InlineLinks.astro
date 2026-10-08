@@ -1,0 +1,27 @@
+---
+// Renders a plain text string from a data file, turning Markdown-style [text](url) into links.
+// Used for the direction intros (directions.ts) and the leadership points (teaching.ts).
+// Links to other sites open in a new tab.
+type Props = { text: string };
+const { text } = Astro.props;
+
+const parts: { text: string; href?: string }[] = [];
+let last = 0;
+for (const m of text.matchAll(/\[([^\]]+)\]\(([^)\s]+)\)/g)) {
+	if (m.index! > last) parts.push({ text: text.slice(last, m.index) });
+	parts.push({ text: m[1], href: m[2] });
+	last = m.index! + m[0].length;
+}
+if (last < text.length) parts.push({ text: text.slice(last) });
+const external = (href: string) => /^https?:/.test(href);
+---
+
+{
+	parts.map((x) =>
+		x.href ? (
+			<a href={x.href} {...(external(x.href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{x.text}</a>
+		) : (
+			x.text
+		),
+	)
+}

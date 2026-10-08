@@ -5,10 +5,29 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import { directionById } from '../data/directions';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, venue, links, draft, tags, direction } = Astro.props;
+const dir = directionById(direction);
+
+// Hero figure: under the title, at most 760 × 460 px and never larger than the image itself.
+// The srcset holds 1x and 2x of that size, so the figure stays sharp on high-density screens.
+const HERO_MAX_W = 760;
+const HERO_MAX_H = 460;
+const hero = heroImage
+	? (() => {
+			const w = Math.round(Math.min(HERO_MAX_W, heroImage.width, (HERO_MAX_H * heroImage.width) / heroImage.height));
+			const widths = [...new Set([400, w, 800, 2 * w].map((x) => Math.min(x, heroImage.width)))].sort((a, b) => a - b);
+			return { widths, sizes: `(max-width: ${w + 40}px) 100vw, ${w}px` };
+		})()
+	: undefined;
+const linkList = [
+	{ label: 'Paper', href: links?.paper },
+	{ label: 'Code', href: links?.code },
+	{ label: 'Data', href: links?.data },
+].filter((l) => l.href);
 ---
 
 <html lang="en">
@@ -19,6 +38,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		width: 100%;
 		margin: 0;
 		overflow-x: hidden;
+		overflow-x: clip; /* not hidden alone: that breaks the sticky header */
 		}
 
 		/* Stop mobile horizontal overflow */
@@ -48,11 +68,12 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		padding: 1rem 0;
 		text-align: center;
 		}
+		/* post title: the shared page-title face (see the type system in global.css) */
 		.title h1 {
 		margin: 0.35rem 0 0.75rem 0;
-		font-size: clamp(2rem, 7vw, 3.4rem);
-		line-height: 1.05;
-		overflow-wrap: anywhere;
+		font: 600 clamp(2rem, 5vw, 3.1rem) / 1.12 var(--font-display);
+		letter-spacing: -0.012em;
+		overflow-wrap: normal;
 		}
 
 		.date {
@@ -63,17 +84,19 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		font-style: italic;
 		}
 
-		/* Hero image must be responsive */
+		/* Hero figure: below the title, at reading width, never stretched past its own size */
 		.hero-image {
-		width: 100%;
-		margin: 0 0 1.25rem 0;
+		max-width: 760px;
+		margin: 0.25rem auto 2.25rem;
 		}
 		.hero-image :global(img) {
-		width: 100%;
+		display: block;
+		width: auto;
 		max-width: 100%;
 		height: auto;
-		display: block;
-		border-radius: 16px;
+		max-height: 460px;
+		margin: 0 auto;
+		border-radius: 6px;
 		}
 
 		/* Hard guardrails for ALL post content */
@@ -88,6 +111,24 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		max-width: 100%;
 		height: auto;
 		}
+		/* Figures in the post body (PostFigure.astro): at most 760 × 520 px, centred, never enlarged */
+		.prose :global(img.post-fig) {
+		display: block;
+		width: auto;
+		height: auto;
+		max-width: min(100%, 760px);
+		max-height: 520px;
+		margin: 0.9rem auto 0.4rem;
+		border-radius: 6px;
+		}
+		/* Reading column: the post body shares one 760-px column with the hero and the figures.
+		   !important beats the list and code-block margin resets in global.css. */
+		.prose > :global(:not(.title):not(.hero-image)) {
+		box-sizing: border-box;
+		max-width: 760px;
+		margin-left: auto !important;
+		margin-right: auto !important;
+		}
 		.prose :global(*) {
 		overflow-wrap: anywhere;
 		word-break: break-word;
@@ -95,6 +136,90 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		.prose :global(pre) {
 		max-width: 100%;
 		overflow-x: auto;
+		}
+
+		/* --- Breadcrumb back to the Lab direction --- */
+		/* back-link to the post's direction: a shared .chip (global.css) */
+		.crumb {
+		margin-bottom: 0.6rem;
+		}
+
+		/* --- Post meta: venue, links, tags, draft banner --- */
+		.draft-banner {
+		margin: 0 auto 0.75rem;
+		max-width: 40rem;
+		padding: 0.45rem 0.8rem;
+		border-radius: 10px;
+		background: #fff4d6;
+		color: #6b4e00;
+		font-size: 0.85rem;
+		}
+		.post-meta {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
+		gap: 0.5rem;
+		margin: 0.25rem 0 0.75rem;
+		}
+		.venue {
+		padding: 0.2rem 0.7rem;
+		border-radius: 999px;
+		background: rgba(var(--blue-rgb), 0.1);
+		color: var(--blue);
+		font-size: 0.85rem;
+		font-weight: 600;
+		}
+		.post-link {
+		padding: 0.2rem 0.7rem;
+		border-radius: 999px;
+		border: 1px solid rgba(var(--blue-rgb), 0.35);
+		color: var(--blue);
+		font-size: 0.85rem;
+		text-decoration: none;
+		}
+		.post-link:hover {
+		background: rgba(var(--blue-rgb), 0.08);
+		}
+		.post-tags {
+		list-style: none;
+		display: flex !important;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.35rem;
+		padding: 0 !important;
+		margin: 0 0 0.5rem !important;
+		}
+		.post-tags li {
+		padding: 0.1rem 0.55rem;
+		border-radius: 999px;
+		background: rgba(var(--ink), 0.05);
+		color: rgba(var(--ink), 0.65);
+		font-size: 0.78rem;
+		}
+		/* Figure captions: an italic line right after an image */
+		.prose :global(p > img + em) {
+		display: block;
+		margin-top: 0.35rem;
+		font-size: 0.85rem;
+		color: rgb(var(--gray));
+		text-align: center;
+		}
+		.prose :global(table) {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.85rem;
+		margin: 1rem 0;
+		}
+		.prose :global(th),
+		.prose :global(td) {
+		padding: 0.4rem 0.5rem;
+		border-bottom: 1px solid rgba(var(--ink), 0.08);
+		text-align: left;
+		}
+		.prose :global(th) {
+		font-weight: 700;
+		border-bottom: 2px solid rgba(var(--ink), 0.18);
 		}
 
 		/* --- Fix Astro prose default left shift --- */
@@ -109,11 +234,13 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<Header />
 		<main>
 			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
 				<div class="prose">
 					<div class="title">
+						{dir ? (
+							<a class="chip crumb" href={`/blog/${dir.id}/`} style={`--c: ${dir.accent}`}><span class="dot" aria-hidden="true" />{dir.kicker}</a>
+						) : (
+							<a class="chip crumb" href="/blog/#earlier"><span class="arr back" aria-hidden="true">←</span>Work · Earlier projects</a>
+						)}
 						<div class="date">
 							<FormattedDate date={pubDate} />
 							{
@@ -125,8 +252,29 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 							}
 						</div>
 						<h1>{title}</h1>
+						{draft && (
+							<p class="draft-banner">DRAFT: only visible in local preview (npm run dev). Set <code>draft: false</code> to publish.</p>
+						)}
+						{(venue || linkList.length > 0) && (
+							<div class="post-meta">
+								{venue && <span class="venue">{venue}</span>}
+								{linkList.map((l) => (
+									<a class="post-link" href={l.href} target="_blank" rel="noopener noreferrer">{l.label}<span class="arr out" aria-hidden="true">↗</span></a>
+								))}
+							</div>
+						)}
+						{tags && tags.length > 0 && (
+							<ul class="post-tags" aria-label="Tags">
+								{tags.map((t) => <li>{t}</li>)}
+							</ul>
+						)}
 						<hr />
 					</div>
+					{heroImage && hero && (
+						<figure class="hero-image">
+							<Image src={heroImage} widths={hero.widths} sizes={hero.sizes} alt="" />
+						</figure>
+					)}
 					<slot />
 				</div>
 			</article>

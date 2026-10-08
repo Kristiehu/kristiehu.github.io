@@ -1,0 +1,143 @@
+---
+// One post as a card: hero image, main tag (its direction), title, short description,
+// up to three keywords in small grey type, and a bottom row with the date and the venue as a rounded tag.
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { directionById } from '../data/directions';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+	post: CollectionEntry<'blog'>;
+	showDirection?: boolean; // off on a direction's own page, where every card has the same tag
+}
+const { post, showDirection = true } = Astro.props;
+const { title, description, heroImage, pubDate, venue, draft, tags } = post.data;
+const dir = directionById(post.data.direction);
+---
+
+<a class="card" href={`/blog/${post.id}/`}>
+	{heroImage && <Image src={heroImage} width={720} height={405} alt="" />}
+	{
+		showDirection && dir && (
+			<span class="dir-tag" style={`--c: ${dir.accent}`}>
+				<span class="dot" aria-hidden="true" />
+				{dir.kicker}
+			</span>
+		)
+	}
+	<h3 class="title">{title}</h3>
+	{description && <p class="desc">{description}</p>}
+	{tags && tags.length > 0 && <p class="tags">{tags.slice(0, 3).join(' · ')}</p>}
+	<p class="date">
+		<FormattedDate date={pubDate} />
+		{draft && <span class="draft">DRAFT</span>}
+		{venue && <span class="venue" title={venue}>{venue}</span>}
+	</p>
+</a>
+
+<style>
+	.card {
+		height: 100%;
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		gap: 0.55rem;
+		padding: 0.9rem;
+		border-radius: 16px;
+		border: 1px solid rgba(var(--ink), 0.08);
+		background: rgba(var(--paper), 0.9);
+		text-decoration: none;
+		transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+	}
+	.card:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+		border-color: rgba(var(--ink), 0.18);
+	}
+	.card :global(img) {
+		width: 100%;
+		height: auto;
+		display: block;
+		border-radius: 12px;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+	}
+	.dir-tag {
+		align-self: flex-start;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		margin-top: 0.15rem;
+		padding: 0.12rem 0.6rem 0.12rem 0.5rem;
+		border-radius: 999px;
+		background: rgba(var(--c), 0.12);
+		color: rgb(var(--gray-dark));
+		font: 600 0.68rem var(--font-ui);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+	.dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 999px;
+		background: rgb(var(--c));
+	}
+	.title {
+		margin: 0;
+		font-size: 1.05rem;
+		line-height: 1.3;
+		color: rgb(var(--black));
+	}
+	.desc {
+		margin: 0;
+		font-size: 0.88rem;
+		line-height: 1.45;
+		color: rgba(var(--gray-dark), 0.85);
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+	/* keywords: one quiet line, cut off with … if long */
+	.tags {
+		margin: 0;
+		font-size: 0.72rem;
+		line-height: 1.4;
+		color: rgba(var(--ink), 0.45);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	/* bottom row: date on the left, venue tag on the right */
+	.date {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin: auto 0 0;
+		font-size: 0.8rem;
+		color: rgba(var(--ink), 0.5);
+	}
+	.venue {
+		margin-left: auto;
+		max-width: 100%;
+		padding: 0.06rem 0.55rem;
+		border: 1px solid rgba(var(--ink), 0.16);
+		border-radius: 999px;
+		font: 600 0.68rem / 1.55 var(--font-ui);
+		letter-spacing: 0.02em;
+		color: rgba(var(--ink), 0.7);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.draft {
+		margin-left: 0;
+		padding: 0.05rem 0.45rem;
+		border-radius: 6px;
+		background: #fff4d6;
+		color: #6b4e00;
+		font-size: 0.75rem;
+		font-weight: 700;
+	}
+</style>

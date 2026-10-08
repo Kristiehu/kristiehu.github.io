@@ -1,0 +1,32 @@
+---
+// Figures written as ![alt](./img/x.png) in a post render through this component
+// (src/pages/blog/[...slug].astro passes it to <Content /> as `img`).
+// On screen a figure is at most 760 × 520 px, centred, and never enlarged past its own size
+// (the CSS is `.post-fig` in src/layouts/BlogPost.astro). The srcset holds 1x and 2x of that
+// size, so a 3600-px screenshot is no longer sent to every reader whole.
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+const MAX_W = 760;
+const MAX_H = 520;
+
+type Props = { src: ImageMetadata | string; alt?: string; title?: string };
+const { src, alt = '', title } = Astro.props;
+
+const local = typeof src === 'string' ? undefined : src;
+const fit = local
+	? (() => {
+			const w = Math.round(Math.min(MAX_W, local.width, (MAX_H * local.width) / local.height));
+			const widths = [...new Set([400, w, 2 * w].map((x) => Math.min(x, local.width)))].sort((a, b) => a - b);
+			return { widths, sizes: `(max-width: ${w + 40}px) 100vw, ${w}px` };
+		})()
+	: undefined;
+---
+
+{
+	local && fit ? (
+		<Image src={local} alt={alt} title={title} widths={fit.widths} sizes={fit.sizes} class="post-fig" />
+	) : (
+		<img src={src as string} alt={alt} title={title} loading="lazy" decoding="async" class="post-fig" />
+	)
+}
