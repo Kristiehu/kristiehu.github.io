@@ -318,6 +318,41 @@ const LINKS = [
       }
     }
 
+    /* Phones: one centred column (layout D, chosen 2026-10-08): portrait, "Kristie Hu", then
+       静祎 /jing-yee hoo/ on the next line, typewriter, motto and links, in line with the
+       English quote and "Explore more" below, which were already centred. */
+    @media (max-width: 720px) {
+      .hero {
+        justify-items: center;
+        justify-self: stretch;
+        width: 100%;
+        gap: 1.1rem;
+      }
+      .portrait-link :global(.pp) {
+        width: 124px;
+      }
+      .heroText {
+        text-align: center;
+      }
+      .name {
+        text-align: center;
+        font-size: 2.15rem;
+        line-height: 1.15;
+      }
+      .name .en {
+        display: block;
+      }
+      .name .zh {
+        margin-left: 0;
+      }
+      .type :global(.typed) {
+        text-align: center;
+      }
+      .links {
+        justify-content: center;
+      }
+    }
+
     </style>
   </body>
 </html>
