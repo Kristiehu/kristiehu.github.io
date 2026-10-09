@@ -1,8 +1,34 @@
-<p class="typed">
-  <span class="anchor">Ask me about </span>
-  <span class="typed-slot">
-    <span id="typed" class="typed-dynamic" aria-live="polite"></span>
-    <span class="cursor" aria-hidden="true">▍</span>
+---
+// Homepage typewriter: "Ask me about" + a rotating topic (option A1, chosen 2026-10-09).
+// Phones (up to 600 px, topic on its own line, centred): before a topic is typed its box is set to exactly
+// that topic's width, so letters appear where they will stay and the finished word is centred; the cursor hangs
+// to the right. Wider screens: the box is as wide as the longest topic, so the centred hero never shifts and
+// typing starts from a fixed point. Both: about 33 ms per letter and 17 ms per letter to delete, timed on the
+// screen's own frames (2 and 1 frames at 60 Hz, 4 and 2 at 120 Hz) so every letter lands at an even beat;
+// a 1.9 s rest; the cursor stays solid while letters change and blinks at rest.
+// Screen readers get one sentence with every topic; with reduced motion the topics swap without typing.
+const LINES = [
+  "GeoFMs.",
+  "Urban Networks.",
+  "Spatial ETL.",
+  "EO Foundation Models.",
+  "Urban Networks.",
+  "Spatial Databases.",
+  "LiDAR & 3D Mapping.",
+  "Point Cloud Segmentation.",
+  "2D–3D Fusion.",
+  "Hyperspectral RS.",
+  "Object Detection."
+];
+const spoken = `Ask me about ${[...new Set(LINES)].map((t) => t.replace(/\.$/, "")).join(", ")}.`;
+---
+
+<p class="typed" data-lines={JSON.stringify(LINES)}>
+  <span class="sr-only">{spoken}</span>
+  <span class="anchor" aria-hidden="true">Ask me about </span>
+  <span class="typed-slot" aria-hidden="true">
+    <span id="typed" class="typed-dynamic">{LINES[0]}</span>
+    <span class="cursor">▍</span>
   </span>
 </p>
 
@@ -25,7 +51,7 @@
   letter-spacing: 0;
 }
 
-/* On wider screens the script reserves room for the longest topic, so the centred hero doesn't slide while typing */
+/* The script sets this box's width (see the note at the top); the cursor may hang past its right edge */
 .typed-slot {
   display: inline-block;
   text-align: left;
@@ -40,18 +66,25 @@
   border-radius: 6px;
   background: linear-gradient(transparent 70%, rgba(var(--blue-rgb), 0.16) 0);
 }
+/* no highlight sliver between topics */
+.typed-dynamic:empty {
+  padding: 0;
+  background: none;
+}
 
 @media (max-width: 600px) {
   .anchor { display: block; }
-  .typed-slot { white-space: normal; }
 }
 
-/* cursor */
+/* cursor: blinks at rest, steady while letters change */
 .cursor {
   display: inline-block;
   opacity: 0.65;
   animation: blink 1.4s steps(1) infinite;
   transform: translateY(1px);
+}
+.cursor.is-typing {
+  animation: none;
 }
 
 @keyframes blink { 50% { opacity: 0; } }
@@ -62,84 +95,102 @@
 </style>
 
 <script>
-  const lines = [
-  "GeoFMs.",
-  "Urban Networks.",
-  "Spatial ETL.",
-  "EO Foundation Models.",
-  "Urban Networks.",
-  "Spatial Databases.",
-  "LiDAR & 3D Mapping.",
-  "Point Cloud Segmentation.",
-  "2D–3D Fusion.",
-  "Hyperspectral RS.",
-  "Object Detection."
-  ];
-
+  const box = document.querySelector<HTMLElement>(".typed[data-lines]");
   const el = document.getElementById("typed");
-  if (!el) throw new Error("TypedDescription: #typed not found");
+  if (box && el) {
+    const lines: string[] = JSON.parse(box.dataset.lines || "[]");
+    const slot = el.parentElement as HTMLElement;
+    const cursor = slot.querySelector(".cursor") as HTMLElement;
+    const phone = matchMedia("(max-width: 600px)");
+    const still = matchMedia("(prefers-reduced-motion: reduce)");
+    const TYPE_MS = 33.3, ERASE_MS = 16.7, REST_MS = 1900, GAP_MS = 250, STILL_MS = 3000;
 
-  // Reserve room for the longest topic on wider screens (the hero is centred, so a growing line would make it slide).
-  // On phones the topic sits on its own line and needs no reserve.
-  const slot = el.parentElement;
-  const cursor = slot.querySelector(".cursor");
-  const reserve = () => {
-    if (matchMedia("(max-width: 600px)").matches) { slot.style.minWidth = ""; return; }
-    const probe = el.cloneNode();
+    const probe = el.cloneNode() as HTMLElement;
     probe.removeAttribute("id");
-    probe.removeAttribute("aria-live");
     probe.style.cssText = "position:absolute;visibility:hidden;white-space:nowrap";
-    slot.appendChild(probe);
-    let widest = 0;
-    for (const t of lines) { probe.textContent = t; widest = Math.max(widest, probe.getBoundingClientRect().width); }
-    probe.remove();
-    slot.style.minWidth = Math.ceil(widest + (cursor ? cursor.getBoundingClientRect().width : 0)) + "px";
-  };
-  document.fonts.ready.then(reserve);
-  addEventListener("resize", reserve);
+    const width = (t: string) => {
+      probe.textContent = t;
+      slot.appendChild(probe);
+      const w = probe.getBoundingClientRect().width;
+      probe.remove();
+      return w;
+    };
 
-  const TYPE_MS = 28;
-  const ERASE_MS = 16;
-  const PAUSE_MS = 1000;
-  const GAP_MS = 250;
-
-  let lineIdx = 0;
-  let charIdx = 0;
-  let mode = "typing";
-
-  const tick = () => {
-    const text = lines[lineIdx];
-
-    if (mode === "typing") {
-      charIdx++;
-      el.textContent = text.slice(0, charIdx);
-      if (charIdx >= text.length) {
-        mode = "pausing";
-        setTimeout(tick, PAUSE_MS);
-        return;
+    // Wider screens: room for the longest topic plus the cursor, measured once (and again on resize).
+    // Phones: exactly the current topic's width, set before each topic is typed, so it is centred.
+    let current = lines[0];
+    let reserved = 0;
+    const fit = () => {
+      if (phone.matches) {
+        slot.style.minWidth = "";
+        slot.style.width = Math.ceil(width(current)) + "px";
+      } else {
+        slot.style.width = "";
+        if (!reserved) reserved = Math.ceil(Math.max(...lines.map(width)) + cursor.getBoundingClientRect().width);
+        slot.style.minWidth = reserved + "px";
       }
-      setTimeout(tick, TYPE_MS);
-      return;
-    }
+    };
+    let resizing = 0;
+    addEventListener("resize", () => {
+      clearTimeout(resizing);
+      resizing = window.setTimeout(() => { reserved = 0; fit(); }, 150);
+    });
 
-    if (mode === "pausing") {
-      mode = "erasing";
-      setTimeout(tick, ERASE_MS);
-      return;
-    }
+    // Pause while the line is off screen
+    let visible = true;
+    new IntersectionObserver((entries) => { visible = entries.some((e) => e.isIntersecting); }).observe(box);
 
-    charIdx--;
-    el.textContent = text.slice(0, Math.max(0, charIdx));
+    // Letters change on animation frames at a fixed number of frames each, so the rhythm is even
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const frame = () => new Promise<number>((r) => requestAnimationFrame(r));
+    let FRAME = 1000 / 60;
+    const measureFrame = async () => {
+      const d: number[] = [];
+      let last = await frame();
+      for (let i = 0; i < 9; i++) { const t = await frame(); d.push(t - last); last = t; }
+      d.sort((x, y) => x - y);
+      if (d[4] > 4 && d[4] < 50) FRAME = d[4];
+    };
+    const beat = (ms: number) => FRAME * Math.max(1, Math.round(ms / FRAME));
+    const steps = async (count: number, ms: number, show: (n: number) => void) => {
+      const every = beat(ms);
+      const start = await frame();
+      show(1);
+      for (let n = 1; n < count; ) {
+        const now = await frame();
+        const next = Math.min(count, Math.floor((now - start) / every + 0.25) + 1);
+        if (next !== n) { n = next; show(n); }
+      }
+    };
 
-    if (charIdx <= 0) {
-      mode = "typing";
-      lineIdx = (lineIdx + 1) % lines.length;
-      setTimeout(tick, GAP_MS);
-      return;
-    }
+    const run = async () => {
+      await measureFrame();
+      let i = 0;
+      for (;;) {
+        await sleep(still.matches ? STILL_MS : REST_MS); // the current topic rests
+        while (!visible) await sleep(500);
+        i = (i + 1) % lines.length;
+        if (still.matches) {
+          current = lines[i];
+          fit();
+          el.textContent = current;
+          continue;
+        }
+        cursor.classList.add("is-typing");
+        const gone = current;
+        await steps(gone.length, ERASE_MS, (n) => { el.textContent = gone.slice(0, gone.length - n); });
+        current = lines[i];
+        fit();
+        await sleep(GAP_MS);
+        const word = current;
+        await steps(word.length, TYPE_MS, (n) => { el.textContent = word.slice(0, n); });
+        cursor.classList.remove("is-typing");
+      }
+    };
 
-    setTimeout(tick, ERASE_MS);
-  };
-
-  tick();
+    document.fonts.ready.then(() => {
+      fit();
+      run();
+    });
+  }
 </script>

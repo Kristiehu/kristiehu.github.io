@@ -20,7 +20,7 @@ const hero = heroImage
 	? (() => {
 			const w = Math.round(Math.min(HERO_MAX_W, heroImage.width, (HERO_MAX_H * heroImage.width) / heroImage.height));
 			const widths = [...new Set([400, w, 800, 2 * w].map((x) => Math.min(x, heroImage.width)))].sort((a, b) => a - b);
-			return { widths, sizes: `(max-width: ${w + 40}px) 100vw, ${w}px` };
+			return { w, widths, sizes: `(max-width: ${w + 40}px) 100vw, ${w}px` };
 		})()
 	: undefined;
 const linkList = [
@@ -272,7 +272,9 @@ const linkList = [
 					</div>
 					{heroImage && hero && (
 						<figure class="hero-image">
-							<Image src={heroImage} widths={hero.widths} sizes={hero.sizes} alt="" />
+							{/* Its width is set up front (with the width/height attributes giving the shape), so the page keeps
+							    room for the figure before it arrives and the text below doesn't jump. It is at the top: load it first. */}
+							<Image src={heroImage} widths={hero.widths} sizes={hero.sizes} alt="" loading="eager" fetchpriority="high" style={`width: ${hero.w}px`} />
 						</figure>
 					)}
 					<slot />
