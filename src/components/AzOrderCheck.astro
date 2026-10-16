@@ -1,0 +1,21 @@
+---
+/* The route viewer.
+
+   The inline script below is bundled by Astro and runs in the browser, which is
+   all a custom element needs: no framework, no hydration directive, and one copy
+   of it however many times the component appears on a page.
+
+   It takes its colours and fonts from the site's own tokens, so it follows the
+   light/dark switch on its own. Nothing to pass in.
+*/
+interface Props {
+  src?: string;
+}
+const { src = "/az-order-check-data.json" } = Astro.props;
+---
+
+<az-order-check src={src}></az-order-check>
+
+<script>
+  import "./az-order-check.js";
+</script>
