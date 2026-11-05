@@ -8,7 +8,7 @@ import '@fontsource-variable/source-serif-4/wght-italic.css'; // italic, only fo
 import '@fontsource-variable/source-sans-3/wght.css';
 import '@fontsource-variable/source-code-pro/wght.css';
 import type { ImageMetadata } from 'astro';
-import { SITE_TITLE } from '../consts';
+import { SITE_TITLE, GOATCOUNTER_CODE } from '../consts';
 
 interface Props {
   title: string;
@@ -52,6 +52,16 @@ const pageTitle = title && title !== SITE_TITLE ? `${title} | ${SITE_TITLE}` : S
 
 <!-- Google Search Console verification -->
 <meta name="google-site-verification" content="JCcrqp27_OcS1fWLCACkc-3YKaMOD8LJgCCsOy2W170" />
+
+<!-- Visit counting (GoatCounter: no cookies). Off until GOATCOUNTER_CODE is set in src/consts.ts. -->
+{GOATCOUNTER_CODE && (
+  <script
+    is:inline
+    data-goatcounter={`https://${GOATCOUNTER_CODE}.goatcounter.com/count`}
+    async
+    src="//gc.zgo.at/count.js"
+  ></script>
+)}
 
 
 <!-- Typography baseline (the font tokens live at the end of global.css) -->

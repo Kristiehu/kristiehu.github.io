@@ -1,6 +1,11 @@
 ---
 import { Github, Linkedin, Satellite, Mail } from "lucide-astro";
 import { PROFILE } from "../data/profile";
+import { GOATCOUNTER_CODE } from "../consts";
+import visitors from "../data/visitors.json";
+
+// The map button appears once the daily fetch has brought in at least one country.
+const hasMap = Boolean(GOATCOUNTER_CODE) && visitors.countries.length > 0;
 
 const today = new Date();
 
@@ -18,7 +23,23 @@ const LINKS = [
     © <a href="/about">Kristie Hu</a> · {today.getFullYear()}
     <span class="sep">|</span>
     Made with <span aria-hidden="true">🩶</span>
+    {GOATCOUNTER_CODE && (
+      <span class="visits" data-gc={GOATCOUNTER_CODE} hidden>
+        <span class="sep">|</span>
+        <span class="n"></span> visits
+        {hasMap && (
+          <button class="map-btn" type="button" aria-expanded="false" aria-controls="visit-map">Map</button>
+        )}
+      </span>
+    )}
   </p>
+
+  {hasMap && (
+    <div class="visit-map" id="visit-map" hidden>
+      <div class="vm-svg"></div>
+      <p class="vm-note">Visits by country, updated daily. No IP addresses are shown.</p>
+    </div>
+  )}
 
   <div class="social-links" aria-label="Social links">
     {
@@ -31,6 +52,45 @@ const LINKS = [
     }
   </div>
 </footer>
+
+<script>
+  // GoatCounter only answers this when "Allow adding visitor counts on your website"
+  // is on in its site settings; until then the count stays hidden.
+  const visits = document.querySelector<HTMLElement>(".visits[data-gc]");
+  if (visits?.dataset.gc) {
+    fetch(`https://${visits.dataset.gc}.goatcounter.com/counter/TOTAL.json`)
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d: { count?: string }) => {
+        const n = visits.querySelector(".n");
+        if (!n || !d.count || d.count === "0") return;
+        n.textContent = d.count;
+        visits.hidden = false;
+      })
+      .catch(() => {});
+  }
+
+  const mapBtn = document.querySelector<HTMLButtonElement>(".map-btn");
+  const mapPanel = document.querySelector<HTMLElement>("#visit-map");
+  let mapLoaded = false;
+  mapBtn?.addEventListener("click", () => {
+    if (!mapPanel) return;
+    const open = mapPanel.hidden;
+    mapPanel.hidden = !open;
+    mapBtn.setAttribute("aria-expanded", String(open));
+    if (open && !mapLoaded) {
+      mapLoaded = true;
+      fetch("/visitors.svg")
+        .then((r) => (r.ok ? r.text() : Promise.reject()))
+        .then((svg) => {
+          const slot = mapPanel.querySelector(".vm-svg");
+          if (slot) slot.innerHTML = svg;
+        })
+        .catch(() => {
+          mapLoaded = false;
+        });
+    }
+  });
+</script>
 
 <style>
   .site-footer {
@@ -65,6 +125,51 @@ const LINKS = [
   .footer-text a:hover {
     border-bottom-color: currentColor;
     opacity: 0.95;
+  }
+
+  .map-btn {
+    margin-left: 0.4rem;
+    padding: 0 0.55rem;
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    border: 1px solid rgba(var(--ink), 0.22);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .map-btn:hover,
+  .map-btn[aria-expanded="true"] {
+    color: var(--blue);
+    border-color: rgba(var(--blue-rgb), 0.5);
+  }
+
+  .visit-map {
+    max-width: 560px;
+    margin: 0.8rem auto 0.2rem;
+  }
+
+  .visit-map :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .visit-map :global(.vm-land) {
+    fill: rgba(var(--ink), 0.08);
+  }
+
+  .visit-map :global(.vm-dot) {
+    fill: rgba(var(--blue-rgb), 0.45);
+    stroke: var(--blue);
+    stroke-width: 1;
+  }
+
+  .vm-note {
+    margin: 0.4rem 0 0;
+    font-size: 0.72rem;
+    opacity: 0.8;
   }
 
   .social-links {

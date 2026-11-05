@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: "17 9 * * *" # daily, 09:17 UTC: refresh the footer's visitor map
 
 permissions:
   contents: read
@@ -29,6 +31,11 @@ jobs:
 
       - name: Install
         run: npm ci
+
+      - name: Fetch visitor stats
+        run: node scripts/fetch-visitors.mjs
+        env:
+          GOATCOUNTER_TOKEN: ${{ secrets.GOATCOUNTER_TOKEN }}
 
       - name: Build
         run: npm run build
