@@ -1,0 +1,364 @@
+---
+// Post 15: what a weekly capacity report lets you see, on simulated equipment.
+// Each week is one dated folder; the history comes from the running summary.
+// Device names, port totals and counts are all generated from a fixed seed.
+function rng(seed: number) {
+	return () => {
+		seed |= 0;
+		seed = (seed + 0x6d2b79f5) | 0;
+		let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+		t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+		return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+	};
+}
+const rand = rng(15);
+const WEEKS = 16;
+
+const start = new Date(Date.UTC(2025, 9, 6)); // a Monday
+const weeks = Array.from({ length: WEEKS }, (_, i) =>
+	new Date(start.getTime() + i * 7 * 864e5).toISOString().slice(0, 10),
+);
+
+function device(name: string, total: number, startShare: number, drift: number) {
+	let used = Math.round(total * startShare);
+	const usedSeries: number[] = [];
+	const adds: number[] = [];
+	const dels: number[] = [];
+	for (let w = 0; w < WEEKS; w++) {
+		const a = w === 0 ? 0 : Math.max(0, Math.round(drift + (rand() - 0.5) * 2));
+		const d = w === 0 ? 0 : Math.max(0, Math.round((rand() - 0.6) * 2));
+		used = Math.min(total, Math.max(0, used + a - d));
+		usedSeries.push(used);
+		adds.push(a);
+		dels.push(d);
+	}
+	return { name, total, used: usedSeries, adds, dels };
+}
+
+const DATA = {
+	weeks,
+	groups: {
+		access: [
+			device("Access 01", 48, 0.56, 0.9),
+			device("Access 02", 48, 0.38, 0.3),
+			device("Access 03", 48, 0.68, 0.7),
+			device("Access 04", 48, 0.22, 0.4),
+			device("Access 05", 48, 0.46, 1.0),
+			device("Access 06", 48, 0.72, 0.2),
+			device("Access 07", 48, 0.3, 0.8),
+			device("Access 08", 48, 0.45, 0.2),
+		],
+		core: [
+			device("Core 1", 96, 0.5, 1.4),
+			device("Core 2", 96, 0.7, 0.6),
+			device("Core 3", 96, 0.3, 1.0),
+			device("Core 4", 96, 0.6, 0.4),
+		],
+	},
+};
+---
+
+<figure class="cx" data-capacity={JSON.stringify(DATA)}>
+	<div class="cx-controls">
+		<div class="cx-tabs" role="group" aria-label="Equipment">
+			<button type="button" data-g="access" aria-pressed="true">Access</button>
+			<button type="button" data-g="core" aria-pressed="false">Core</button>
+		</div>
+		<label class="cx-week">
+			<span>Weekly folder</span>
+			<input type="range" min="0" max={WEEKS - 1} value={WEEKS - 1} step="1" />
+			<output class="cx-date">{weeks[WEEKS - 1]}</output>
+		</label>
+	</div>
+
+	<div class="cx-body">
+		<ol class="cx-list" aria-label="Equipment, fullest first"></ol>
+		<div class="cx-detail" aria-live="polite"></div>
+	</div>
+
+	<figcaption>
+		Inside plant (ISP), simulated: equipment and counts are made up. Each week is one dated folder,
+		and the history comes from the running summary. Red marks equipment at 85% or more.
+	</figcaption>
+</figure>
+
+<script>
+	type Device = { name: string; total: number; used: number[]; adds: number[]; dels: number[] };
+	type Data = { weeks: string[]; groups: Record<string, Device[]> };
+
+	const FULL = 0.85;
+
+	document.querySelectorAll<HTMLElement>(".cx[data-capacity]").forEach((root) => {
+		const data: Data = JSON.parse(root.dataset.capacity ?? "{}");
+		const list = root.querySelector<HTMLOListElement>(".cx-list")!;
+		const detail = root.querySelector<HTMLElement>(".cx-detail")!;
+		const slider = root.querySelector<HTMLInputElement>("input[type=range]")!;
+		const date = root.querySelector<HTMLOutputElement>(".cx-date")!;
+		const tabs = root.querySelectorAll<HTMLButtonElement>(".cx-tabs button");
+
+		let group = "access";
+		let week = data.weeks.length - 1;
+		let selected = "";
+
+		const share = (d: Device, w = week) => d.used[w] / d.total;
+
+		function sparkline(d: Device) {
+			const W = 300, H = 92, P = 8;
+			// Start the scale a little below this device's lowest week, so a few
+			// ports a week reads as a trend rather than a flat line.
+			const loShare = Math.max(0, Math.floor((Math.min(...d.used) / d.total - 0.1) * 10) / 10);
+			const lo = loShare * d.total;
+			const x = (i: number) => P + (i / (d.used.length - 1)) * (W - 2 * P);
+			const y = (v: number) => H - P - ((v - lo) / (d.total - lo)) * (H - 2 * P);
+			const line = d.used.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join("");
+			const yf = y(d.total * FULL).toFixed(1);
+			const hot = share(d) >= FULL;
+			return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${d.name}: ports in use over ${d.used.length} weeks">
+				<line class="cx-th" x1="${P}" x2="${W - P}" y1="${yf}" y2="${yf}"/>
+				<text class="cx-thl" x="${W - P}" y="${Number(yf) - 4}" text-anchor="end">85%</text>
+				<text class="cx-ax" x="${P}" y="${P + 9}">100%</text>
+				<text class="cx-ax" x="${P}" y="${H - P - 3}">${Math.round(loShare * 100)}%</text>
+				<path class="cx-line" d="${line}"/>
+				<line class="cx-now" x1="${x(week)}" x2="${x(week)}" y1="${P}" y2="${H - P}"/>
+				<circle class="cx-pt${hot ? " hot" : ""}" cx="${x(week)}" cy="${y(d.used[week])}" r="4"/>
+			</svg>`;
+		}
+
+		function render() {
+			const devices = [...(data.groups[group] ?? [])].sort((a, b) => share(b) - share(a));
+			if (!devices.some((d) => d.name === selected)) selected = devices[0]?.name ?? "";
+			date.textContent = data.weeks[week];
+
+			list.innerHTML = "";
+			for (const d of devices) {
+				const li = document.createElement("li");
+				const b = document.createElement("button");
+				b.type = "button";
+				b.className = "cx-row" + (d.name === selected ? " on" : "") + (share(d) >= FULL ? " hot" : "");
+				const pct = Math.round(share(d) * 100);
+				b.innerHTML = `<span class="cx-name">${d.name}</span>
+					<span class="cx-bar"><span style="width:${pct}%"></span></span>
+					<span class="cx-pct">${pct}%</span>`;
+				b.addEventListener("click", () => {
+					selected = d.name;
+					render();
+				});
+				li.appendChild(b);
+				list.appendChild(li);
+			}
+
+			const d = devices.find((x) => x.name === selected);
+			if (!d) return;
+			const free = d.total - d.used[week];
+			const net = d.adds[week] - d.dels[week];
+			const change =
+				d.adds[week] === 0 && d.dels[week] === 0
+					? "This week: no change"
+					: `This week: ${d.adds[week]} added, ${d.dels[week]} removed (${net >= 0 ? "+" : "−"}${Math.abs(net)} net)`;
+			detail.innerHTML = `<p class="cx-dname">${d.name}</p>
+				<p class="cx-stat"><b>${d.used[week]}</b> of ${d.total} ports in use · <b>${free}</b> free</p>
+				<p class="cx-stat">${change}</p>
+				${sparkline(d)}
+				<p class="cx-hint">16 weekly folders, kept side by side.</p>`;
+		}
+
+		tabs.forEach((t) =>
+			t.addEventListener("click", () => {
+				group = t.dataset.g ?? "access";
+				tabs.forEach((o) => o.setAttribute("aria-pressed", String(o === t)));
+				selected = "";
+				render();
+			}),
+		);
+		slider.addEventListener("input", () => {
+			week = Number(slider.value);
+			render();
+		});
+
+		render();
+	});
+</script>
+
+<style is:global>
+	.cx {
+		margin: 0;
+		padding: 1rem 1.1rem 0.9rem;
+		border: 1px solid rgba(var(--ink), 0.13);
+		border-radius: 6px;
+		background: rgb(var(--paper));
+	}
+	.cx-controls {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.7rem 1.4rem;
+		align-items: center;
+	}
+	.cx-tabs {
+		display: flex;
+		gap: 0.4rem;
+	}
+	.cx-tabs button {
+		font: 500 0.8rem var(--font-ui);
+		padding: 0.3rem 0.85rem;
+		border-radius: 999px;
+		border: 1px solid rgba(var(--ink), 0.2);
+		background: transparent;
+		color: rgba(var(--ink), 0.72);
+		cursor: pointer;
+	}
+	.cx-tabs button[aria-pressed="true"] {
+		color: var(--blue);
+		border-color: var(--blue);
+		background: rgba(var(--blue-rgb), 0.08);
+	}
+	.cx-week {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		flex: 1;
+		min-width: 15rem;
+		font: 0.78rem var(--font-ui);
+		color: rgba(var(--ink), 0.6);
+	}
+	.cx-week input {
+		flex: 1;
+		accent-color: var(--blue);
+	}
+	.cx-date {
+		font: 600 0.8rem var(--font-mono);
+		color: rgb(var(--black));
+	}
+	.cx-body {
+		display: grid;
+		grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+		gap: 1.1rem;
+		margin-top: 0.9rem;
+	}
+	.cx .cx-list {
+		list-style: none;
+		margin: 0;
+		padding: 0 !important;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+	.cx .cx-list li {
+		margin: 0;
+		padding: 0;
+	}
+	.cx-row {
+		width: 100%;
+		display: grid;
+		grid-template-columns: 5.4rem 1fr 2.6rem;
+		gap: 0.6rem;
+		align-items: center;
+		padding: 0.32rem 0.45rem;
+		border: 1px solid transparent;
+		border-radius: 5px;
+		background: transparent;
+		color: rgb(var(--black));
+		font: 0.8rem var(--font-ui);
+		text-align: left;
+		cursor: pointer;
+	}
+	.cx-row:hover {
+		background: rgba(var(--ink), 0.04);
+	}
+	.cx-row.on {
+		border-color: rgba(var(--blue-rgb), 0.5);
+		background: rgba(var(--blue-rgb), 0.06);
+	}
+	.cx-bar {
+		height: 0.55rem;
+		border-radius: 999px;
+		background: rgba(var(--ink), 0.08);
+		overflow: hidden;
+	}
+	.cx-bar span {
+		display: block;
+		height: 100%;
+		border-radius: 999px;
+		background: var(--blue);
+		transition: width 0.25s ease;
+	}
+	.cx-row.hot .cx-bar span {
+		background: rgb(216, 58, 31);
+	}
+	.cx-pct {
+		font: 600 0.78rem var(--font-mono);
+		text-align: right;
+	}
+	.cx-row.hot .cx-pct {
+		color: rgb(216, 58, 31);
+	}
+	.cx-detail p {
+		margin: 0;
+	}
+	.cx-dname {
+		font: 600 1rem var(--font-text);
+	}
+	.cx-stat {
+		font: 0.82rem var(--font-ui);
+		color: rgba(var(--ink), 0.7);
+		margin-top: 0.15rem !important;
+	}
+	.cx-stat b {
+		color: rgb(var(--black));
+	}
+	.cx-detail svg {
+		display: block;
+		width: 100%;
+		height: auto;
+		margin-top: 0.5rem;
+	}
+	.cx-line {
+		fill: none;
+		stroke: var(--blue);
+		stroke-width: 2;
+		stroke-linejoin: round;
+	}
+	.cx-th {
+		stroke: rgb(216, 58, 31);
+		stroke-dasharray: 4 3;
+		opacity: 0.7;
+	}
+	.cx-thl {
+		font: 10px var(--font-ui);
+		fill: rgb(216, 58, 31);
+	}
+	.cx-ax {
+		font: 10px var(--font-ui);
+		fill: rgba(var(--ink), 0.45);
+	}
+	.cx-now {
+		stroke: rgba(var(--ink), 0.3);
+		stroke-dasharray: 2 3;
+	}
+	.cx-pt {
+		fill: var(--blue);
+		stroke: rgb(var(--paper));
+		stroke-width: 2;
+	}
+	.cx-pt.hot {
+		fill: rgb(216, 58, 31);
+	}
+	.cx-hint {
+		font: 0.72rem var(--font-ui);
+		color: rgba(var(--ink), 0.5);
+	}
+	.cx figcaption {
+		margin-top: 0.8rem;
+		font: 0.72rem var(--font-ui);
+		color: rgba(var(--ink), 0.5);
+	}
+	@media (max-width: 620px) {
+		.cx-body {
+			grid-template-columns: 1fr;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.cx-bar span {
+			transition: none;
+		}
+	}
+</style>

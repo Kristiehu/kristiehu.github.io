@@ -1,0 +1,182 @@
+---
+// Post 16: one circuit as each team records it, with the fields that disagree marked.
+// Every ID, place and date here is invented.
+const FIELDS = ["Circuit ID", "Region", "Status", "Last updated"] as const;
+
+const EXAMPLES = [
+	{
+		tab: "Not synced yet",
+		ours: ["DEMO-0412-B", "Greater Toronto Area", "In service", "Jun 18"],
+		theirs: ["DEMO-0412-B", "Greater Toronto Area", "None", "Jun 11"],
+		verdict:
+			"In service on one side, no status at all on the other. The two systems update on different schedules, and the newer state hasn't reached the second one yet.",
+	},
+	{
+		tab: "Deactivated on one side",
+		ours: ["DEMO-1187-A", "Montreal", "Deactivated", "Jun 17"],
+		theirs: ["DEMO-1187-A", "Montreal", "In service", "May 28"],
+		verdict:
+			"Retired on one side, still in service on the other, until the next refresh reaches it.",
+	},
+	{
+		tab: "Entry error",
+		ours: ["DEMO-0270-D", "Ottawa", "In service", "Jun 5"],
+		theirs: ["DEMO-0270-D", "Montreal", "In service", "Jun 5"],
+		verdict:
+			"Same circuit, same status, but the region was picked wrong when it was entered by hand. A small slip that sends the record to the wrong place.",
+	},
+	{
+		tab: "Records agree",
+		ours: ["DEMO-0093-C", "Vancouver", "In service", "Jun 15"],
+		theirs: ["DEMO-0093-C", "Vancouver", "In service", "Jun 15"],
+		verdict: "Everything matches. Nothing to send today.",
+	},
+];
+
+const first = EXAMPLES[0];
+const differs = (i: number) => first.ours[i] !== first.theirs[i];
+---
+
+<figure class="rp" data-examples={JSON.stringify(EXAMPLES)}>
+	<div class="tabs" role="tablist" aria-label="Example">
+		{EXAMPLES.map((ex, i) => (
+			<button type="button" role="tab" aria-selected={i === 0 ? "true" : "false"} data-i={i}>
+				{ex.tab}
+			</button>
+		))}
+	</div>
+
+	<div class="cards">
+		{["Our record", "Their record"].map((who, side) => (
+			<div class="card">
+				<p class="who">{who}</p>
+				<dl>
+					{FIELDS.map((f, i) => (
+						<div class:list={["row", { bad: differs(i) }]} data-field={i}>
+							<dt>{f}</dt>
+							<dd data-side={side}>{side === 0 ? first.ours[i] : first.theirs[i]}</dd>
+						</div>
+					))}
+				</dl>
+			</div>
+		))}
+	</div>
+
+	<p class="verdict" aria-live="polite">{first.verdict}</p>
+	<figcaption>Simulated records: every ID, place and date here is made up.</figcaption>
+</figure>
+
+<script>
+	type Example = { tab: string; ours: string[]; theirs: string[]; verdict: string };
+
+	document.querySelectorAll<HTMLElement>(".rp[data-examples]").forEach((root) => {
+		const examples: Example[] = JSON.parse(root.dataset.examples ?? "[]");
+		const tabs = root.querySelectorAll<HTMLButtonElement>("[role=tab]");
+		const verdict = root.querySelector(".verdict");
+
+		function show(i: number) {
+			const ex = examples[i];
+			if (!ex) return;
+			tabs.forEach((t, k) => t.setAttribute("aria-selected", String(k === i)));
+			root.querySelectorAll<HTMLElement>(".row").forEach((row) => {
+				const f = Number(row.dataset.field);
+				const dd = row.querySelector<HTMLElement>("dd");
+				const side = Number(dd?.dataset.side);
+				if (dd) dd.textContent = side === 0 ? ex.ours[f] : ex.theirs[f];
+				row.classList.toggle("bad", ex.ours[f] !== ex.theirs[f]);
+			});
+			if (verdict) verdict.textContent = ex.verdict;
+		}
+
+		tabs.forEach((t) => t.addEventListener("click", () => show(Number(t.dataset.i))));
+	});
+</script>
+
+<style>
+	.rp {
+		margin: 0;
+		padding: 1rem 1.1rem 0.9rem;
+		border: 1px solid rgba(var(--ink), 0.13);
+		border-radius: 6px;
+		background: rgb(var(--paper));
+	}
+	.tabs {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+	.tabs button {
+		font: 500 0.8rem var(--font-ui);
+		padding: 0.3rem 0.75rem;
+		border-radius: 999px;
+		border: 1px solid rgba(var(--ink), 0.2);
+		background: transparent;
+		color: rgba(var(--ink), 0.72);
+		cursor: pointer;
+	}
+	.tabs button[aria-selected="true"] {
+		color: var(--blue);
+		border-color: var(--blue);
+		background: rgba(var(--blue-rgb), 0.08);
+	}
+	.cards {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.9rem;
+		margin-top: 0.9rem;
+	}
+	.card {
+		border: 1px solid rgba(var(--ink), 0.13);
+		border-radius: 6px;
+		padding: 0.7rem 0.85rem;
+	}
+	.who {
+		margin: 0 0 0.4rem;
+		font: 600 0.68rem var(--font-ui);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: rgba(var(--ink), 0.55);
+	}
+	dl {
+		margin: 0;
+	}
+	.row {
+		display: grid;
+		grid-template-columns: 6.5rem 1fr;
+		gap: 0.5rem;
+		padding: 0.28rem 0.35rem;
+		border-radius: 4px;
+		transition: background-color 0.2s ease;
+	}
+	dt {
+		font: 0.78rem var(--font-ui);
+		color: rgba(var(--ink), 0.55);
+	}
+	dd {
+		margin: 0;
+		font: 0.84rem var(--font-mono);
+		color: rgb(var(--black));
+	}
+	.row.bad {
+		background: color-mix(in srgb, rgb(var(--paper)) 88%, rgb(216, 58, 31));
+	}
+	.row.bad dd {
+		color: rgb(216, 58, 31);
+		font-weight: 600;
+	}
+	.verdict {
+		margin: 0.85rem 0 0;
+		font-size: 0.95rem;
+		line-height: 1.5;
+	}
+	figcaption {
+		margin-top: 0.6rem;
+		font: 0.72rem var(--font-ui);
+		color: rgba(var(--ink), 0.5);
+	}
+	@media (max-width: 560px) {
+		.cards {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

@@ -1,0 +1,90 @@
+---
+title: "Cross-System Record Reconciliation: An Automated, Secure Data Exchange Between GIS and Operational Systems"
+description: "A daily pipeline that compares circuit records across two teams' systems and hands every difference, over an encrypted channel, to the team that owns the record."
+pubDate: '2026-06-20' # when the work happened
+heroImage: "./img/16-cross-team-alignment-hero.png"
+tags: ["Data Systems", "Data Quality", "Automation", "Python", "SFTP"]
+short: "Cross-system record reconciliation"
+direction: data-systems
+venue: 'Industry'
+draft: true # preview with `npm run dev`; set to false to publish
+---
+
+{/* Figures from Kristie. All examples and charts below use simulated data. */}
+
+import SyncRecordPair from '../../components/sync/SyncRecordPair.astro';
+import SyncBacklog from '../../components/sync/SyncBacklog.astro';
+import SyncHandoff from '../../components/sync/SyncHandoff.astro';
+import SyncRegionMap from '../../components/sync/SyncRegionMap.astro';
+
+Two teams keep records about the same circuits: ours, GIS Application and Automation,
+and a software team whose systems run day-to-day operations. Each team works in its own
+tools, and behind them circuit status is refreshed through different APIs at different
+frequencies.
+
+That timing gap is normal, but it means the two systems can briefly tell different
+stories. A circuit may be in service on one side while the other hasn't picked up a status
+yet, or deactivated on one side while the other still lists it as in service. Now and then
+a manual entry adds a difference of its own. Keeping the two aligned needs a bridge
+between them.
+
+<div style={{ height: "1.2rem" }} />
+
+<SyncRecordPair />
+
+<div style={{ height: "2rem" }} />
+## Why a bridge
+
+A difference that nobody looks for doesn't stay small. Without a regular comparison,
+differences build up quietly, and the longer one sits, the more likely someone downstream
+works from the version that's behind.
+
+<div style={{ height: "1.2rem" }} />
+
+<SyncBacklog />
+
+<div style={{ height: "2rem" }} />
+## The exchange
+
+Four steps: pull, compare and send happen on our side; the update happens on theirs.
+Because these records carry internal details, this exchange runs over an encrypted SFTP
+connection rather than email or a shared folder.
+
+<div style={{ height: "1rem" }} />
+
+<SyncHandoff />
+
+<div style={{ height: "1.2rem" }} />
+
+The file is the agreement between the two teams. Neither team has to work inside the
+other's systems; the only shared point is one folder on their server.
+
+<div style={{ height: "2rem" }} />
+## What changed
+
+Every day it brings around 20 records back into line, across every property we maintain
+in the Greater Toronto Area, Montreal, Vancouver and Ottawa. It has been running every
+day since 2025.
+
+<div style={{ height: "1rem" }} />
+
+<SyncRegionMap />
+
+<div style={{ height: "1.2rem" }} />
+
+Each difference goes to the team that owns the record, close to when it appears, so the
+two systems stay aligned day to day rather than drifting apart.
+
+It works alongside the [weekly capacity reports](/blog/15-weekly-capacity-reports/): those
+get our own numbers to the people who need them; this keeps two teams' records in line. Both depend on the data being right in the first place, which is what
+[spatial validation of splice sequences](/blog/14_cable-order-check/) is for.
+
+<div style={{ height: "2rem" }} />
+## Next steps
+
+- **Measure the loop.** Track how long each difference takes to resolve, not only how
+  many are found.
+- **Compare more fields.** Extend the check beyond IDs and status to the other details
+  both teams keep.
+- **Shared infrastructure.** Run the exchange on shared, always-on infrastructure, and
+  have the receiving side flag any day when no file arrives.

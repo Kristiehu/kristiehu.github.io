@@ -1,0 +1,79 @@
+---
+title: "Automated ISP and OSP Capacity Reporting for Fibre Network Planning: Weekly and Monthly ETL Pipelines"
+description: "Two scheduled pipelines that turn raw exports into capacity reports for a fibre network, inside plant weekly and outside plant monthly, cutting the work from two days to under half a day and keeping the history for planning."
+short: "ISP and OSP capacity pipelines"
+heroImage: "./img/p15_main.png"
+direction: data-systems
+pubDate: '2026-01-30'
+venue: 'Industry'
+tags: ["Data Systems", "Automation", "ETL", "Python", "Capacity Planning"]
+draft: true
+---
+
+import CapacityExplorer from '../../components/capacity/CapacityExplorer.astro';
+
+A fibre network's capacity lives in two places. **Inside plant (ISP)** is the equipment in
+hubs and buildings: access and core devices and their ports. **Outside plant (OSP)** is
+everything in the field: the cables, the splice closures that join them, and the
+structures they run through. Planning needs both: which equipment still has free ports,
+and where the fibre itself has room.
+
+Putting those reports together by hand took about two days. I built two pipelines on
+tools the team already used every day: Google Drive, scheduled jobs, bash and Python.
+The reports now take under half a day.
+
+<div style={{ height: "1.4rem" }} />
+
+<CapacityExplorer />
+
+<div style={{ height: "2rem" }} />
+## Inside plant, every week
+
+One script runs every step, every Monday morning.
+
+1. **Collect.** A Google Apps Script drops the latest equipment exports into Drive.
+2. **Download.** Only the files that changed in the last two days are fetched, so nothing
+   is processed twice.
+3. **Build.** Python works out free and used ports for access and core equipment,
+   uplinks, device counts, and what was added or removed that week, then formats it all
+   into the report.
+4. **Publish.** The report goes into a new folder named by date, next to every earlier
+   week, and a running summary takes that week's numbers.
+
+Each step writes its own log, so when something fails, the log names the step.
+
+<div style={{ height: "2rem" }} />
+## Outside plant, every month
+
+Every month a bash script runs the OSP cycle. It starts from last month's report and
+merges in the new splice closure capacity, cable capacity, structure and location exports.
+It fills in missing coordinates from the other sources, adds locations that weren't there
+before, and pushes the month's changes out as a new report. All the inputs sit in one
+config file, so each cycle is one command, not an afternoon of copying and pasting.
+
+<div style={{ height: "2rem" }} />
+## What changed
+
+- **Under half a day instead of two.** The time goes into reading the reports, not
+  assembling them.
+- **One place to look.** Everyone opens the same shared folder, so nobody has to ask who
+  has the latest version.
+- **History built in.** Every week and every month is kept, so "how fast is this filling
+  up?" has an answer instead of a guess.
+
+Both are part of the automated geospatial ETL I run, which handles 450+ files a month.
+
+Between teams, a daily exchange now
+[reconciles records across two teams' systems](/blog/16-cross-team-alignment/). All of it
+depends on the records being right in the first place, which is what
+[spatial validation of splice sequences](/blog/14_cable-order-check/) is for.
+
+<div style={{ height: "2rem" }} />
+## Next steps
+
+- **One view of capacity.** Bring ISP and OSP together, so planning sees free ports and
+  free fibre for the same place at once.
+- **Forecasting.** With months of history, estimate when each piece of equipment or each
+  cable will fill up, so planning can act before it does.
+- **Shared infrastructure.** Move the scheduled runs onto shared, always-on
+  infrastructure, with an alert when a step fails.

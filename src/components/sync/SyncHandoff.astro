@@ -1,0 +1,226 @@
+---
+// Post 16: the exchange as four steps, with the team boundary between sending and updating.
+// A file chip travels along the track and crosses the boundary; click a step for detail.
+const STEPS = [
+	{
+		name: "Pull",
+		detail: "The latest records to compare are downloaded from the reporting tools.",
+	},
+	{
+		name: "Compare",
+		detail: "A Python script checks every circuit and keeps the ones where the two sides disagree, most often on status.",
+	},
+	{
+		name: "Send",
+		detail: "New results go to the other team's server over SFTP, an encrypted connection. No email, no shared drive.",
+	},
+	{
+		name: "Update",
+		detail: "Their automation picks up each new file and corrects the record on their side.",
+	},
+];
+---
+
+<figure class="ho">
+	<div class="zones" aria-hidden="true">
+		<span class="zone ours">Our side</span>
+		<span class="zone theirs">Their side</span>
+	</div>
+
+	<div class="steps">
+		{STEPS.slice(0, 3).map((s, i) => (
+			<button type="button" class="step" data-i={i} aria-pressed={i === 0 ? "true" : "false"}>
+				<span class="num">{i + 1}</span>
+				{s.name}
+			</button>
+		))}
+		<div class="boundary" aria-hidden="true"><span>one shared folder</span></div>
+		<button type="button" class="step" data-i="3" aria-pressed="false">
+			<span class="num">4</span>
+			{STEPS[3].name}
+		</button>
+	</div>
+
+	<div class="track" aria-hidden="true">
+		<span class="file">.xlsx</span>
+	</div>
+
+	<p class="detail" aria-live="polite" data-details={JSON.stringify(STEPS.map((s) => s.detail))}>
+		{STEPS[0].detail}
+	</p>
+	<figcaption>How a day's results move from one team to the other. Click a step.</figcaption>
+</figure>
+
+<script>
+	document.querySelectorAll<HTMLElement>(".ho").forEach((root) => {
+		const detail = root.querySelector<HTMLElement>(".detail");
+		const details: string[] = JSON.parse(detail?.dataset.details ?? "[]");
+		const steps = root.querySelectorAll<HTMLButtonElement>(".step");
+		steps.forEach((b) =>
+			b.addEventListener("click", () => {
+				steps.forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+				if (detail) detail.textContent = details[Number(b.dataset.i)] ?? "";
+			}),
+		);
+	});
+</script>
+
+<style>
+	.ho {
+		margin: 0;
+		padding: 1rem 1.1rem 0.9rem;
+		border: 1px solid rgba(var(--ink), 0.13);
+		border-radius: 6px;
+		background: rgb(var(--paper));
+	}
+	.zones,
+	.steps {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr)) 3.2rem minmax(0, 1fr);
+		gap: 0.6rem;
+		align-items: stretch;
+	}
+	.zone {
+		font: 600 0.68rem var(--font-ui);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: rgba(var(--ink), 0.55);
+		padding-bottom: 0.35rem;
+	}
+	.zone.ours {
+		grid-column: 1 / 4;
+	}
+	.zone.theirs {
+		grid-column: 5;
+	}
+	.step {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.25rem;
+		padding: 0.65rem 0.75rem;
+		border: 1px solid rgba(var(--ink), 0.16);
+		border-radius: 6px;
+		background: rgba(var(--ink), 0.025);
+		font: 600 0.95rem var(--font-text);
+		color: rgb(var(--black));
+		text-align: left;
+		cursor: pointer;
+		transition: border-color 0.15s ease, background-color 0.15s ease;
+	}
+	.step:hover {
+		border-color: rgba(var(--blue-rgb), 0.5);
+	}
+	.step[aria-pressed="true"] {
+		border-color: var(--blue);
+		background: rgba(var(--blue-rgb), 0.08);
+	}
+	.num {
+		font: 600 0.7rem var(--font-mono);
+		color: var(--blue);
+	}
+	.boundary {
+		position: relative;
+		display: flex;
+		justify-content: center;
+	}
+	.boundary::before {
+		content: "";
+		position: absolute;
+		top: -1.6rem;
+		bottom: -2.4rem;
+		left: 50%;
+		border-left: 2px dashed rgba(var(--ink), 0.3);
+	}
+	.boundary span {
+		position: relative;
+		align-self: center;
+		padding: 0.15rem 0.2rem;
+		background: rgb(var(--paper));
+		font: 0.62rem/1.2 var(--font-ui);
+		color: rgba(var(--ink), 0.55);
+		text-align: center;
+	}
+	.track {
+		position: relative;
+		height: 1.6rem;
+		margin-top: 0.7rem;
+	}
+	.track::before {
+		content: "";
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 50%;
+		border-top: 1px solid rgba(var(--ink), 0.15);
+	}
+	.file {
+		position: absolute;
+		top: 50%;
+		left: 0;
+		transform: translate(0, -50%);
+		padding: 0.05rem 0.4rem;
+		border-radius: 4px;
+		background: var(--blue);
+		color: #fff;
+		font: 600 0.66rem var(--font-mono);
+		animation: travel 6s ease-in-out infinite;
+	}
+	@keyframes travel {
+		0% {
+			left: 0;
+			opacity: 0;
+		}
+		8% {
+			opacity: 1;
+		}
+		70% {
+			left: calc(100% - 3rem);
+			opacity: 1;
+		}
+		85%,
+		100% {
+			left: calc(100% - 3rem);
+			opacity: 0;
+		}
+	}
+	.detail {
+		margin: 0.6rem 0 0;
+		font-size: 0.95rem;
+		line-height: 1.5;
+		min-height: 3em;
+	}
+	figcaption {
+		margin-top: 0.4rem;
+		font: 0.72rem var(--font-ui);
+		color: rgba(var(--ink), 0.5);
+	}
+	@media (max-width: 600px) {
+		.zones {
+			display: none;
+		}
+		.steps {
+			grid-template-columns: 1fr;
+		}
+		.boundary {
+			height: 2rem;
+		}
+		.boundary::before {
+			top: 50%;
+			bottom: auto;
+			left: 0;
+			right: 0;
+			border-left: 0;
+			border-top: 2px dashed rgba(var(--ink), 0.3);
+		}
+		.track {
+			display: none;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.file {
+			animation: none;
+			left: calc(100% - 3rem);
+		}
+	}
+</style>
