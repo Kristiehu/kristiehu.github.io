@@ -52,7 +52,10 @@ const last = DAYS - 1;
 		))}
 		<path class="l-without" d={line(without)} />
 		<path class="l-with" d={line(withCheck)} />
-		<text class="end end-without" x={x(last) + 8} y={y(without[last])} dominant-baseline="middle">No regular comparison</text>
+		<text class="end end-without" x={x(last) + 8} y={y(without[last])} dominant-baseline="middle">
+			<tspan x={x(last) + 8} dy="-0.6em">No regular</tspan>
+			<tspan x={x(last) + 8} dy="1.2em">comparison</tspan>
+		</text>
 		<text class="end end-with" x={x(last) + 8} y={y(withCheck[last])} dominant-baseline="middle">Daily exchange</text>
 		<line class="hover" x1="0" x2="0" y1={M.top} y2={H - M.bottom} visibility="hidden" />
 		<rect class="catch" x={M.left} y={M.top} width={W - M.left - M.right} height={H - M.top - M.bottom} />
