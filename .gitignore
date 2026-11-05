@@ -33,3 +33,6 @@ dist/
 astro
 kristiehu.github.io@0.0.1
 .claude/
+
+# local archive: kept on this machine, never pushed
+archive/
