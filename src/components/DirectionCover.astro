@@ -19,6 +19,18 @@ const loading = eager ? 'eager' : 'lazy';
 	<Image class="for-dark" src={d.cover} alt="" widths={widths} sizes={sizes} loading={loading} />
 </span>
 
+<script>
+	// Lazy covers fade in when they arrive instead of popping in. Only images still
+	// loading are hidden, and only by this script, so without JavaScript nothing changes.
+	document.querySelectorAll<HTMLImageElement>(".dcover img").forEach((img) => {
+		if (img.complete) return;
+		img.classList.add("dc-wait");
+		const show = () => img.classList.remove("dc-wait");
+		img.addEventListener("load", show, { once: true });
+		img.addEventListener("error", show, { once: true });
+	});
+</script>
+
 <style>
 	.dcover {
 		display: block;
@@ -35,6 +47,15 @@ const loading = eager ? 'eager' : 'lazy';
 		object-fit: cover;
 		-webkit-mask-image: radial-gradient(closest-side, #000 76%, transparent 100%);
 		mask-image: radial-gradient(closest-side, #000 76%, transparent 100%);
+		transition: opacity 0.35s ease;
+	}
+	.dcover :global(img.dc-wait) {
+		opacity: 0;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.dcover :global(img) {
+			transition: none;
+		}
 	}
 	.dcover :global(.for-dark),
 	:global(:root[data-theme='dark']) .dcover :global(.for-light) {
