@@ -16,10 +16,24 @@ export type Role = {
 // LEADERSHIP is a name used in the code: no spaces or & allowed.
 export const LEADERSHIP: Role[] = [
 	{
+		role: 'Project Review Committee',
+		org: '[Graduate Studies Endowment Fund](https://uwaterloo.ca/graduate-studies-endowment-fund/), University of Waterloo',
+		start: 'Nov 2026',
+		end: 'present',
+		points: [
+        	'Review small and large project funding proposals to support graduate student initiatives.',
+        	'Participate in committee discussions and project presentations to evaluate and recommend funding decisions.',
+        ],
+	},
+	{
 		role: 'Program Committee',
-		org: '[AAAI-27 SA](https://aaai.org/conference/aaai/aaai-27/), Association for the Advancement of Artificial Intelligence (AAAI), Montréal, Canada',
+		org: '[AAAI-27 SA](https://aaai.org/conference/aaai/aaai-27/), Association for the Advancement of Artificial Intelligence (AAAI) 2027, Montréal, Canada',
 		start: 'Oct 2026',
 		end: 'present',
+		points: [
+        	'Review research submissions to the AAAI-27 Student Abstract Program.',
+        	'Contribute to the peer-review process for work presented at AAAI-27 in Montréal, Canada (Feb 16–23, 2027).',
+      	],
 	},
 	{
 		role: 'Vice President',
