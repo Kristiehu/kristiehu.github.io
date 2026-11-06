@@ -68,31 +68,6 @@ export type Institution = {
 	courses: Course[];
 };
 
-// TODO(Kristie): add terms to each course. The old page showed "1.0 / 2.5"
-// next to some courses without a unit; add them back as terms or leave them out.
-export const TEACHING: Institution[] = [
-	{
-		institution: 'University of Waterloo',
-		role: 'Teaching Assistant',
-		courses: [
-			{ code: 'GEOG 101', title: 'Human Geography' },
-			{ code: 'GEOG 310', title: 'Geodesy & Land Surveying', },
-			// roles: ['Guest lecture'] },
-			{ code: 'GEOG 316', title: 'Multivariate Statistics' },
-		],
-	},
-	{
-		institution: 'University of Toronto',
-		role: 'Part-time Tutor',
-		courses: [
-			{ code: 'GGRA30H3', title: 'Geographic Information Systems and Empirical Reasoning' },
-			{ code: 'MGEA06H3', title: 'Advanced Geographic Information Systems' },
-			{ code: 'GGR210H5S', title: 'Social Geographies' },
-			{ code: 'GGR209H5S', title: 'Economic Geography' },
-		],
-	},
-];
-
 // Courses you have taken (PhD coursework). Leave empty to hide the section.
 // Example: { code: 'CIVE 700', title: 'Course title', term: 'F26' }
 export const COURSEWORK: { code: string; title: string; term?: string }[] = [
