@@ -68,6 +68,19 @@ export type Institution = {
 	courses: Course[];
 };
 
+export const TEACHING: Institution[] = [
+	{
+		institution: 'University of Waterloo',
+		role: 'Teaching Assistant',
+		courses: [
+			{ code: 'GEOG 101', title: 'Human Geography', terms: ['Winter 2022'] },
+			{ code: 'GEOG 310', title: 'Geodesy & Land Surveying', terms: ['Fall 2022', 'Fall 2023'] },
+			{ code: 'GEOG 316', title: 'Multivariate Statistics', terms: ['Fall 2023'] },
+		],
+	},
+
+];
+
 // Courses you have taken (PhD coursework). Leave empty to hide the section.
 // Example: { code: 'CIVE 700', title: 'Course title', term: 'F26' }
 export const COURSEWORK: { code: string; title: string; term?: string }[] = [
