@@ -388,7 +388,7 @@ const menu = header?.querySelector('#site-menu');
     e.stopPropagation();
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
-    try { localStorage.setItem('theme', next); } catch (err) {}
+    try { sessionStorage.setItem('theme', next); } catch (err) {} // for this visit only (see BaseHead.astro)
   });
 </script>
 
