@@ -12,12 +12,6 @@ draft: false
 
 import AzOrderCheck from '../../components/AzOrderCheck.astro';
 
-{/* A simulation of an internal tool, running on a wholly generated network: no real
-    cable, structure, coordinate or order appears anywhere in it. Every number below
-    comes from one run of the checker on that generated set (seed 7): 419 cables, 698
-    structures, 68 planted faults, 66 caught, 18 false alarms. `python3 demo/evaluate.py`
-    in the az-order-verify repo reproduces it. */}
-
 A fibre run is recorded as an A end, a Z end, and the structures spliced between them,
 in order. Usually that order is right. Sometimes two stops are the wrong way round, or
 one points at a structure on the other side of the city because the wrong name got
